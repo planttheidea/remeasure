@@ -1,0 +1,81 @@
+{
+  "author": "planttheidea",
+  "ava": {
+    "babel": "inherit",
+    "failFast": true,
+    "files": [
+      "./test/utils.js",
+      "./test/index.js"
+    ],
+    "require": [
+      "babel-register",
+      "babel-polyfill",
+      "./test/helpers/setup-browser-env.js"
+    ]
+  },
+  "bugs": {
+    "url": "https://github.com/planttheidea/remeasure/issues"
+  },
+  "dependencies": {
+    "element-resize-event": "^2.0.5",
+    "react": ">=0.14.0"
+  },
+  "description": "Get position and size of the DOM element for any React Component",
+  "devDependencies": {
+    "ava": "0.15.2",
+    "babel": "^6.5.2",
+    "babel-cli": "^6.10.1",
+    "babel-eslint": "^6.1.2",
+    "babel-loader": "^6.2.4",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-polyfill": "^6.9.1",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-react": "^6.11.1",
+    "babel-preset-stage-0": "^6.5.0",
+    "eslint": "^3.1.0",
+    "eslint-friendly-formatter": "^2.0.6",
+    "eslint-loader": "^1.4.1",
+    "eslint-plugin-react": "^5.2.2",
+    "html-webpack-plugin": "^2.22.0",
+    "in-publish": "^2.0.0",
+    "jsdom": "^9.4.1",
+    "react-dom": ">=0.14.0",
+    "sinon": "^1.17.4",
+    "webpack": "^1.13.1",
+    "webpack-dev-server": "^1.14.1"
+  },
+  "homepage": "https://github.com/planttheidea/remeasure#readme",
+  "keywords": [
+    "react",
+    "remeasure",
+    "sizing",
+    "measure",
+    "measurement",
+    "dimensions",
+    "position"
+  ],
+  "license": "MIT",
+  "main": "lib/index.js",
+  "name": "remeasure",
+  "peerDependencies": {
+    "react": ">=0.14.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/planttheidea/remeasure.git"
+  },
+  "scripts": {
+    "build": "NODE_ENV=development ./node_modules/webpack/bin/webpack.js --progress --colors",
+    "build-minified": "NODE_ENV=production ./node_modules/webpack/bin/webpack.js --progress --colors --config=webpack.config.minified.js",
+    "compile-for-publish": "npm run lint && npm run test && npm run transpile && npm run dist",
+    "dev": "NODE_ENV=development ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --progress --colors --config=webpack.config.dev.js",
+    "dist": "npm run build && npm run build-minified",
+    "lint": "NODE_ENV=test ./node_modules/eslint/bin/eslint.js src",
+    "prepublish": "in-publish && npm run compile-for-publish || in-install",
+    "test": "NODE_ENV=test ava --no-cache",
+    "test:watch": "NODE_ENV=test ava --no-cache --watch",
+    "transpile": "./node_modules/babel-cli/lib/babel/index.js -d lib/ src/"
+  },
+  "version": "1.0.0"
+}
