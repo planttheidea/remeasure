@@ -48,12 +48,15 @@
   "homepage": "https://github.com/planttheidea/remeasure#readme",
   "keywords": [
     "react",
-    "remeasure",
-    "sizing",
     "measure",
-    "measurement",
     "dimensions",
-    "position"
+    "position",
+    "size",
+    "height",
+    "width",
+    "resize",
+    "container-queries",
+    "element-queries"
   ],
   "license": "MIT",
   "main": "lib/index.js",
