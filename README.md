@@ -48,22 +48,29 @@ const StatelessComponent = measure(({position, size}) => {
 ```
 
 ANy component that has `measure` applied to it will be wrapped in a [Higher-Order Component](https://medium.com/@dan_abramov/mixins-are-dead-long-live-higher-order-components-94a0d2f9e750#.k0th02ffm) that will pass in the props `position` and `size`, which contain a variety of measurements related to (you guessed it) the component's position and size. A complete list of properties:
-* Position
-  * bottom (relative to window)
-  * offsetLeft
-  * offsetTop
-  * left (relative to window)
-  * right (relative to window)
-  * top (relative to window)
-* Size
-  * clientHeight
-  * clientWidth
-  * height
-  * offsetHeight
-  * offsetWidth
-  * scrollHeight
-  * scrollWidth
-  * width
+  
+```javascript
+{
+  position: {
+    bottom: Number,
+    offsetLeft: Number,
+    offsetTop: Number,
+    left: Number,
+    right: Number,
+    top: Number
+  },
+  size: {
+    clientHeight: Number,
+    clientWidth: Number,
+    height: Number,
+    offsetHeight: Number,
+    offsetWidth: Number,
+    scrollHeight: Number,
+    scrollWidth: Number,
+    width: Number
+  }
+}
+```
   
 The `bottom`, `left`, `right`, and `top` properties in `position` are what you would expect from the result of `element.getBoundingClientRect()`.
 
