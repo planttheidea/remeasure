@@ -47,7 +47,7 @@ const StatelessComponent = measure(({position, size}) => {
 });
 ```
 
-ANy component that has `measure` applied to it will have the props `position` and `size` injected, which contain a variety of measurements related to (you guessed it) the component's position and size. A complete list of properties:
+ANy component that has `measure` applied to it will be wrapped in a [Higher-Order Component](https://medium.com/@dan_abramov/mixins-are-dead-long-live-higher-order-components-94a0d2f9e750#.k0th02ffm) that will pass in the props `position` and `size`, which contain a variety of measurements related to (you guessed it) the component's position and size. A complete list of properties:
 * Position
   * bottom (relative to window)
   * offsetLeft
