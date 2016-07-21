@@ -47,7 +47,7 @@ const StatelessComponent = measure(({position, size}) => {
 });
 ```
 
-The component that has the decoration of `measure` applied to it will have the props `position` and `size` injected, which contain a variety of measurements related to (you guessed it) the component's position and size. A complete list of properties:
+ANy component that has `measure` applied to it will have the props `position` and `size` injected, which contain a variety of measurements related to (you guessed it) the component's position and size. A complete list of properties:
 * Position
   * bottom (relative to window)
   * offsetLeft
@@ -64,14 +64,14 @@ The component that has the decoration of `measure` applied to it will have the p
   * scrollHeight
   * scrollWidth
   * width
-
-For the `bottom`, `left`, `right`, and `top` properties in `position`, they are what you would expect from doing `element.getBoundingClientRect()`.
+  
+The `bottom`, `left`, `right`, and `top` properties in `position` are what you would expect from the result of `element.getBoundingClientRect()`.
 
 These properties are retrieved on mount, but will also automatically update if the element is resized thanks to [element-resize-event](https://github.com/KyleAMathews/element-resize-event).
 
 #### Advanced usage
 
-If you want to limit the items that are injected into the component, you can also use the decorator as a function.
+If you want to limit the items that are injected into the component, you can pass either a string or array of strings to the decorator before wrapping the component.
 
 **measure(`string|array<string>`)** *returns `function`*
 
