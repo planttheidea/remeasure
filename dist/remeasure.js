@@ -540,7 +540,7 @@ var Remeasure =
 	
 	var ALL_BOUNDING_CLIENT_RECT_KEYS = [].concat(BOUNDING_CLIENT_RECT_POSITION_KEYS, BOUNDING_CLIENT_RECT_SIZE_KEYS);
 	
-	var DOM_ELEMENT_POSITION_KEYS = ['offsetLeft', 'offsetTop'];
+	var DOM_ELEMENT_POSITION_KEYS = ['clientLeft', 'clientTop', 'offsetLeft', 'offsetTop', 'scrollLeft', 'scrollTop'];
 	
 	var DOM_ELEMENT_SIZE_KEYS = ['clientHeight', 'clientWidth', 'offsetHeight', 'offsetWidth', 'scrollHeight', 'scrollWidth'];
 	

@@ -53,10 +53,14 @@ Any component that has `measure` applied to it will be wrapped in a [Higher-Orde
 {
   position: {
     bottom: Number,
+    clientLeft: Number,
+    clientTop: Number,
     offsetLeft: Number,
     offsetTop: Number,
     left: Number,
     right: Number,
+    scrollLeft: Number,
+    scrollTop: Number,
     top: Number
   },
   size: {

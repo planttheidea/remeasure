@@ -16,8 +16,12 @@ const ALL_BOUNDING_CLIENT_RECT_KEYS = [
 ];
 
 const DOM_ELEMENT_POSITION_KEYS = [
+  'clientLeft',
+  'clientTop',
   'offsetLeft',
-  'offsetTop'
+  'offsetTop',
+  'scrollLeft',
+  'scrollTop'
 ];
 
 const DOM_ELEMENT_SIZE_KEYS = [
