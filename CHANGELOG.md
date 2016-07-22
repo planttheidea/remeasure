@@ -1,5 +1,8 @@
 # remeasure changelog
 
+#### 1.2.1
+* Abstract requestAnimationFrame assignment to `setRaf` function called on `componentDidMount` (for universal apps)
+
 #### 1.2.0
 * Component now only updates when one of the requested keys updates (or if used in standard way, when any key updates)
 * Add `naturalHeight` and `naturalWidth` properties
