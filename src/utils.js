@@ -13,6 +13,8 @@ const REQUEST_ANIMATION_FRAME = (
   }
 );
 
+const NATURAL_REGEXP = /natural/;
+
 /**
  * get the toString value for the object
  *
@@ -40,24 +42,6 @@ const forEach = (array, fn) => {
 };
 
 /**
- * create an object based on the keys passed and their value
- * in the source object
- *
- * @param {array<string>} keys
- * @param {object|ClientRect} source
- * @returns {object}
- */
-const createObjectFromKeys = (keys, source) => {
-  let target = {};
-
-  forEach(keys, (key) => {
-    target[key] = source[key];
-  });
-
-  return target;
-};
-
-/**
  * determine if object is an array
  *
  * @param {any} object
@@ -75,6 +59,51 @@ const isArray = (object) => {
  */
 const isString = (object) => {
   return toString(object) === '[object String]';
+};
+
+/**
+ * determine if object is undefined
+ *
+ * @param {any} object
+ * @returns {boolean}
+ */
+const isUndefined = (object) => {
+  return object === void 0;
+};
+
+/**
+ * For naturalHeight and naturalWidth, coalesce the values
+ * with scrollHeight and scrollWIdth if the element does not
+ * natively support it
+ *
+ * @param {HTMLElement} source
+ * @param {string} key
+ * @returns {number}
+ */
+const getNaturalDimensionValue = (source, key) => {
+  if (isUndefined(source[key])) {
+    return source[key.replace(NATURAL_REGEXP, 'scroll')];
+  }
+
+  return source[key];
+};
+
+/**
+ * create an object based on the keys passed and their value
+ * in the source object
+ *
+ * @param {array<string>} keys
+ * @param {object|ClientRect} source
+ * @returns {object}
+ */
+const createObjectFromKeys = (keys, source) => {
+  let target = {};
+
+  forEach(keys, (key) => {
+    target[key] = NATURAL_REGEXP.test(key) ? getNaturalDimensionValue(source, key) : source[key];
+  });
+
+  return target;
 };
 
 /**
@@ -174,8 +203,10 @@ const getValues = (keys, currentState) => {
 export {arrayContains};
 export {createObjectFromKeys};
 export {forEach};
+export {getNaturalDimensionValue};
 export {getValidKeys};
 export {getValues};
 export {isArray};
 export {isString};
+export {isUndefined};
 export {REQUEST_ANIMATION_FRAME as raf};

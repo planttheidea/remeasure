@@ -4,10 +4,12 @@ import {
   arrayContains,
   createObjectFromKeys,
   forEach,
+  getNaturalDimensionValue,
   getValidKeys,
   getValues,
   isArray,
-  isString
+  isString,
+  isUndefined
 } from '../src/utils';
 
 test('if arrayContains correctly identifies when an array contains an item', (t) => {
@@ -41,6 +43,19 @@ test('if forEach correctly loops over all items in an array', (t) => {
   });
 
   t.deepEqual(source, target);
+});
+
+test('if getNaturalDimensionValue gets the correct value based on key', (t) => {
+  const objectWithoutNaturalValue = {
+    scrollHeight: 200
+  };
+  const objectWithNaturalValue = {
+    ...objectWithoutNaturalValue,
+    naturalHeight: 100
+  };
+
+  t.is(getNaturalDimensionValue(objectWithoutNaturalValue, 'naturalHeight'), objectWithNaturalValue.scrollHeight);
+  t.is(getNaturalDimensionValue(objectWithNaturalValue, 'naturalHeight'), objectWithNaturalValue.naturalHeight);
 });
 
 test('if getValidKeys correctly limits the keys returned', (t) => {
@@ -108,4 +123,14 @@ test('if isString correctly identifies a string vs other object types', (t) => {
   t.false(isString([]));
   t.false(isString({}));
   t.false(isString(new Date()));
+});
+
+test('if isUndefined correctly identifies a string vs other object types', (t) => {
+  t.true(isUndefined(undefined));
+  t.false(isUndefined(null));
+  t.false(isUndefined('foo'));
+  t.false(isUndefined(12));
+  t.false(isUndefined([]));
+  t.false(isUndefined({}));
+  t.false(isUndefined(new Date()));
 });

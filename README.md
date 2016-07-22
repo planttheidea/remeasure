@@ -67,6 +67,8 @@ Any component that has `measure` applied to it will be wrapped in a [Higher-Orde
     clientHeight: Number,
     clientWidth: Number,
     height: Number,
+    naturalHeight: Number,
+    naturalWidth: Number,
     offsetHeight: Number,
     offsetWidth: Number,
     scrollHeight: Number,
@@ -76,7 +78,7 @@ Any component that has `measure` applied to it will be wrapped in a [Higher-Orde
 }
 ```
   
-The `bottom`, `left`, `right`, and `top` properties in `position` are what you would expect from the result of `element.getBoundingClientRect()`.
+The `bottom`, `left`, `right`, and `top` properties in `position` are what you would expect from the result of `element.getBoundingClientRect()`. `naturalHeight` and `naturalWidth` are properties that are native to `img` elements, and for all non-`img` elements they are coalesced with `scrollHeight` and `scrollWidth`, respectively.
 
 These properties are retrieved on mount, but will also automatically update if the element is resized thanks to [element-resize-event](https://github.com/KyleAMathews/element-resize-event).
 

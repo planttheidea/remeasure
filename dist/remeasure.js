@@ -113,7 +113,7 @@ var Remeasure =
 	
 	      _this.state = _extends({}, _constants.initialState);
 	
-	      _this.haveValuesChanged = function (values) {
+	      _this.haveValuesChanged = function (values, keys) {
 	        var length = _constants.allKeys.length;
 	
 	        var index = -1,
@@ -122,7 +122,7 @@ var Remeasure =
 	        while (++index < length) {
 	          key = _constants.allKeys[index];
 	
-	          if (values[key] !== _this.state[key]) {
+	          if ((0, _utils.arrayContains)(keys, key) && values[key] !== _this.state[key]) {
 	            return true;
 	          }
 	        }
@@ -136,7 +136,7 @@ var Remeasure =
 	
 	          var values = _extends({}, (0, _utils.createObjectFromKeys)(_constants.allDomElementKeys, domElement), (0, _utils.createObjectFromKeys)(_constants.allBoundingRectClientKeys, boundingClientRect));
 	
-	          if (_this.haveValuesChanged(values)) {
+	          if (_this.haveValuesChanged(values, keys)) {
 	            _this.setState(values);
 	          }
 	        });
@@ -169,6 +169,7 @@ var Remeasure =
 	       * changed compared to what is stored in state
 	       *
 	       * @param {object} values
+	       * @param {array<string>} keys
 	       * @returns {boolean}
 	       */
 	
@@ -201,7 +202,7 @@ var Remeasure =
 	 * into OriginalComponent as an object under the prop name size and position
 	 *
 	 * @param {Component|array<string>} keys
-	 * @returns {ComponentWithDimensions}
+	 * @returns {RemeasureComponent}
 	 */
 	var measure = function measure(keys) {
 	  if ((0, _utils.isString)(keys)) {
@@ -234,7 +235,7 @@ var Remeasure =
 	    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
 	  }
 	
-	  return getHigherOrderComponent(keys);
+	  return getHigherOrderComponent(keys, _constants.allKeys);
 	};
 	
 	exports.default = measure;
@@ -346,13 +347,16 @@ var Remeasure =
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.raf = exports.isString = exports.isArray = exports.getValues = exports.getValidKeys = exports.forEach = exports.createObjectFromKeys = exports.arrayContains = undefined;
+	exports.raf = exports.isUndefined = exports.isString = exports.isArray = exports.getValues = exports.getValidKeys = exports.getNaturalDimensionValue = exports.forEach = exports.createObjectFromKeys = exports.arrayContains = undefined;
 	
 	var _constants = __webpack_require__(6);
 	
 	var REQUEST_ANIMATION_FRAME = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (callback) {
 	  window.setTimeout(callback, 1000 / 60);
-	};
+	}; // constants
+	
+	
+	var NATURAL_REGEXP = /natural/;
 	
 	/**
 	 * get the toString value for the object
@@ -360,7 +364,6 @@ var Remeasure =
 	 * @param {any} object
 	 * @returns {string}
 	 */
-	// constants
 	var toString = function toString(object) {
 	  return Object.prototype.toString.call(object);
 	};
@@ -382,24 +385,6 @@ var Remeasure =
 	};
 	
 	/**
-	 * create an object based on the keys passed and their value
-	 * in the source object
-	 *
-	 * @param {array<string>} keys
-	 * @param {object|ClientRect} source
-	 * @returns {object}
-	 */
-	var createObjectFromKeys = function createObjectFromKeys(keys, source) {
-	  var target = {};
-	
-	  forEach(keys, function (key) {
-	    target[key] = source[key];
-	  });
-	
-	  return target;
-	};
-	
-	/**
 	 * determine if object is an array
 	 *
 	 * @param {any} object
@@ -417,6 +402,51 @@ var Remeasure =
 	 */
 	var isString = function isString(object) {
 	  return toString(object) === '[object String]';
+	};
+	
+	/**
+	 * determine if object is undefined
+	 *
+	 * @param {any} object
+	 * @returns {boolean}
+	 */
+	var isUndefined = function isUndefined(object) {
+	  return object === void 0;
+	};
+	
+	/**
+	 * For naturalHeight and naturalWidth, coalesce the values
+	 * with scrollHeight and scrollWIdth if the element does not
+	 * natively support it
+	 *
+	 * @param {HTMLElement} source
+	 * @param {string} key
+	 * @returns {number}
+	 */
+	var getNaturalDimensionValue = function getNaturalDimensionValue(source, key) {
+	  if (isUndefined(source[key])) {
+	    return source[key.replace(NATURAL_REGEXP, 'scroll')];
+	  }
+	
+	  return source[key];
+	};
+	
+	/**
+	 * create an object based on the keys passed and their value
+	 * in the source object
+	 *
+	 * @param {array<string>} keys
+	 * @param {object|ClientRect} source
+	 * @returns {object}
+	 */
+	var createObjectFromKeys = function createObjectFromKeys(keys, source) {
+	  var target = {};
+	
+	  forEach(keys, function (key) {
+	    target[key] = NATURAL_REGEXP.test(key) ? getNaturalDimensionValue(source, key) : source[key];
+	  });
+	
+	  return target;
 	};
 	
 	/**
@@ -516,10 +546,12 @@ var Remeasure =
 	exports.arrayContains = arrayContains;
 	exports.createObjectFromKeys = createObjectFromKeys;
 	exports.forEach = forEach;
+	exports.getNaturalDimensionValue = getNaturalDimensionValue;
 	exports.getValidKeys = getValidKeys;
 	exports.getValues = getValues;
 	exports.isArray = isArray;
 	exports.isString = isString;
+	exports.isUndefined = isUndefined;
 	exports.raf = REQUEST_ANIMATION_FRAME;
 
 /***/ },
@@ -542,7 +574,7 @@ var Remeasure =
 	
 	var DOM_ELEMENT_POSITION_KEYS = ['clientLeft', 'clientTop', 'offsetLeft', 'offsetTop', 'scrollLeft', 'scrollTop'];
 	
-	var DOM_ELEMENT_SIZE_KEYS = ['clientHeight', 'clientWidth', 'offsetHeight', 'offsetWidth', 'scrollHeight', 'scrollWidth'];
+	var DOM_ELEMENT_SIZE_KEYS = ['clientHeight', 'clientWidth', 'naturalHeight', 'naturalWidth', 'offsetHeight', 'offsetWidth', 'scrollHeight', 'scrollWidth'];
 	
 	var ALL_DOM_ELEMENT_KEYS = [].concat(DOM_ELEMENT_POSITION_KEYS, DOM_ELEMENT_SIZE_KEYS);
 	

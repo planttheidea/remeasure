@@ -11,14 +11,18 @@ const DIV_STYLES = {
   border: '10px solid black',
   height: 100,
   marginBottom: 15,
-  padding: 20,
-  width: 50
+  padding: 20
 };
 
 const SECTION_STYLES = {
   height: 100,
   overflow: 'auto',
   marginBottom: 15
+};
+
+const IMG_STYLES = {
+  height: 324,
+  width: 719
 };
 
 @measure
@@ -41,7 +45,7 @@ class Div extends Component {
   }
 }
 
-@measure('position')
+@measure('size')
 class Section extends Component {
   render() {
     const {
@@ -81,13 +85,28 @@ class Main extends Component {
   }
 }
 
+const meatureNaturalDimensions = measure(['naturalHeight', 'naturalWidth']);
+
+const Img = meatureNaturalDimensions(({position, size}) => {
+  console.group('Img');
+  console.log('img position', position);
+  console.log('img size', size);
+  console.groupEnd();
+
+  return (
+    <img
+      src="https://placeholdit.imgix.net/~text?txtsize=33&txt=350%C3%97150&w=350&h=150"
+      style={IMG_STYLES}
+    />
+  );
+});
+
 const measureWithSpecificKeys = measure(['left', 'offsetLeft']);
 
-
-const App = measureWithSpecificKeys((props) => {
+const App = measureWithSpecificKeys(({position, size}) => {
   console.group('App');
-  console.log('app position', props.position);
-  console.log('app size', props.size);
+  console.log('app position', position);
+  console.log('app size', size);
   console.groupEnd();
 
   return (
@@ -140,6 +159,8 @@ const App = measureWithSpecificKeys((props) => {
       <Main>
         Hello!
       </Main>
+
+      <Img/>
     </div>
   );
 });

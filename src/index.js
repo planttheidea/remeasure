@@ -9,6 +9,7 @@ import {
 
 // utils
 import {
+  arrayContains,
   createObjectFromKeys,
   getValidKeys,
   getValues,
@@ -65,18 +66,19 @@ const getHigherOrderComponent = (OriginalComponent, keys) => {
      * changed compared to what is stored in state
      *
      * @param {object} values
+     * @param {array<string>} keys
      * @returns {boolean}
      */
-    haveValuesChanged = (values) => {
+    haveValuesChanged = (values, keys) => {
       const length = allKeys.length;
 
       let index = -1,
-        key;
+          key;
 
       while (++index < length) {
         key = allKeys[index];
 
-        if (values[key] !== this.state[key]) {
+        if (arrayContains(keys, key) && values[key] !== this.state[key]) {
           return true;
         }
       }
@@ -100,7 +102,7 @@ const getHigherOrderComponent = (OriginalComponent, keys) => {
           ...createObjectFromKeys(allBoundingRectClientKeys, boundingClientRect)
         };
 
-        if (this.haveValuesChanged(values)) {
+        if (this.haveValuesChanged(values, keys)) {
           this.setState(values);
         }
       });
@@ -126,7 +128,7 @@ const getHigherOrderComponent = (OriginalComponent, keys) => {
  * into OriginalComponent as an object under the prop name size and position
  *
  * @param {Component|array<string>} keys
- * @returns {ComponentWithDimensions}
+ * @returns {RemeasureComponent}
  */
 const measure = (keys) => {
   if (isString(keys)) {
@@ -153,7 +155,7 @@ const measure = (keys) => {
     };
   }
 
-  return getHigherOrderComponent(keys);
+  return getHigherOrderComponent(keys, allKeys);
 };
 
 export default measure;
