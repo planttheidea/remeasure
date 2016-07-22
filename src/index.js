@@ -14,8 +14,7 @@ import {
   getValidKeys,
   getValues,
   isArray,
-  isString,
-  raf
+  isString
 } from './utils';
 
 // constants
@@ -27,6 +26,23 @@ import {
   allSizeKeys,
   initialState
 } from './constants';
+
+let raf;
+
+/**
+ * wait to assign the raf until mount, so it has access to the
+ * window object
+ */
+const setRaf = () => {
+  raf = (
+    window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    function(callback) {
+      window.setTimeout(callback, 1000 / 60);
+    }
+  );
+};
 
 /**
  * create the HOC that injects the position and size props
@@ -45,6 +61,10 @@ const getHigherOrderComponent = (OriginalComponent, keys) => {
 
     componentDidMount() {
       const domElement = findDOMNode(this);
+
+      if (!raf) {
+        setRaf();
+      }
 
       this.setValues(domElement);
 

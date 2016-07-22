@@ -4,15 +4,6 @@ import {
   allSizeKeys
 } from './constants';
 
-const REQUEST_ANIMATION_FRAME = (
-  window.requestAnimationFrame ||
-  window.webkitRequestAnimationFrame ||
-  window.mozRequestAnimationFrame ||
-  function(callback) {
-    window.setTimeout(callback, 1000 / 60);
-  }
-);
-
 const NATURAL_REGEXP = /natural/;
 
 /**
@@ -209,4 +200,3 @@ export {getValues};
 export {isArray};
 export {isString};
 export {isUndefined};
-export {REQUEST_ANIMATION_FRAME as raf};

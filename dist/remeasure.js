@@ -93,6 +93,18 @@ var Remeasure =
 	// constants
 	
 	
+	var raf = void 0;
+	
+	/**
+	 * wait to assign the raf until mount, so it has access to the
+	 * window object
+	 */
+	var setRaf = function setRaf() {
+	  raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (callback) {
+	    window.setTimeout(callback, 1000 / 60);
+	  };
+	};
+	
 	/**
 	 * create the HOC that injects the position and size props
 	 * into the child (assuming they have keys that are valid
@@ -131,7 +143,7 @@ var Remeasure =
 	      };
 	
 	      _this.setValues = function (domElement) {
-	        (0, _utils.raf)(function () {
+	        raf(function () {
 	          var boundingClientRect = domElement.getBoundingClientRect();
 	
 	          var values = _extends({}, (0, _utils.createObjectFromKeys)(_constants.allDomElementKeys, domElement), (0, _utils.createObjectFromKeys)(_constants.allBoundingRectClientKeys, boundingClientRect));
@@ -151,6 +163,10 @@ var Remeasure =
 	        var _this2 = this;
 	
 	        var domElement = (0, _reactDom.findDOMNode)(this);
+	
+	        if (!raf) {
+	          setRaf();
+	        }
 	
 	        this.setValues(domElement);
 	
@@ -347,14 +363,9 @@ var Remeasure =
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.raf = exports.isUndefined = exports.isString = exports.isArray = exports.getValues = exports.getValidKeys = exports.getNaturalDimensionValue = exports.forEach = exports.createObjectFromKeys = exports.arrayContains = undefined;
+	exports.isUndefined = exports.isString = exports.isArray = exports.getValues = exports.getValidKeys = exports.getNaturalDimensionValue = exports.forEach = exports.createObjectFromKeys = exports.arrayContains = undefined;
 	
 	var _constants = __webpack_require__(6);
-	
-	var REQUEST_ANIMATION_FRAME = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (callback) {
-	  window.setTimeout(callback, 1000 / 60);
-	}; // constants
-	
 	
 	var NATURAL_REGEXP = /natural/;
 	
@@ -364,6 +375,7 @@ var Remeasure =
 	 * @param {any} object
 	 * @returns {string}
 	 */
+	// constants
 	var toString = function toString(object) {
 	  return Object.prototype.toString.call(object);
 	};
@@ -552,7 +564,6 @@ var Remeasure =
 	exports.isArray = isArray;
 	exports.isString = isString;
 	exports.isUndefined = isUndefined;
-	exports.raf = REQUEST_ANIMATION_FRAME;
 
 /***/ },
 /* 6 */
