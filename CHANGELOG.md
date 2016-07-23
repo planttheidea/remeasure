@@ -1,5 +1,8 @@
 # remeasure changelog
 
+#### 1.3.1
+* Fix shorthand key use for `position` and `size` to work with custom `positionProp` and `sizeProp`
+
 #### 1.3.0
 * Add ability to pass `options` object, allowing overrides of the following properties:
   * `positionProp` (defaults to `position`) = the name of the position prop injected into the component

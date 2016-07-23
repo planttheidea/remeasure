@@ -170,13 +170,23 @@ const getHigherOrderComponent = (OriginalComponent, keys, options = {}) => {
  */
 const measure = (keys, options) => {
   if (isString(keys)) {
+    let position = POSITION_PROP_DEFAULT,
+        size = SIZE_PROP_DEFAULT;
+
+    if (isObject(options)) {
+      ({
+        positionProp: position = POSITION_PROP_DEFAULT,
+        sizeProp: size = SIZE_PROP_DEFAULT
+      } = options);
+    }
+
     switch (keys) {
-      case 'size':
-        keys = allSizeKeys;
+      case position:
+        keys = allPositionKeys;
         break;
 
-      case 'position':
-        keys = allPositionKeys;
+      case size:
+        keys = allSizeKeys;
         break;
 
       default:

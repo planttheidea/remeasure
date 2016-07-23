@@ -51,7 +51,7 @@ class Div extends Component {
   }
 }
 
-@measure(options)
+@measure('foo', options)
 class AnotherDiv extends Component {
   render() {
     const {

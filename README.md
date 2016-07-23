@@ -158,6 +158,7 @@ const FOO_BAR_OPTIONS = {
     sizeProp: 'bar'
 };
 
+// use the options by themselves
 @measure(FOO_BAR_OPTIONS)
 class MyComponent extends Component {
     render() {
@@ -174,6 +175,7 @@ class MyComponent extends Component {
     }
 }
 
+// or you can use them with keys
 const measureWithKeysAndOptions = measure(['height', 'width'], FOO_BAR_OPTIONS);
 
 const MyStatelessComponent = measureWithKeysAndOptions(({foo, bar}) => {
@@ -184,6 +186,19 @@ const MyStatelessComponent = measureWithKeysAndOptions(({foo, bar}) => {
         </div>
     );
 };
+
+// you can even use the custom props with the shorthand notation
+@measure('bar', FOO_BAR_OPTIONS)
+class MySizedComponent extends Component {
+    render() {
+        return (
+            <div>
+                I will have access to all the size properties under the prop
+                bar, but foo will not be injected.
+            </div>
+        );
+    }
+}
 ```
 
 #### Support

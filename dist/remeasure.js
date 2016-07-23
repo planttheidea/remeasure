@@ -241,13 +241,23 @@ var Remeasure =
 	 */
 	var measure = function measure(keys, options) {
 	  if ((0, _utils.isString)(keys)) {
+	    var position = POSITION_PROP_DEFAULT,
+	        size = SIZE_PROP_DEFAULT;
+	
+	    if ((0, _utils.isObject)(options)) {
+	      var _options$positionProp2 = options.positionProp;
+	      position = _options$positionProp2 === undefined ? POSITION_PROP_DEFAULT : _options$positionProp2;
+	      var _options$sizeProp2 = options.sizeProp;
+	      size = _options$sizeProp2 === undefined ? SIZE_PROP_DEFAULT : _options$sizeProp2;
+	    }
+	
 	    switch (keys) {
-	      case 'size':
-	        keys = _constants.allSizeKeys;
+	      case position:
+	        keys = _constants.allPositionKeys;
 	        break;
 	
-	      case 'position':
-	        keys = _constants.allPositionKeys;
+	      case size:
+	        keys = _constants.allSizeKeys;
 	        break;
 	
 	      default:
