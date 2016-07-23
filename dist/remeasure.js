@@ -54,15 +54,11 @@ var Remeasure =
 
 	'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
+	exports.__esModule = true;
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	var _elementResizeEvent = __webpack_require__(2);
 	
@@ -134,7 +130,7 @@ var Remeasure =
 	    function RemeasureComponent(props) {
 	      _classCallCheck(this, RemeasureComponent);
 	
-	      var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RemeasureComponent).call(this, props));
+	      var _this = _possibleConstructorReturn(this, _Component.call(this, props));
 	
 	      _this.state = _extends({}, _constants.initialState);
 	
@@ -170,60 +166,55 @@ var Remeasure =
 	      return _this;
 	    }
 	
-	    _createClass(RemeasureComponent, [{
-	      key: 'componentDidMount',
-	      value: function componentDidMount() {
-	        var _this2 = this;
+	    RemeasureComponent.prototype.componentDidMount = function componentDidMount() {
+	      var _this2 = this;
 	
-	        var domElement = (0, _reactDom.findDOMNode)(this);
+	      var domElement = (0, _reactDom.findDOMNode)(this);
 	
-	        if (!raf) {
-	          setRaf();
-	        }
-	
-	        this.setValues(domElement);
-	
-	        if (renderOnResize) {
-	          (0, _elementResizeEvent2.default)(domElement, function () {
-	            _this2.setValues(domElement);
-	          });
-	        }
-	      }
-	    }, {
-	      key: 'componentDidUpdate',
-	      value: function componentDidUpdate() {
-	        this.setValues((0, _reactDom.findDOMNode)(this));
+	      if (!raf) {
+	        setRaf();
 	      }
 	
-	      /**
-	       * iterate through keys and determine if the values have
-	       * changed compared to what is stored in state
-	       *
-	       * @param {object} values
-	       * @param {array<string>} keys
-	       * @returns {boolean}
-	       */
+	      this.setValues(domElement);
 	
-	
-	      /**
-	       * based on the current DOM element, get the values
-	       * and determine if the state should be updated (only
-	       * if things have changed)
-	       *
-	       * @param {HTMLElement} domElement
-	       */
-	
-	    }, {
-	      key: 'render',
-	      value: function render() {
-	        var values = (0, _utils.getValues)(keys, this.state, {
-	          positionProp: positionProp,
-	          sizeProp: sizeProp
+	      if (renderOnResize) {
+	        (0, _elementResizeEvent2.default)(domElement, function () {
+	          _this2.setValues(domElement);
 	        });
-	
-	        return _react2.default.createElement(OriginalComponent, _extends({}, this.props, values));
 	      }
-	    }]);
+	    };
+	
+	    RemeasureComponent.prototype.componentDidUpdate = function componentDidUpdate() {
+	      this.setValues((0, _reactDom.findDOMNode)(this));
+	    };
+	
+	    /**
+	     * iterate through keys and determine if the values have
+	     * changed compared to what is stored in state
+	     *
+	     * @param {object} values
+	     * @param {array<string>} keys
+	     * @returns {boolean}
+	     */
+	
+	
+	    /**
+	     * based on the current DOM element, get the values
+	     * and determine if the state should be updated (only
+	     * if things have changed)
+	     *
+	     * @param {HTMLElement} domElement
+	     */
+	
+	
+	    RemeasureComponent.prototype.render = function render() {
+	      var values = (0, _utils.getValues)(keys, this.state, {
+	        positionProp: positionProp,
+	        sizeProp: sizeProp
+	      });
+	
+	      return _react2.default.createElement(OriginalComponent, _extends({}, this.props, values));
+	    };
 	
 	    return RemeasureComponent;
 	  }(_react.Component);
@@ -395,9 +386,7 @@ var Remeasure =
 
 	'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
+	exports.__esModule = true;
 	exports.isUndefined = exports.isString = exports.isObject = exports.isArray = exports.getValues = exports.getValidKeys = exports.getNaturalDimensionValue = exports.forEach = exports.createObjectFromKeys = exports.arrayContains = undefined;
 	
 	var _constants = __webpack_require__(6);
@@ -622,12 +611,7 @@ var Remeasure =
 
 	'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-	
+	exports.__esModule = true;
 	var BOUNDING_CLIENT_RECT_SIZE_KEYS = ['height', 'width'];
 	
 	var BOUNDING_CLIENT_RECT_POSITION_KEYS = ['bottom', 'left', 'right', 'top'];
@@ -644,7 +628,7 @@ var Remeasure =
 	
 	var ALL_SIZE_KEYS = [].concat(DOM_ELEMENT_SIZE_KEYS, BOUNDING_CLIENT_RECT_SIZE_KEYS);
 	
-	var ALL_KEYS = [].concat(_toConsumableArray(ALL_POSITION_KEYS), _toConsumableArray(ALL_SIZE_KEYS));
+	var ALL_KEYS = [].concat(ALL_POSITION_KEYS, ALL_SIZE_KEYS);
 	
 	var initialState = {},
 	    index = ALL_KEYS.length,
