@@ -140,13 +140,15 @@ class MySizedComponent extends Component {
 }
 ```
 
-#### Browser support
+#### Support
 `remeasure` has been tested and confirmed to work on the following browsers:
 * Chrome
 * Firefox
 * Opera
 * Edge
 * IE9+
+
+`remeasure` also works with universal / isomorphic applications.
 
 #### Development
 
