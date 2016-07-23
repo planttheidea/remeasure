@@ -93,6 +93,10 @@ var Remeasure =
 	// constants
 	
 	
+	var POSITION_PROP_DEFAULT = 'position';
+	var RENDER_ON_RESIZE_DEFAULT = true;
+	var SIZE_PROP_DEFAULT = 'size';
+	
 	var raf = void 0;
 	
 	/**
@@ -112,9 +116,18 @@ var Remeasure =
 	 *
 	 * @param {Component} OriginalComponent
 	 * @param {array<string>} keys
+	 * @param {object} options={}
 	 * @returns {RemeasureComponent}
 	 */
 	var getHigherOrderComponent = function getHigherOrderComponent(OriginalComponent, keys) {
+	  var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+	  var _options$positionProp = options.positionProp;
+	  var positionProp = _options$positionProp === undefined ? POSITION_PROP_DEFAULT : _options$positionProp;
+	  var _options$renderOnResi = options.renderOnResize;
+	  var renderOnResize = _options$renderOnResi === undefined ? RENDER_ON_RESIZE_DEFAULT : _options$renderOnResi;
+	  var _options$sizeProp = options.sizeProp;
+	  var sizeProp = _options$sizeProp === undefined ? SIZE_PROP_DEFAULT : _options$sizeProp;
+	
 	  var RemeasureComponent = function (_Component) {
 	    _inherits(RemeasureComponent, _Component);
 	
@@ -170,9 +183,11 @@ var Remeasure =
 	
 	        this.setValues(domElement);
 	
-	        (0, _elementResizeEvent2.default)(domElement, function () {
-	          _this2.setValues(domElement);
-	        });
+	        if (renderOnResize) {
+	          (0, _elementResizeEvent2.default)(domElement, function () {
+	            _this2.setValues(domElement);
+	          });
+	        }
 	      }
 	    }, {
 	      key: 'componentDidUpdate',
@@ -201,7 +216,10 @@ var Remeasure =
 	    }, {
 	      key: 'render',
 	      value: function render() {
-	        var values = (0, _utils.getValues)(keys, this.state);
+	        var values = (0, _utils.getValues)(keys, this.state, {
+	          positionProp: positionProp,
+	          sizeProp: sizeProp
+	        });
 	
 	        return _react2.default.createElement(OriginalComponent, _extends({}, this.props, values));
 	      }
@@ -218,9 +236,10 @@ var Remeasure =
 	 * into OriginalComponent as an object under the prop name size and position
 	 *
 	 * @param {Component|array<string>} keys
+	 * @param {object} options
 	 * @returns {RemeasureComponent}
 	 */
-	var measure = function measure(keys) {
+	var measure = function measure(keys, options) {
 	  if ((0, _utils.isString)(keys)) {
 	    switch (keys) {
 	      case 'size':
@@ -243,12 +262,18 @@ var Remeasure =
 	
 	      return {
 	        v: function v(OriginalComponent) {
-	          return getHigherOrderComponent(OriginalComponent, validKeys);
+	          return getHigherOrderComponent(OriginalComponent, validKeys, options);
 	        }
 	      };
 	    }();
 	
 	    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+	  }
+	
+	  if ((0, _utils.isObject)(keys)) {
+	    return function (OriginalComponent) {
+	      return getHigherOrderComponent(OriginalComponent, _constants.allKeys, keys);
+	    };
 	  }
 	
 	  return getHigherOrderComponent(keys, _constants.allKeys);
@@ -363,7 +388,7 @@ var Remeasure =
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.isUndefined = exports.isString = exports.isArray = exports.getValues = exports.getValidKeys = exports.getNaturalDimensionValue = exports.forEach = exports.createObjectFromKeys = exports.arrayContains = undefined;
+	exports.isUndefined = exports.isString = exports.isObject = exports.isArray = exports.getValues = exports.getValidKeys = exports.getNaturalDimensionValue = exports.forEach = exports.createObjectFromKeys = exports.arrayContains = undefined;
 	
 	var _constants = __webpack_require__(6);
 	
@@ -404,6 +429,16 @@ var Remeasure =
 	 */
 	var isArray = function isArray(object) {
 	  return toString(object) === '[object Array]';
+	};
+	
+	/**
+	 * determine if object is an object
+	 *
+	 * @param {any} object
+	 * @returns {boolean}
+	 */
+	var isObject = function isObject(object) {
+	  return toString(object) === '[object Object]' && !!object;
 	};
 	
 	/**
@@ -499,9 +534,14 @@ var Remeasure =
 	 *
 	 * @param {array<string>} keys
 	 * @param {object} currentState
+	 * @param {string} positionProp
+	 * @param {string} sizeProp
 	 * @returns {object}
 	 */
-	var getValues = function getValues(keys, currentState) {
+	var getValues = function getValues(keys, currentState, _ref) {
+	  var positionProp = _ref.positionProp;
+	  var sizeProp = _ref.sizeProp;
+	
 	  var hasSize = false,
 	      hasPosition = false,
 	      size = void 0,
@@ -545,11 +585,11 @@ var Remeasure =
 	  var values = {};
 	
 	  if (hasSize) {
-	    values.size = size;
+	    values[sizeProp] = size;
 	  }
 	
 	  if (hasPosition) {
-	    values.position = position;
+	    values[positionProp] = position;
 	  }
 	
 	  return values;
@@ -562,6 +602,7 @@ var Remeasure =
 	exports.getValidKeys = getValidKeys;
 	exports.getValues = getValues;
 	exports.isArray = isArray;
+	exports.isObject = isObject;
 	exports.isString = isString;
 	exports.isUndefined = isUndefined;
 

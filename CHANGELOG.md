@@ -1,5 +1,11 @@
 # remeasure changelog
 
+#### 1.3.0
+* Add ability to pass `options` object, allowing overrides of the following properties:
+  * `positionProp` (defaults to `position`) = the name of the position prop injected into the component
+  * `renderOnResize` (defaults to `true`) = whether or not to trigger a re-render when element resizes
+  * `sizeProp` (defaults to `size`) = the name of the size prop injected into the component
+
 #### 1.2.1
 * Abstract requestAnimationFrame assignment to `setRaf` function called on `componentDidMount` (for universal apps)
 

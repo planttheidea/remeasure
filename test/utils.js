@@ -8,9 +8,16 @@ import {
   getValidKeys,
   getValues,
   isArray,
+  isObject,
   isString,
   isUndefined
 } from '../src/utils';
+
+const DEFAULT_OPTIONS = {
+  positionProp: 'position',
+  renderOnResize: true,
+  sizeProp: 'size'
+};
 
 test('if arrayContains correctly identifies when an array contains an item', (t) => {
   const array = ['foo', 12];
@@ -96,9 +103,9 @@ test('if getValues returns an object with size or position or both with the corr
     ...positionResult
   };
 
-  const sizeValues = getValues(sizeKeys, currentState);
-  const positionValues = getValues(positionKeys, currentState);
-  const allValues = getValues(allKeys, currentState);
+  const sizeValues = getValues(sizeKeys, currentState, DEFAULT_OPTIONS);
+  const positionValues = getValues(positionKeys, currentState, DEFAULT_OPTIONS);
+  const allValues = getValues(allKeys, currentState, DEFAULT_OPTIONS);
 
   t.deepEqual(sizeValues, sizeResult);
   t.deepEqual(positionValues, positionResult);
@@ -113,6 +120,16 @@ test('if isArray correctly identifies an array vs other object types', (t) => {
   t.true(isArray([]));
   t.false(isArray({}));
   t.false(isArray(new Date()));
+});
+
+test('if isObject correctly identifies an object vs other object types', (t) => {
+  t.false(isObject(undefined));
+  t.false(isObject(null));
+  t.false(isObject('foo'));
+  t.false(isObject(12));
+  t.false(isObject([]));
+  t.true(isObject({}));
+  t.false(isObject(new Date()));
 });
 
 test('if isString correctly identifies a string vs other object types', (t) => {

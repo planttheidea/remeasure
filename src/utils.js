@@ -43,6 +43,16 @@ const isArray = (object) => {
 };
 
 /**
+ * determine if object is an object
+ *
+ * @param {any} object
+ * @returns {boolean}
+ */
+const isObject = (object) => {
+  return toString(object) === '[object Object]' && !!object;
+};
+
+/**
  * determine if object is a string
  *
  * @param {any} object
@@ -135,9 +145,11 @@ const getValidKeys = (keys, keysToTestAgainst) => {
  *
  * @param {array<string>} keys
  * @param {object} currentState
+ * @param {string} positionProp
+ * @param {string} sizeProp
  * @returns {object}
  */
-const getValues = (keys, currentState) => {
+const getValues = (keys, currentState, {positionProp, sizeProp}) => {
   let hasSize = false,
       hasPosition = false,
       size,
@@ -181,11 +193,11 @@ const getValues = (keys, currentState) => {
   let values = {};
 
   if (hasSize) {
-    values.size = size;
+    values[sizeProp] = size;
   }
 
   if (hasPosition) {
-    values.position = position;
+    values[positionProp] = position;
   }
 
   return values;
@@ -198,5 +210,6 @@ export {getNaturalDimensionValue};
 export {getValidKeys};
 export {getValues};
 export {isArray};
+export {isObject};
 export {isString};
 export {isUndefined};

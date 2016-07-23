@@ -84,9 +84,9 @@ These properties are retrieved on mount, but will also automatically update if t
 
 #### Advanced usage
 
-If you want to limit the items that are injected into the component, you can pass either a string or array of strings to the decorator before wrapping the component.
+If you want to limit the items that are injected into the component, you can pass either a key or array of keys to the decorator before wrapping the component.
 
-**measure(`string|array<string>`)** *returns `function`*
+**measure(`String|Array<String>|Object[, Object]`)** *returns `Function`*
 
 Examples:
 
@@ -138,6 +138,52 @@ class MySizedComponent extends Component {
     );
   }
 }
+```
+
+You can also pass an object with any of the following propeties (defaults shown):
+   
+```javascript
+{
+    positionProp: String = 'position',
+    renderOnResize: Boolean = true,
+    sizeProp: String = 'size'
+}
+```
+
+These will serve as options for the instance `remeasure` is applied to. For example, if you want all position-related properties to be injected under the prop `foo` and the size-related properties to be injected under the prop `bar`, you can do this:
+
+```javascript
+const FOO_BAR_OPTIONS = {
+    positionProp: 'foo',
+    sizeProp: 'bar'
+};
+
+@measure(FOO_BAR_OPTIONS)
+class MyComponent extends Component {
+    render() {
+        const {
+            foo,
+            bar
+        } = this.props;
+    
+        return (
+            <div>
+                The foo and bar props now represent position and size, respectively.
+            </div>
+        );
+    }
+}
+
+const measureWithKeysAndOptions = measure(['height', 'width'], FOO_BAR_OPTIONS);
+
+const MyStatelessComponent = measureWithKeysAndOptions(({foo, bar}) => {
+    return (
+        <div>
+            You can still pass options when you want to specify keys, as the
+            second parameter.
+        </div>
+    );
+};
 ```
 
 #### Support
