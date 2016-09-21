@@ -1,7 +1,7 @@
 // constants
 import {
-  allPositionKeys,
-  allSizeKeys
+  ALL_POSITION_KEYS,
+  ALL_SIZE_KEYS
 } from './constants';
 
 const NATURAL_REGEXP = /natural/;
@@ -73,6 +73,30 @@ const isUndefined = (object) => {
 };
 
 /**
+ * determine if array contains item at one of the indices
+ *
+ * @param {array<any>} array
+ * @param {any} item
+ * @returns {boolean}
+ */
+const arrayContains = (array, item) => {
+  return isArray(array) && !!~array.indexOf(item);
+};
+
+/**
+ * get subset of array1 based on items existing in array2
+ *
+ * @param {array<*>} array1
+ * @param {array<*>} array2
+ * @returns {array<T>}
+ */
+const arraySubset = (array1, array2) => {
+  return array1.filter((item) => {
+    return array2.includes(item);
+  });
+};
+
+/**
  * For naturalHeight and naturalWidth, coalesce the values
  * with scrollHeight and scrollWIdth if the element does not
  * natively support it
@@ -105,17 +129,6 @@ const createObjectFromKeys = (keys, source) => {
   });
 
   return target;
-};
-
-/**
- * determine if array contains item at one of the indices
- *
- * @param {array<any>} array
- * @param {any} item
- * @returns {boolean}
- */
-const arrayContains = (array, item) => {
-  return isArray(array) && !!~array.indexOf(item);
 };
 
 /**
@@ -157,7 +170,7 @@ const getValues = (keys, currentState, {positionProp, sizeProp}) => {
 
   if (isArray(keys)) {
     forEach(keys, (key) => {
-      if (arrayContains(allPositionKeys, key)) {
+      if (arrayContains(ALL_POSITION_KEYS, key)) {
         if (!position) {
           position = {};
         }
@@ -166,7 +179,7 @@ const getValues = (keys, currentState, {positionProp, sizeProp}) => {
         hasPosition = true;
       }
 
-      if (arrayContains(allSizeKeys, key)) {
+      if (arrayContains(ALL_SIZE_KEYS, key)) {
         if (!size) {
           size = {};
         }
@@ -181,11 +194,11 @@ const getValues = (keys, currentState, {positionProp, sizeProp}) => {
     hasSize = true;
     hasPosition = true;
 
-    forEach(allPositionKeys, (key) => {
+    forEach(ALL_POSITION_KEYS, (key) => {
       position[key] = currentState[key];
     });
 
-    forEach(allSizeKeys, (key) => {
+    forEach(ALL_SIZE_KEYS, (key) => {
       size[key] = currentState[key];
     });
   }
@@ -203,12 +216,38 @@ const getValues = (keys, currentState, {positionProp, sizeProp}) => {
   return values;
 };
 
+/**
+ * iterate through keys and determine if the values have
+ * changed compared to what is stored in state
+ *
+ * @param {array<string>} keys
+ * @param {object} values
+ * @param {object} currentState
+ * @returns {boolean}
+ */
+const haveValuesChanged = (keys, values, currentState) => {
+  let index = -1,
+      key;
+
+  while (++index < keys.length) {
+    key = keys[index];
+
+    if (values[key] !== currentState[key]) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
 export {arrayContains};
+export {arraySubset};
 export {createObjectFromKeys};
 export {forEach};
 export {getNaturalDimensionValue};
 export {getValidKeys};
 export {getValues};
+export {haveValuesChanged};
 export {isArray};
 export {isObject};
 export {isString};

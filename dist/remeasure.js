@@ -1,5 +1,14 @@
-var Remeasure =
-/******/ (function(modules) { // webpackBootstrap
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory(require("react"), require("react-dom"));
+	else if(typeof define === 'function' && define.amd)
+		define("Remeasure", ["react", "react-dom"], factory);
+	else if(typeof exports === 'object')
+		exports["Remeasure"] = factory(require("react"), require("react-dom"));
+	else
+		root["Remeasure"] = factory(root["React"], root["ReactDOM"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE_6__, __WEBPACK_EXTERNAL_MODULE_7__) {
+return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -54,173 +63,31 @@ var Remeasure =
 
 	'use strict';
 	
-	exports.__esModule = true;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var _elementResizeEvent = __webpack_require__(2);
-	
-	var _elementResizeEvent2 = _interopRequireDefault(_elementResizeEvent);
-	
-	var _react = __webpack_require__(3);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactDom = __webpack_require__(4);
-	
-	var _utils = __webpack_require__(5);
-	
-	var _constants = __webpack_require__(6);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // external dependencies
-	
-	
-	// utils
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; }; // utils
 	
 	
 	// constants
 	
 	
+	// HOC
+	
+	
+	var _utils = __webpack_require__(2);
+	
+	var _constants = __webpack_require__(3);
+	
+	var _getHigherOrderComponent = __webpack_require__(4);
+	
+	var _getHigherOrderComponent2 = _interopRequireDefault(_getHigherOrderComponent);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
 	var POSITION_PROP_DEFAULT = 'position';
-	var RENDER_ON_RESIZE_DEFAULT = true;
 	var SIZE_PROP_DEFAULT = 'size';
-	
-	var raf = void 0;
-	
-	/**
-	 * wait to assign the raf until mount, so it has access to the
-	 * window object
-	 */
-	var setRaf = function setRaf() {
-	  raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (callback) {
-	    window.setTimeout(callback, 1000 / 60);
-	  };
-	};
-	
-	/**
-	 * create the HOC that injects the position and size props
-	 * into the child (assuming they have keys that are valid
-	 * for one or both of those)
-	 *
-	 * @param {Component} OriginalComponent
-	 * @param {array<string>} keys
-	 * @param {object} options={}
-	 * @returns {RemeasureComponent}
-	 */
-	var getHigherOrderComponent = function getHigherOrderComponent(OriginalComponent, keys) {
-	  var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
-	  var _options$positionProp = options.positionProp;
-	  var positionProp = _options$positionProp === undefined ? POSITION_PROP_DEFAULT : _options$positionProp;
-	  var _options$renderOnResi = options.renderOnResize;
-	  var renderOnResize = _options$renderOnResi === undefined ? RENDER_ON_RESIZE_DEFAULT : _options$renderOnResi;
-	  var _options$sizeProp = options.sizeProp;
-	  var sizeProp = _options$sizeProp === undefined ? SIZE_PROP_DEFAULT : _options$sizeProp;
-	
-	  var RemeasureComponent = function (_Component) {
-	    _inherits(RemeasureComponent, _Component);
-	
-	    function RemeasureComponent(props) {
-	      _classCallCheck(this, RemeasureComponent);
-	
-	      var _this = _possibleConstructorReturn(this, _Component.call(this, props));
-	
-	      _this.state = _extends({}, _constants.initialState);
-	
-	      _this.haveValuesChanged = function (values, keys) {
-	        var length = _constants.allKeys.length;
-	
-	        var index = -1,
-	            key = void 0;
-	
-	        while (++index < length) {
-	          key = _constants.allKeys[index];
-	
-	          if ((0, _utils.arrayContains)(keys, key) && values[key] !== _this.state[key]) {
-	            return true;
-	          }
-	        }
-	
-	        return false;
-	      };
-	
-	      _this.setValues = function (domElement) {
-	        raf(function () {
-	          var boundingClientRect = domElement.getBoundingClientRect();
-	
-	          var values = _extends({}, (0, _utils.createObjectFromKeys)(_constants.allDomElementKeys, domElement), (0, _utils.createObjectFromKeys)(_constants.allBoundingRectClientKeys, boundingClientRect));
-	
-	          if (_this.haveValuesChanged(values, keys)) {
-	            _this.setState(values);
-	          }
-	        });
-	      };
-	
-	      return _this;
-	    }
-	
-	    RemeasureComponent.prototype.componentDidMount = function componentDidMount() {
-	      var _this2 = this;
-	
-	      var domElement = (0, _reactDom.findDOMNode)(this);
-	
-	      if (!raf) {
-	        setRaf();
-	      }
-	
-	      this.setValues(domElement);
-	
-	      if (renderOnResize) {
-	        (0, _elementResizeEvent2.default)(domElement, function () {
-	          _this2.setValues(domElement);
-	        });
-	      }
-	    };
-	
-	    RemeasureComponent.prototype.componentDidUpdate = function componentDidUpdate() {
-	      this.setValues((0, _reactDom.findDOMNode)(this));
-	    };
-	
-	    /**
-	     * iterate through keys and determine if the values have
-	     * changed compared to what is stored in state
-	     *
-	     * @param {object} values
-	     * @param {array<string>} keys
-	     * @returns {boolean}
-	     */
-	
-	
-	    /**
-	     * based on the current DOM element, get the values
-	     * and determine if the state should be updated (only
-	     * if things have changed)
-	     *
-	     * @param {HTMLElement} domElement
-	     */
-	
-	
-	    RemeasureComponent.prototype.render = function render() {
-	      var values = (0, _utils.getValues)(keys, this.state, {
-	        positionProp: positionProp,
-	        sizeProp: sizeProp
-	      });
-	
-	      return _react2.default.createElement(OriginalComponent, _extends({}, this.props, values));
-	    };
-	
-	    return RemeasureComponent;
-	  }(_react.Component);
-	
-	  return RemeasureComponent;
-	};
 	
 	/**
 	 * create higher-order component that injects size and position properties
@@ -236,19 +103,19 @@ var Remeasure =
 	        size = SIZE_PROP_DEFAULT;
 	
 	    if ((0, _utils.isObject)(options)) {
-	      var _options$positionProp2 = options.positionProp;
-	      position = _options$positionProp2 === undefined ? POSITION_PROP_DEFAULT : _options$positionProp2;
-	      var _options$sizeProp2 = options.sizeProp;
-	      size = _options$sizeProp2 === undefined ? SIZE_PROP_DEFAULT : _options$sizeProp2;
+	      var _options$positionProp = options.positionProp;
+	      position = _options$positionProp === undefined ? POSITION_PROP_DEFAULT : _options$positionProp;
+	      var _options$sizeProp = options.sizeProp;
+	      size = _options$sizeProp === undefined ? SIZE_PROP_DEFAULT : _options$sizeProp;
 	    }
 	
 	    switch (keys) {
 	      case position:
-	        keys = _constants.allPositionKeys;
+	        keys = _constants.ALL_POSITION_KEYS;
 	        break;
 	
 	      case size:
-	        keys = _constants.allSizeKeys;
+	        keys = _constants.ALL_SIZE_KEYS;
 	        break;
 	
 	      default:
@@ -259,11 +126,11 @@ var Remeasure =
 	
 	  if ((0, _utils.isArray)(keys)) {
 	    var _ret = function () {
-	      var validKeys = (0, _utils.getValidKeys)(keys, _constants.allKeys);
+	      var validKeys = (0, _utils.getValidKeys)(keys, _constants.ALL_KEYS);
 	
 	      return {
 	        v: function v(OriginalComponent) {
-	          return getHigherOrderComponent(OriginalComponent, validKeys, options);
+	          return (0, _getHigherOrderComponent2.default)(OriginalComponent, validKeys, options);
 	        }
 	      };
 	    }();
@@ -273,11 +140,11 @@ var Remeasure =
 	
 	  if ((0, _utils.isObject)(keys)) {
 	    return function (OriginalComponent) {
-	      return getHigherOrderComponent(OriginalComponent, _constants.allKeys, keys);
+	      return (0, _getHigherOrderComponent2.default)(OriginalComponent, _constants.ALL_KEYS, keys);
 	    };
 	  }
 	
-	  return getHigherOrderComponent(keys, _constants.allKeys);
+	  return (0, _getHigherOrderComponent2.default)(keys, _constants.ALL_KEYS);
 	};
 	
 	exports.default = measure;
@@ -285,111 +152,16 @@ var Remeasure =
 
 /***/ },
 /* 2 */
-/***/ function(module, exports) {
-
-	var exports = function exports(element, fn) {
-	  var window = this
-	  var document = window.document
-	  var isIE
-	  var requestFrame
-	
-	  var attachEvent = document.attachEvent
-	  if (typeof navigator !== 'undefined') {
-	    isIE = navigator.userAgent.match(/Trident/) || navigator.userAgent.match(/Edge/)
-	  }
-	
-	  requestFrame = (function () {
-	    var raf = window.requestAnimationFrame ||
-	      window.mozRequestAnimationFrame ||
-	        window.webkitRequestAnimationFrame ||
-	          function fallbackRAF(func) {
-	            return window.setTimeout(func, 20)
-	          }
-	    return function requestFrameFunction(func) {
-	      return raf(func)
-	    }
-	  })()
-	
-	  var cancelFrame = (function () {
-	    var cancel = window.cancelAnimationFrame ||
-	      window.mozCancelAnimationFrame ||
-	        window.webkitCancelAnimationFrame ||
-	          window.clearTimeout
-	    return function cancelFrameFunction(id) {
-	      return cancel(id)
-	    }
-	  })()
-	
-	  function resizeListener(e) {
-	    var win = e.target || e.srcElement
-	    if (win.__resizeRAF__) {
-	      cancelFrame(win.__resizeRAF__)
-	    }
-	    win.__resizeRAF__ = requestFrame(function () {
-	      var trigger = win.__resizeTrigger__
-	      trigger.__resizeListeners__.forEach(function (fn) {
-	        fn.call(trigger, e)
-	      })
-	    })
-	  }
-	
-	  function objectLoad() {
-	    this.contentDocument.defaultView.__resizeTrigger__ = this.__resizeElement__
-	    this.contentDocument.defaultView.addEventListener('resize', resizeListener)
-	  }
-	
-	  if (!element.__resizeListeners__) {
-	    element.__resizeListeners__ = []
-	    if (attachEvent) {
-	      element.__resizeTrigger__ = element
-	      element.attachEvent('onresize', resizeListener)
-	    } else {
-	      if (getComputedStyle(element).position === 'static') {
-	        element.style.position = 'relative'
-	      }
-	      var obj = element.__resizeTrigger__ = document.createElement('object')
-	      obj.setAttribute('style', 'display: block; position: absolute; top: 0; left: 0; height: 100%; width: 100%; overflow: hidden; pointer-events: none; z-index: -1;')
-	      obj.setAttribute('class', 'resize-sensor')
-	      obj.__resizeElement__ = element
-	      obj.onload = objectLoad
-	      obj.type = 'text/html'
-	      if (isIE) {
-	        element.appendChild(obj)
-	      }
-	      obj.data = 'about:blank'
-	      if (!isIE) {
-	        element.appendChild(obj)
-	      }
-	    }
-	  }
-	  element.__resizeListeners__.push(fn)
-	}
-	
-	module.exports = (typeof window === 'undefined') ? exports : exports.bind(window)
-
-
-/***/ },
-/* 3 */
-/***/ function(module, exports) {
-
-	module.exports = undefined;
-
-/***/ },
-/* 4 */
-/***/ function(module, exports) {
-
-	module.exports = undefined;
-
-/***/ },
-/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	exports.__esModule = true;
-	exports.isUndefined = exports.isString = exports.isObject = exports.isArray = exports.getValues = exports.getValidKeys = exports.getNaturalDimensionValue = exports.forEach = exports.createObjectFromKeys = exports.arrayContains = undefined;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.isUndefined = exports.isString = exports.isObject = exports.isArray = exports.haveValuesChanged = exports.getValues = exports.getValidKeys = exports.getNaturalDimensionValue = exports.forEach = exports.createObjectFromKeys = exports.arraySubset = exports.arrayContains = undefined;
 	
-	var _constants = __webpack_require__(6);
+	var _constants = __webpack_require__(3);
 	
 	var NATURAL_REGEXP = /natural/;
 	
@@ -461,6 +233,30 @@ var Remeasure =
 	};
 	
 	/**
+	 * determine if array contains item at one of the indices
+	 *
+	 * @param {array<any>} array
+	 * @param {any} item
+	 * @returns {boolean}
+	 */
+	var arrayContains = function arrayContains(array, item) {
+	  return isArray(array) && !!~array.indexOf(item);
+	};
+	
+	/**
+	 * get subset of array1 based on items existing in array2
+	 *
+	 * @param {array<*>} array1
+	 * @param {array<*>} array2
+	 * @returns {array<T>}
+	 */
+	var arraySubset = function arraySubset(array1, array2) {
+	  return array1.filter(function (item) {
+	    return array2.includes(item);
+	  });
+	};
+	
+	/**
 	 * For naturalHeight and naturalWidth, coalesce the values
 	 * with scrollHeight and scrollWIdth if the element does not
 	 * natively support it
@@ -493,17 +289,6 @@ var Remeasure =
 	  });
 	
 	  return target;
-	};
-	
-	/**
-	 * determine if array contains item at one of the indices
-	 *
-	 * @param {array<any>} array
-	 * @param {any} item
-	 * @returns {boolean}
-	 */
-	var arrayContains = function arrayContains(array, item) {
-	  return isArray(array) && !!~array.indexOf(item);
 	};
 	
 	/**
@@ -548,7 +333,7 @@ var Remeasure =
 	
 	  if (isArray(keys)) {
 	    forEach(keys, function (key) {
-	      if (arrayContains(_constants.allPositionKeys, key)) {
+	      if (arrayContains(_constants.ALL_POSITION_KEYS, key)) {
 	        if (!position) {
 	          position = {};
 	        }
@@ -557,7 +342,7 @@ var Remeasure =
 	        hasPosition = true;
 	      }
 	
-	      if (arrayContains(_constants.allSizeKeys, key)) {
+	      if (arrayContains(_constants.ALL_SIZE_KEYS, key)) {
 	        if (!size) {
 	          size = {};
 	        }
@@ -572,11 +357,11 @@ var Remeasure =
 	    hasSize = true;
 	    hasPosition = true;
 	
-	    forEach(_constants.allPositionKeys, function (key) {
+	    forEach(_constants.ALL_POSITION_KEYS, function (key) {
 	      position[key] = currentState[key];
 	    });
 	
-	    forEach(_constants.allSizeKeys, function (key) {
+	    forEach(_constants.ALL_SIZE_KEYS, function (key) {
 	      size[key] = currentState[key];
 	    });
 	  }
@@ -594,24 +379,55 @@ var Remeasure =
 	  return values;
 	};
 	
+	/**
+	 * iterate through keys and determine if the values have
+	 * changed compared to what is stored in state
+	 *
+	 * @param {array<string>} keys
+	 * @param {object} values
+	 * @param {object} currentState
+	 * @returns {boolean}
+	 */
+	var haveValuesChanged = function haveValuesChanged(keys, values, currentState) {
+	  var index = -1,
+	      key = void 0;
+	
+	  while (++index < keys.length) {
+	    key = keys[index];
+	
+	    if (values[key] !== currentState[key]) {
+	      return true;
+	    }
+	  }
+	
+	  return false;
+	};
+	
 	exports.arrayContains = arrayContains;
+	exports.arraySubset = arraySubset;
 	exports.createObjectFromKeys = createObjectFromKeys;
 	exports.forEach = forEach;
 	exports.getNaturalDimensionValue = getNaturalDimensionValue;
 	exports.getValidKeys = getValidKeys;
 	exports.getValues = getValues;
+	exports.haveValuesChanged = haveValuesChanged;
 	exports.isArray = isArray;
 	exports.isObject = isObject;
 	exports.isString = isString;
 	exports.isUndefined = isUndefined;
 
 /***/ },
-/* 6 */
+/* 3 */
 /***/ function(module, exports) {
 
 	'use strict';
 	
-	exports.__esModule = true;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
 	var BOUNDING_CLIENT_RECT_SIZE_KEYS = ['height', 'width'];
 	
 	var BOUNDING_CLIENT_RECT_POSITION_KEYS = ['bottom', 'left', 'right', 'top'];
@@ -628,7 +444,7 @@ var Remeasure =
 	
 	var ALL_SIZE_KEYS = [].concat(DOM_ELEMENT_SIZE_KEYS, BOUNDING_CLIENT_RECT_SIZE_KEYS);
 	
-	var ALL_KEYS = [].concat(ALL_POSITION_KEYS, ALL_SIZE_KEYS);
+	var ALL_KEYS = [].concat(_toConsumableArray(ALL_POSITION_KEYS), _toConsumableArray(ALL_SIZE_KEYS));
 	
 	var initialState = {},
 	    index = ALL_KEYS.length,
@@ -640,17 +456,304 @@ var Remeasure =
 	  initialState[key] = 0;
 	}
 	
-	exports.allBoundingRectClientKeys = ALL_BOUNDING_CLIENT_RECT_KEYS;
-	exports.allDomElementKeys = ALL_DOM_ELEMENT_KEYS;
-	exports.allKeys = ALL_KEYS;
-	exports.allPositionKeys = ALL_POSITION_KEYS;
-	exports.allSizeKeys = ALL_SIZE_KEYS;
-	exports.boundingClientRectPositionKeys = BOUNDING_CLIENT_RECT_POSITION_KEYS;
-	exports.boundingClientRectSizeKeys = BOUNDING_CLIENT_RECT_SIZE_KEYS;
-	exports.domElementPositionKeys = DOM_ELEMENT_POSITION_KEYS;
-	exports.domElementSizeKeys = DOM_ELEMENT_SIZE_KEYS;
+	exports.ALL_BOUNDING_CLIENT_RECT_KEYS = ALL_BOUNDING_CLIENT_RECT_KEYS;
+	exports.ALL_DOM_ELEMENT_KEYS = ALL_DOM_ELEMENT_KEYS;
+	exports.ALL_KEYS = ALL_KEYS;
+	exports.ALL_POSITION_KEYS = ALL_POSITION_KEYS;
+	exports.ALL_SIZE_KEYS = ALL_SIZE_KEYS;
+	exports.BOUNDING_CLIENT_RECT_POSITION_KEYS = BOUNDING_CLIENT_RECT_POSITION_KEYS;
+	exports.BOUNDING_CLIENT_RECT_SIZE_KEYS = BOUNDING_CLIENT_RECT_SIZE_KEYS;
+	exports.DOM_ELEMENT_POSITION_KEYS = DOM_ELEMENT_POSITION_KEYS;
+	exports.DOM_ELEMENT_SIZE_KEYS = DOM_ELEMENT_SIZE_KEYS;
 	exports.initialState = initialState;
 
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; // external dependencies
+	
+	
+	// utils
+	
+	
+	// constants
+	
+	
+	var _elementResizeEvent = __webpack_require__(5);
+	
+	var _elementResizeEvent2 = _interopRequireDefault(_elementResizeEvent);
+	
+	var _react = __webpack_require__(6);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactDom = __webpack_require__(7);
+	
+	var _utils = __webpack_require__(2);
+	
+	var _constants = __webpack_require__(3);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
+	var POSITION_PROP_DEFAULT = 'position';
+	var RENDER_ON_RESIZE_DEFAULT = true;
+	var SIZE_PROP_DEFAULT = 'size';
+	
+	var raf = void 0;
+	
+	/**
+	 * wait to assign the raf until mount, so it has access to the
+	 * window object
+	 */
+	var setRaf = function setRaf() {
+	  raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (callback) {
+	    window.setTimeout(callback, 1000 / 60);
+	  };
+	};
+	
+	/**
+	 * create the HOC that injects the position and size props
+	 * into the child (assuming they have keys that are valid
+	 * for one or both of those)
+	 *
+	 * @param {Component} OriginalComponent
+	 * @param {array<string>} keys
+	 * @param {object} options={}
+	 * @returns {RemeasureComponent}
+	 */
+	var getHigherOrderComponent = function getHigherOrderComponent(OriginalComponent, keys) {
+	  var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+	  var _options$positionProp = options.positionProp;
+	  var positionProp = _options$positionProp === undefined ? POSITION_PROP_DEFAULT : _options$positionProp;
+	  var _options$renderOnResi = options.renderOnResize;
+	  var renderOnResize = _options$renderOnResi === undefined ? RENDER_ON_RESIZE_DEFAULT : _options$renderOnResi;
+	  var _options$sizeProp = options.sizeProp;
+	  var sizeProp = _options$sizeProp === undefined ? SIZE_PROP_DEFAULT : _options$sizeProp;
+	
+	
+	  var propKeyNames = {
+	    positionProp: positionProp,
+	    sizeProp: sizeProp
+	  };
+	
+	  var boundingClientRectKeys = (0, _utils.arraySubset)(_constants.ALL_BOUNDING_CLIENT_RECT_KEYS, keys);
+	  var domElementKeys = (0, _utils.arraySubset)(_constants.ALL_DOM_ELEMENT_KEYS, keys);
+	
+	  var initialState = _constants.ALL_KEYS.reduce(function (accumulatedInitialState, key) {
+	    if (keys.includes(key)) {
+	      return _extends({}, accumulatedInitialState, _defineProperty({}, key, 0));
+	    }
+	
+	    return accumulatedInitialState;
+	  }, {});
+	
+	  if (!raf) {
+	    setRaf();
+	  }
+	
+	  var RemeasureComponent = function (_Component) {
+	    _inherits(RemeasureComponent, _Component);
+	
+	    function RemeasureComponent() {
+	      var _ref;
+	
+	      var _temp, _this, _ret;
+	
+	      _classCallCheck(this, RemeasureComponent);
+	
+	      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	        args[_key] = arguments[_key];
+	      }
+	
+	      return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = RemeasureComponent.__proto__ || Object.getPrototypeOf(RemeasureComponent)).call.apply(_ref, [this].concat(args))), _this), _this.state = initialState, _this.domElement = null, _this.setValues = function () {
+	        raf(function () {
+	          var domElement = _this.domElement;
+	          var boundingClientRect = domElement.getBoundingClientRect();
+	
+	          var values = _extends({}, (0, _utils.createObjectFromKeys)(boundingClientRectKeys, boundingClientRect), (0, _utils.createObjectFromKeys)(domElementKeys, domElement));
+	
+	          if ((0, _utils.haveValuesChanged)(keys, values, _this.state)) {
+	            _this.setState(values);
+	          }
+	        });
+	      }, _temp), _possibleConstructorReturn(_this, _ret);
+	    }
+	
+	    _createClass(RemeasureComponent, [{
+	      key: 'componentDidMount',
+	      value: function componentDidMount() {
+	        this.domElement = (0, _reactDom.findDOMNode)(this);
+	
+	        if (renderOnResize) {
+	          (0, _elementResizeEvent2.default)(this.domElement, this.setValues);
+	        }
+	
+	        this.setValues();
+	      }
+	    }, {
+	      key: 'componentDidUpdate',
+	      value: function componentDidUpdate() {
+	        this.setValues();
+	      }
+	    }, {
+	      key: 'componentWillUnmount',
+	      value: function componentWillUnmount() {
+	        this.domElement = null;
+	      }
+	
+	      /**
+	       * based on the current DOM element, get the values
+	       * and determine if the state should be updated (only
+	       * if things have changed)
+	       */
+	
+	    }, {
+	      key: 'render',
+	      value: function render() {
+	        return _react2.default.createElement(OriginalComponent, _extends({}, this.props, (0, _utils.getValues)(keys, this.state, propKeyNames)));
+	      }
+	    }]);
+	
+	    return RemeasureComponent;
+	  }(_react.Component);
+	
+	  return RemeasureComponent;
+	};
+	
+	exports.default = getHigherOrderComponent;
+	module.exports = exports['default'];
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+	var exports = function exports(element, fn) {
+	  var window = this
+	  var document = window.document
+	  var isIE
+	  var requestFrame
+	
+	  var attachEvent = document.attachEvent
+	  if (typeof navigator !== 'undefined') {
+	    isIE = navigator.userAgent.match(/Trident/) || navigator.userAgent.match(/Edge/)
+	  }
+	
+	  requestFrame = (function () {
+	    var raf = window.requestAnimationFrame ||
+	      window.mozRequestAnimationFrame ||
+	        window.webkitRequestAnimationFrame ||
+	          function fallbackRAF(func) {
+	            return window.setTimeout(func, 20)
+	          }
+	    return function requestFrameFunction(func) {
+	      return raf(func)
+	    }
+	  })()
+	
+	  var cancelFrame = (function () {
+	    var cancel = window.cancelAnimationFrame ||
+	      window.mozCancelAnimationFrame ||
+	        window.webkitCancelAnimationFrame ||
+	          window.clearTimeout
+	    return function cancelFrameFunction(id) {
+	      return cancel(id)
+	    }
+	  })()
+	
+	  function resizeListener(e) {
+	    var win = e.target || e.srcElement
+	    if (win.__resizeRAF__) {
+	      cancelFrame(win.__resizeRAF__)
+	    }
+	    win.__resizeRAF__ = requestFrame(function () {
+	      var trigger = win.__resizeTrigger__
+	      if(trigger !== undefined) {
+	        trigger.__resizeListeners__.forEach(function (fn) {
+	          fn.call(trigger, e)
+	        })
+	      }
+	    })
+	  }
+	
+	  function objectLoad() {
+	    this.contentDocument.defaultView.__resizeTrigger__ = this.__resizeElement__
+	    this.contentDocument.defaultView.addEventListener('resize', resizeListener)
+	  }
+	
+	  if (!element.__resizeListeners__) {
+	    element.__resizeListeners__ = []
+	    if (attachEvent) {
+	      element.__resizeTrigger__ = element
+	      element.attachEvent('onresize', resizeListener)
+	    } else {
+	      if (getComputedStyle(element).position === 'static') {
+	        element.style.position = 'relative'
+	      }
+	      var obj = element.__resizeTrigger__ = document.createElement('object')
+	      obj.setAttribute('style', 'display: block; position: absolute; top: 0; left: 0; height: 100%; width: 100%; overflow: hidden; pointer-events: none; z-index: -1; opacity: 0;')
+	      obj.setAttribute('class', 'resize-sensor')
+	      obj.__resizeElement__ = element
+	      obj.onload = objectLoad
+	      obj.type = 'text/html'
+	      if (isIE) {
+	        element.appendChild(obj)
+	      }
+	      obj.data = 'about:blank'
+	      if (!isIE) {
+	        element.appendChild(obj)
+	      }
+	    }
+	  }
+	  element.__resizeListeners__.push(fn)
+	}
+	
+	exports.unbind = function(element, fn){
+	  var attachEvent = document.attachEvent;
+	  element.__resizeListeners__.splice(element.__resizeListeners__.indexOf(fn), 1);
+	  if (!element.__resizeListeners__.length) {
+	    if (attachEvent) {
+	      element.detachEvent('onresize', resizeListener);
+	    } else {
+	      element.__resizeTrigger__.contentDocument.defaultView.removeEventListener('resize', resizeListener);
+	      element.__resizeTrigger__ = !element.removeChild(element.__resizeTrigger__);
+	    }
+	  }
+	}
+	
+	module.exports = (typeof window === 'undefined') ? exports : exports.bind(window)
+
+
+/***/ },
+/* 6 */
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_6__;
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_7__;
+
 /***/ }
-/******/ ]);
+/******/ ])
+});
+;
 //# sourceMappingURL=remeasure.js.map

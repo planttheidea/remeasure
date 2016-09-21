@@ -65,13 +65,13 @@ while (index--) {
   initialState[key] = 0;
 }
 
-export {ALL_BOUNDING_CLIENT_RECT_KEYS as allBoundingRectClientKeys};
-export {ALL_DOM_ELEMENT_KEYS as allDomElementKeys};
-export {ALL_KEYS as allKeys};
-export {ALL_POSITION_KEYS as allPositionKeys};
-export {ALL_SIZE_KEYS as allSizeKeys};
-export {BOUNDING_CLIENT_RECT_POSITION_KEYS as boundingClientRectPositionKeys};
-export {BOUNDING_CLIENT_RECT_SIZE_KEYS as boundingClientRectSizeKeys};
-export {DOM_ELEMENT_POSITION_KEYS as domElementPositionKeys};
-export {DOM_ELEMENT_SIZE_KEYS as domElementSizeKeys};
+export {ALL_BOUNDING_CLIENT_RECT_KEYS};
+export {ALL_DOM_ELEMENT_KEYS};
+export {ALL_KEYS};
+export {ALL_POSITION_KEYS};
+export {ALL_SIZE_KEYS};
+export {BOUNDING_CLIENT_RECT_POSITION_KEYS};
+export {BOUNDING_CLIENT_RECT_SIZE_KEYS};
+export {DOM_ELEMENT_POSITION_KEYS};
+export {DOM_ELEMENT_SIZE_KEYS};
 export {initialState};

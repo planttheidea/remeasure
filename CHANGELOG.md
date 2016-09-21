@@ -1,5 +1,11 @@
 # remeasure changelog
 
+#### 1.4.0
+* Refactor of instantiation to only put keys listened for on state instead of all keys
+
+#### 1.3.2
+* Update to es2015-loose preset for smaller filesize
+
 #### 1.3.1
 * Fix shorthand key use for `position` and `size` to work with custom `positionProp` and `sizeProp`
 

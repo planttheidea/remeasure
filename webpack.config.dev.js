@@ -24,7 +24,7 @@ module.exports = {
         }
     },
 
-    devtool: '#eval-cheap-module-source-map',
+    devtool: '#source-map',
 
     entry: [
         path.resolve (__dirname, 'DEV_ONLY', 'App.js')
@@ -56,6 +56,11 @@ module.exports = {
                     path.resolve(__dirname, 'DEV_ONLY')
                 ],
                 loader: 'babel',
+                query: {
+                    plugins: [
+                      'transform-decorators-legacy'
+                    ]
+                },
                 test: /\.js$/
             }
         ]

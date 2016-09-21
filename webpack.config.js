@@ -6,7 +6,7 @@ module.exports = {
 
   debug: true,
 
-  devtool: 'source-map',
+  devtool: '#source-map',
 
   entry: [
     path.resolve(__dirname, 'src', 'index.js')
@@ -49,8 +49,7 @@ module.exports = {
     loaders: [
       {
         include: [
-          path.resolve(__dirname, 'src'),
-          path.resolve(__dirname, 'DEV_ONLY')
+          path.resolve(__dirname, 'src')
         ],
         loader: 'babel',
         test: /\.js$/
@@ -61,6 +60,7 @@ module.exports = {
   output: {
     filename: 'remeasure.js',
     library: 'Remeasure',
+    libraryTarget: 'umd',
     path: path.resolve(__dirname, 'dist'),
     umdNamedDefine: true
   },

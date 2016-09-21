@@ -38,10 +38,10 @@ class Div extends Component {
       children
     } = this.props;
 
-    console.group('Div');
-    console.log('div position', this.props.position);
-    console.log('div size', this.props.size);
-    console.groupEnd();
+    // console.group('Div');
+    // console.log('div position', this.props.position);
+    // console.log('div size', this.props.size);
+    // console.groupEnd();
 
     return (
       <div style={DIV_STYLES}>
@@ -58,12 +58,12 @@ class AnotherDiv extends Component {
       children
     } = this.props;
 
-    console.group('AnotherDiv');
-    console.log('another div position', this.props.position);
-    console.log('another div foo', this.props.foo);
-    console.log('another div size', this.props.size);
-    console.log('another div bar', this.props.bar);
-    console.groupEnd();
+    // console.group('AnotherDiv');
+    // console.log('another div position', this.props.position);
+    // console.log('another div foo', this.props.foo);
+    // console.log('another div size', this.props.size);
+    // console.log('another div bar', this.props.bar);
+    // console.groupEnd();
 
     return (
       <div style={DIV_STYLES}>
@@ -80,10 +80,10 @@ class Section extends Component {
       children
     } = this.props;
 
-    console.group('Section');
-    console.log('section position', this.props.position);
-    console.log('section size', this.props.size);
-    console.groupEnd();
+    // console.group('Section');
+    // console.log('section position', this.props.position);
+    // console.log('section size', this.props.size);
+    // console.groupEnd();
 
     return (
       <section style={SECTION_STYLES}>
@@ -93,7 +93,7 @@ class Section extends Component {
   }
 }
 
-@measure('height')
+@measure('width')
 class Main extends Component {
   render() {
     const {
@@ -116,10 +116,10 @@ class Main extends Component {
 const meatureNaturalDimensions = measure(['naturalHeight', 'naturalWidth']);
 
 const Img = meatureNaturalDimensions(({position, size}) => {
-  console.group('Img');
-  console.log('img position', position);
-  console.log('img size', size);
-  console.groupEnd();
+  // console.group('Img');
+  // console.log('img position', position);
+  // console.log('img size', size);
+  // console.groupEnd();
 
   return (
     <img
@@ -132,10 +132,10 @@ const Img = meatureNaturalDimensions(({position, size}) => {
 const measureWithSpecificKeys = measure(['left', 'offsetLeft']);
 
 const App = measureWithSpecificKeys(({position, size}) => {
-  console.group('App');
-  console.log('app position', position);
-  console.log('app size', size);
-  console.groupEnd();
+  // console.group('App');
+  // console.log('app position', position);
+  // console.log('app size', size);
+  // console.groupEnd();
 
   return (
     <div>
