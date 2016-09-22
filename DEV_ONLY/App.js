@@ -38,10 +38,10 @@ class Div extends Component {
       children
     } = this.props;
 
-    // console.group('Div');
-    // console.log('div position', this.props.position);
-    // console.log('div size', this.props.size);
-    // console.groupEnd();
+    console.group('Div');
+    console.log('div position', this.props.position);
+    console.log('div size', this.props.size);
+    console.groupEnd();
 
     return (
       <div style={DIV_STYLES}>
@@ -100,10 +100,10 @@ class Main extends Component {
       children
     } = this.props;
 
-    console.group('Main');
-    console.log('main position', this.props.position);
-    console.log('main size', this.props.size);
-    console.groupEnd();
+    // console.group('Main');
+    // console.log('main position', this.props.position);
+    // console.log('main size', this.props.size);
+    // console.groupEnd();
 
     return (
       <main>

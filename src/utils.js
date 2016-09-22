@@ -118,17 +118,18 @@ const getNaturalDimensionValue = (source, key) => {
  * in the source object
  *
  * @param {array<string>} keys
+ * @param {function} keys.reduce
  * @param {object|ClientRect} source
+ * @param {boolean} shouldAlterNaturalKeys=true
  * @returns {object}
  */
-const createObjectFromKeys = (keys, source) => {
-  let target = {};
-
-  forEach(keys, (key) => {
-    target[key] = NATURAL_REGEXP.test(key) ? getNaturalDimensionValue(source, key) : source[key];
-  });
-
-  return target;
+const createObjectFromKeys = (keys, source, shouldAlterNaturalKeys = true) => {
+  return keys.reduce((target, key) => {
+    return {
+      ...target,
+      [key]: shouldAlterNaturalKeys ? getNaturalDimensionValue(source, key) : source[key]
+    };
+  }, {});
 };
 
 /**
@@ -152,6 +153,50 @@ const getValidKeys = (keys, keysToTestAgainst) => {
 };
 
 /**
+ * get the position and size, and booleans to identify they're
+ * intended existence in state
+ *
+ * @param {array<string>} keys
+ * @param {object} currentState
+ * @returns {{hasPosition: boolean, hasSize: boolean, position: object, size: object}}
+ */
+const getValuesProperties = (keys, currentState) => {
+  if (isArray(keys)) {
+    let position = {},
+        size = {},
+        hasPosition = false,
+        hasSize = false;
+
+    forEach(keys, (key) => {
+      if (arrayContains(ALL_POSITION_KEYS, key)) {
+        position[key] = currentState[key];
+        hasPosition = true;
+      } else if (arrayContains(ALL_SIZE_KEYS, key)) {
+        size[key] = currentState[key];
+        hasSize = true;
+      }
+    });
+
+    return {
+      hasPosition,
+      hasSize,
+      position,
+      size
+    };
+  }
+
+  const position = createObjectFromKeys(ALL_POSITION_KEYS, currentState, false);
+  const size = createObjectFromKeys(ALL_SIZE_KEYS, currentState, false);
+
+  return {
+    hasPosition: true,
+    hasSize: true,
+    position,
+    size
+  };
+};
+
+/**
  * based on the keys passed, create an object with either position
  * or size or both properties that are objects containing the respective
  * values for the associated keys
@@ -163,45 +208,12 @@ const getValidKeys = (keys, keysToTestAgainst) => {
  * @returns {object}
  */
 const getValues = (keys, currentState, {positionProp, sizeProp}) => {
-  let hasSize = false,
-      hasPosition = false,
-      size,
-      position;
-
-  if (isArray(keys)) {
-    forEach(keys, (key) => {
-      if (arrayContains(ALL_POSITION_KEYS, key)) {
-        if (!position) {
-          position = {};
-        }
-
-        position[key] = currentState[key];
-        hasPosition = true;
-      }
-
-      if (arrayContains(ALL_SIZE_KEYS, key)) {
-        if (!size) {
-          size = {};
-        }
-
-        size[key] = currentState[key];
-        hasSize = true;
-      }
-    });
-  } else {
-    size = {};
-    position = {};
-    hasSize = true;
-    hasPosition = true;
-
-    forEach(ALL_POSITION_KEYS, (key) => {
-      position[key] = currentState[key];
-    });
-
-    forEach(ALL_SIZE_KEYS, (key) => {
-      size[key] = currentState[key];
-    });
-  }
+  const {
+    hasPosition,
+    hasSize,
+    position,
+    size
+  } = getValuesProperties(keys, currentState);
 
   let values = {};
 

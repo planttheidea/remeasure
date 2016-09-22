@@ -86,9 +86,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var POSITION_PROP_DEFAULT = 'position';
-	var SIZE_PROP_DEFAULT = 'size';
-	
 	/**
 	 * create higher-order component that injects size and position properties
 	 * into OriginalComponent as an object under the prop name size and position
@@ -99,14 +96,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	var measure = function measure(keys, options) {
 	  if ((0, _utils.isString)(keys)) {
-	    var position = POSITION_PROP_DEFAULT,
-	        size = SIZE_PROP_DEFAULT;
+	    var position = _constants.POSITION_PROP_DEFAULT,
+	        size = _constants.SIZE_PROP_DEFAULT;
 	
 	    if ((0, _utils.isObject)(options)) {
 	      var _options$positionProp = options.positionProp;
-	      position = _options$positionProp === undefined ? POSITION_PROP_DEFAULT : _options$positionProp;
+	      position = _options$positionProp === undefined ? _constants.POSITION_PROP_DEFAULT : _options$positionProp;
 	      var _options$sizeProp = options.sizeProp;
-	      size = _options$sizeProp === undefined ? SIZE_PROP_DEFAULT : _options$sizeProp;
+	      size = _options$sizeProp === undefined ? _constants.SIZE_PROP_DEFAULT : _options$sizeProp;
 	    }
 	
 	    switch (keys) {
@@ -161,7 +158,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	exports.isUndefined = exports.isString = exports.isObject = exports.isArray = exports.haveValuesChanged = exports.getValues = exports.getValidKeys = exports.getNaturalDimensionValue = exports.forEach = exports.createObjectFromKeys = exports.arraySubset = exports.arrayContains = undefined;
 	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; // constants
+	
+	
 	var _constants = __webpack_require__(3);
+	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 	
 	var NATURAL_REGEXP = /natural/;
 	
@@ -171,7 +175,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {any} object
 	 * @returns {string}
 	 */
-	// constants
 	var toString = function toString(object) {
 	  return Object.prototype.toString.call(object);
 	};
@@ -278,17 +281,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * in the source object
 	 *
 	 * @param {array<string>} keys
+	 * @param {function} keys.reduce
 	 * @param {object|ClientRect} source
+	 * @param {boolean} shouldAlterNaturalKeys=true
 	 * @returns {object}
 	 */
 	var createObjectFromKeys = function createObjectFromKeys(keys, source) {
-	  var target = {};
+	  var shouldAlterNaturalKeys = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
 	
-	  forEach(keys, function (key) {
-	    target[key] = NATURAL_REGEXP.test(key) ? getNaturalDimensionValue(source, key) : source[key];
-	  });
-	
-	  return target;
+	  return keys.reduce(function (target, key) {
+	    return _extends({}, target, _defineProperty({}, key, shouldAlterNaturalKeys ? getNaturalDimensionValue(source, key) : source[key]));
+	  }, {});
 	};
 	
 	/**
@@ -312,6 +315,56 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/**
+	 * get the position and size, and booleans to identify they're
+	 * intended existence in state
+	 *
+	 * @param {array<string>} keys
+	 * @param {object} currentState
+	 * @returns {{hasPosition: boolean, hasSize: boolean, position: object, size: object}}
+	 */
+	var getValuesProperties = function getValuesProperties(keys, currentState) {
+	  if (isArray(keys)) {
+	    var _ret = function () {
+	      var position = {},
+	          size = {},
+	          hasPosition = false,
+	          hasSize = false;
+	
+	      forEach(keys, function (key) {
+	        if (arrayContains(_constants.ALL_POSITION_KEYS, key)) {
+	          position[key] = currentState[key];
+	          hasPosition = true;
+	        } else if (arrayContains(_constants.ALL_SIZE_KEYS, key)) {
+	          size[key] = currentState[key];
+	          hasSize = true;
+	        }
+	      });
+	
+	      return {
+	        v: {
+	          hasPosition: hasPosition,
+	          hasSize: hasSize,
+	          position: position,
+	          size: size
+	        }
+	      };
+	    }();
+	
+	    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+	  }
+	
+	  var position = createObjectFromKeys(_constants.ALL_POSITION_KEYS, currentState, false);
+	  var size = createObjectFromKeys(_constants.ALL_SIZE_KEYS, currentState, false);
+	
+	  return {
+	    hasPosition: true,
+	    hasSize: true,
+	    position: position,
+	    size: size
+	  };
+	};
+	
+	/**
 	 * based on the keys passed, create an object with either position
 	 * or size or both properties that are objects containing the respective
 	 * values for the associated keys
@@ -326,45 +379,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var positionProp = _ref.positionProp;
 	  var sizeProp = _ref.sizeProp;
 	
-	  var hasSize = false,
-	      hasPosition = false,
-	      size = void 0,
-	      position = void 0;
+	  var _getValuesProperties = getValuesProperties(keys, currentState);
 	
-	  if (isArray(keys)) {
-	    forEach(keys, function (key) {
-	      if (arrayContains(_constants.ALL_POSITION_KEYS, key)) {
-	        if (!position) {
-	          position = {};
-	        }
+	  var hasSize = _getValuesProperties.hasSize;
+	  var hasPosition = _getValuesProperties.hasPosition;
+	  var position = _getValuesProperties.position;
+	  var size = _getValuesProperties.size;
 	
-	        position[key] = currentState[key];
-	        hasPosition = true;
-	      }
-	
-	      if (arrayContains(_constants.ALL_SIZE_KEYS, key)) {
-	        if (!size) {
-	          size = {};
-	        }
-	
-	        size[key] = currentState[key];
-	        hasSize = true;
-	      }
-	    });
-	  } else {
-	    size = {};
-	    position = {};
-	    hasSize = true;
-	    hasPosition = true;
-	
-	    forEach(_constants.ALL_POSITION_KEYS, function (key) {
-	      position[key] = currentState[key];
-	    });
-	
-	    forEach(_constants.ALL_SIZE_KEYS, function (key) {
-	      size[key] = currentState[key];
-	    });
-	  }
 	
 	  var values = {};
 	
@@ -428,6 +449,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 	
+	var POSITION_PROP_DEFAULT = 'position';
+	var RENDER_ON_RESIZE_DEFAULT = true;
+	var SIZE_PROP_DEFAULT = 'size';
+	
 	var BOUNDING_CLIENT_RECT_SIZE_KEYS = ['height', 'width'];
 	
 	var BOUNDING_CLIENT_RECT_POSITION_KEYS = ['bottom', 'left', 'right', 'top'];
@@ -466,6 +491,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.DOM_ELEMENT_POSITION_KEYS = DOM_ELEMENT_POSITION_KEYS;
 	exports.DOM_ELEMENT_SIZE_KEYS = DOM_ELEMENT_SIZE_KEYS;
 	exports.initialState = initialState;
+	exports.POSITION_PROP_DEFAULT = POSITION_PROP_DEFAULT;
+	exports.RENDER_ON_RESIZE_DEFAULT = RENDER_ON_RESIZE_DEFAULT;
+	exports.SIZE_PROP_DEFAULT = SIZE_PROP_DEFAULT;
 
 /***/ },
 /* 4 */
@@ -512,10 +540,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 	
-	var POSITION_PROP_DEFAULT = 'position';
-	var RENDER_ON_RESIZE_DEFAULT = true;
-	var SIZE_PROP_DEFAULT = 'size';
-	
 	var raf = void 0;
 	
 	/**
@@ -526,6 +550,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	  raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (callback) {
 	    window.setTimeout(callback, 1000 / 60);
 	  };
+	};
+	
+	/**
+	 * based on desiredKeys, build the initialState object
+	 *
+	 * @param {array<string>} allKeys
+	 * @param {array<string>} desiredKeys
+	 * @returns {array<T>}
+	 */
+	var reduceStateToMatchingKeys = function reduceStateToMatchingKeys(allKeys, desiredKeys) {
+	  return allKeys.reduce(function (accumulatedInitialState, key) {
+	    if (desiredKeys.includes(key)) {
+	      return _extends({}, accumulatedInitialState, _defineProperty({}, key, 0));
+	    }
+	
+	    return accumulatedInitialState;
+	  }, {});
 	};
 	
 	/**
@@ -541,11 +582,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	var getHigherOrderComponent = function getHigherOrderComponent(OriginalComponent, keys) {
 	  var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 	  var _options$positionProp = options.positionProp;
-	  var positionProp = _options$positionProp === undefined ? POSITION_PROP_DEFAULT : _options$positionProp;
+	  var positionProp = _options$positionProp === undefined ? _constants.POSITION_PROP_DEFAULT : _options$positionProp;
 	  var _options$renderOnResi = options.renderOnResize;
-	  var renderOnResize = _options$renderOnResi === undefined ? RENDER_ON_RESIZE_DEFAULT : _options$renderOnResi;
+	  var renderOnResize = _options$renderOnResi === undefined ? _constants.RENDER_ON_RESIZE_DEFAULT : _options$renderOnResi;
 	  var _options$sizeProp = options.sizeProp;
-	  var sizeProp = _options$sizeProp === undefined ? SIZE_PROP_DEFAULT : _options$sizeProp;
+	  var sizeProp = _options$sizeProp === undefined ? _constants.SIZE_PROP_DEFAULT : _options$sizeProp;
 	
 	
 	  var propKeyNames = {
@@ -555,14 +596,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  var boundingClientRectKeys = (0, _utils.arraySubset)(_constants.ALL_BOUNDING_CLIENT_RECT_KEYS, keys);
 	  var domElementKeys = (0, _utils.arraySubset)(_constants.ALL_DOM_ELEMENT_KEYS, keys);
-	
-	  var initialState = _constants.ALL_KEYS.reduce(function (accumulatedInitialState, key) {
-	    if (keys.includes(key)) {
-	      return _extends({}, accumulatedInitialState, _defineProperty({}, key, 0));
-	    }
-	
-	    return accumulatedInitialState;
-	  }, {});
+	  var initialState = reduceStateToMatchingKeys(_constants.ALL_KEYS, keys);
 	
 	  if (!raf) {
 	    setRaf();

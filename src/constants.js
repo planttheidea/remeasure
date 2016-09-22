@@ -1,3 +1,7 @@
+const POSITION_PROP_DEFAULT = 'position';
+const RENDER_ON_RESIZE_DEFAULT = true;
+const SIZE_PROP_DEFAULT = 'size';
+
 const BOUNDING_CLIENT_RECT_SIZE_KEYS = [
   'height',
   'width'
@@ -75,3 +79,6 @@ export {BOUNDING_CLIENT_RECT_SIZE_KEYS};
 export {DOM_ELEMENT_POSITION_KEYS};
 export {DOM_ELEMENT_SIZE_KEYS};
 export {initialState};
+export {POSITION_PROP_DEFAULT};
+export {RENDER_ON_RESIZE_DEFAULT};
+export {SIZE_PROP_DEFAULT};

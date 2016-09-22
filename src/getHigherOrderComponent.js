@@ -19,12 +19,11 @@ import {
 import {
   ALL_BOUNDING_CLIENT_RECT_KEYS,
   ALL_DOM_ELEMENT_KEYS,
-  ALL_KEYS
+  ALL_KEYS,
+  POSITION_PROP_DEFAULT,
+  RENDER_ON_RESIZE_DEFAULT,
+  SIZE_PROP_DEFAULT
 } from './constants';
-
-const POSITION_PROP_DEFAULT = 'position';
-const RENDER_ON_RESIZE_DEFAULT = true;
-const SIZE_PROP_DEFAULT = 'size';
 
 let raf;
 
@@ -41,6 +40,26 @@ const setRaf = () => {
       window.setTimeout(callback, 1000 / 60);
     }
   );
+};
+
+/**
+ * based on desiredKeys, build the initialState object
+ *
+ * @param {array<string>} allKeys
+ * @param {array<string>} desiredKeys
+ * @returns {array<T>}
+ */
+const reduceStateToMatchingKeys = (allKeys, desiredKeys) => {
+  return allKeys.reduce((accumulatedInitialState, key) => {
+    if (desiredKeys.includes(key)) {
+      return {
+        ...accumulatedInitialState,
+        [key]: 0
+      };
+    }
+
+    return accumulatedInitialState;
+  }, {});
 };
 
 /**
@@ -67,17 +86,7 @@ const getHigherOrderComponent = (OriginalComponent, keys, options = {}) => {
 
   const boundingClientRectKeys = arraySubset(ALL_BOUNDING_CLIENT_RECT_KEYS, keys);
   const domElementKeys = arraySubset(ALL_DOM_ELEMENT_KEYS, keys);
-
-  const initialState = ALL_KEYS.reduce((accumulatedInitialState, key) => {
-    if (keys.includes(key)) {
-      return {
-        ...accumulatedInitialState,
-        [key]: 0
-      };
-    }
-
-    return accumulatedInitialState;
-  }, {});
+  const initialState = reduceStateToMatchingKeys(ALL_KEYS, keys);
 
   if (!raf) {
     setRaf();

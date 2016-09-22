@@ -10,14 +10,13 @@ import {
 import {
   ALL_KEYS,
   ALL_POSITION_KEYS,
-  ALL_SIZE_KEYS
+  ALL_SIZE_KEYS,
+  POSITION_PROP_DEFAULT,
+  SIZE_PROP_DEFAULT
 } from './constants';
 
 // HOC
 import getHigherOrderComponent from './getHigherOrderComponent';
-
-const POSITION_PROP_DEFAULT = 'position';
-const SIZE_PROP_DEFAULT = 'size';
 
 /**
  * create higher-order component that injects size and position properties
