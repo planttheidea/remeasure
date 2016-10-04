@@ -67,7 +67,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; }; // utils
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; // utils
 	
 	
 	// constants
@@ -158,7 +158,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	exports.isUndefined = exports.isString = exports.isObject = exports.isArray = exports.haveValuesChanged = exports.getValues = exports.getValidKeys = exports.getNaturalDimensionValue = exports.forEach = exports.createObjectFromKeys = exports.arraySubset = exports.arrayContains = undefined;
 	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; // constants
 	
@@ -287,7 +287,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {object}
 	 */
 	var createObjectFromKeys = function createObjectFromKeys(keys, source) {
-	  var shouldAlterNaturalKeys = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
+	  var shouldAlterNaturalKeys = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 	
 	  return keys.reduce(function (target, key) {
 	    return _extends({}, target, _defineProperty({}, key, shouldAlterNaturalKeys ? getNaturalDimensionValue(source, key) : source[key]));
@@ -381,8 +381,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  var _getValuesProperties = getValuesProperties(keys, currentState);
 	
-	  var hasSize = _getValuesProperties.hasSize;
 	  var hasPosition = _getValuesProperties.hasPosition;
+	  var hasSize = _getValuesProperties.hasSize;
 	  var position = _getValuesProperties.position;
 	  var size = _getValuesProperties.size;
 	
@@ -580,7 +580,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {RemeasureComponent}
 	 */
 	var getHigherOrderComponent = function getHigherOrderComponent(OriginalComponent, keys) {
-	  var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+	  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 	  var _options$positionProp = options.positionProp;
 	  var positionProp = _options$positionProp === undefined ? _constants.POSITION_PROP_DEFAULT : _options$positionProp;
 	  var _options$renderOnResi = options.renderOnResize;
@@ -616,34 +616,49 @@ return /******/ (function(modules) { // webpackBootstrap
 	        args[_key] = arguments[_key];
 	      }
 	
-	      return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = RemeasureComponent.__proto__ || Object.getPrototypeOf(RemeasureComponent)).call.apply(_ref, [this].concat(args))), _this), _this.state = initialState, _this.domElement = null, _this.setValues = function () {
-	        raf(function () {
-	          var domElement = _this.domElement;
-	          var boundingClientRect = domElement.getBoundingClientRect();
+	      return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = RemeasureComponent.__proto__ || Object.getPrototypeOf(RemeasureComponent)).call.apply(_ref, [this].concat(args))), _this), _this.state = initialState, _this.domElement = null, _this.setDomElement = function () {
+	        var domElement = (0, _reactDom.findDOMNode)(_this);
 	
-	          var values = _extends({}, (0, _utils.createObjectFromKeys)(boundingClientRectKeys, boundingClientRect), (0, _utils.createObjectFromKeys)(domElementKeys, domElement));
+	        if (domElement) {
+	          _this.domElement = domElement;
+	          _this.setOnResize();
+	        }
+	      }, _this.setOnResize = function () {
+	        if (renderOnResize) {
+	          (0, _elementResizeEvent2.default)(_this.domElement, _this.setValues);
+	        }
+	      }, _this.setValues = function () {
+	        if (_this.domElement) {
+	          raf(function () {
+	            var domElement = _this.domElement;
+	            var boundingClientRect = domElement.getBoundingClientRect();
 	
-	          if ((0, _utils.haveValuesChanged)(keys, values, _this.state)) {
-	            _this.setState(values);
-	          }
-	        });
+	            var values = _extends({}, (0, _utils.createObjectFromKeys)(boundingClientRectKeys, boundingClientRect), (0, _utils.createObjectFromKeys)(domElementKeys, domElement));
+	
+	            if ((0, _utils.haveValuesChanged)(keys, values, _this.state)) {
+	              _this.setState(values);
+	            }
+	          });
+	        }
 	      }, _temp), _possibleConstructorReturn(_this, _ret);
 	    }
 	
 	    _createClass(RemeasureComponent, [{
 	      key: 'componentDidMount',
 	      value: function componentDidMount() {
-	        this.domElement = (0, _reactDom.findDOMNode)(this);
+	        this.setDomElement();
 	
-	        if (renderOnResize) {
-	          (0, _elementResizeEvent2.default)(this.domElement, this.setValues);
+	        if (this.domElement) {
+	          this.setValues();
 	        }
-	
-	        this.setValues();
 	      }
 	    }, {
 	      key: 'componentDidUpdate',
 	      value: function componentDidUpdate() {
+	        if (!this.domElement) {
+	          this.setDomElement();
+	        }
+	
 	        this.setValues();
 	      }
 	    }, {

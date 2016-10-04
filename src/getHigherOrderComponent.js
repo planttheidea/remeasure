@@ -94,16 +94,18 @@ const getHigherOrderComponent = (OriginalComponent, keys, options = {}) => {
 
   class RemeasureComponent extends Component {
     componentDidMount() {
-      this.domElement = findDOMNode(this);
+      this.setDomElement();
 
-      if (renderOnResize) {
-        onElementResize(this.domElement, this.setValues);
+      if (this.domElement) {
+        this.setValues();
       }
-
-      this.setValues();
     }
 
     componentDidUpdate() {
+      if (!this.domElement) {
+        this.setDomElement();
+      }
+
       this.setValues();
     }
 
@@ -115,25 +117,42 @@ const getHigherOrderComponent = (OriginalComponent, keys, options = {}) => {
 
     domElement = null;
 
+    setDomElement = () => {
+      const domElement = findDOMNode(this);
+
+      if (domElement) {
+        this.domElement = domElement;
+        this.setOnResize();
+      }
+    };
+
+    setOnResize = () => {
+      if (renderOnResize) {
+        onElementResize(this.domElement, this.setValues);
+      }
+    };
+
     /**
      * based on the current DOM element, get the values
      * and determine if the state should be updated (only
      * if things have changed)
      */
     setValues = () => {
-      raf(() => {
-        const domElement = this.domElement;
-        const boundingClientRect = domElement.getBoundingClientRect();
+      if (this.domElement) {
+        raf(() => {
+          const domElement = this.domElement;
+          const boundingClientRect = domElement.getBoundingClientRect();
 
-        const values = {
-          ...createObjectFromKeys(boundingClientRectKeys, boundingClientRect),
-          ...createObjectFromKeys(domElementKeys, domElement)
-        };
+          const values = {
+            ...createObjectFromKeys(boundingClientRectKeys, boundingClientRect),
+            ...createObjectFromKeys(domElementKeys, domElement)
+          };
 
-        if (haveValuesChanged(keys, values, this.state)) {
-          this.setState(values);
-        }
-      });
+          if (haveValuesChanged(keys, values, this.state)) {
+            this.setState(values);
+          }
+        });
+      }
     };
 
     render() {

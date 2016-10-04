@@ -129,6 +129,13 @@ const Img = meatureNaturalDimensions(({position, size}) => {
   );
 });
 
+@measure
+class NullReturn extends Component {
+  render() {
+    return null;
+  }
+}
+
 const measureWithSpecificKeys = measure(['left', 'offsetLeft']);
 
 const App = measureWithSpecificKeys(({position, size}) => {
@@ -193,6 +200,8 @@ const App = measureWithSpecificKeys(({position, size}) => {
       </Main>
 
       <Img/>
+
+      <NullReturn />
     </div>
   );
 });
