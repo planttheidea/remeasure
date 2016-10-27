@@ -1,6 +1,8 @@
 const path = require('path');
 const webpack = require('webpack');
 
+const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
+
 module.exports = {
   cache: true,
 
@@ -68,7 +70,8 @@ module.exports = {
   plugins: [
     new webpack.EnvironmentPlugin([
       'NODE_ENV'
-    ])
+    ]),
+    new LodashModuleReplacementPlugin()
   ],
 
   resolve: {

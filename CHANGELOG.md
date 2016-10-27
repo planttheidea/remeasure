@@ -1,5 +1,17 @@
 # remeasure changelog
 
+#### 1.5.0
+* Add `debounce` option, to debounce recalculation on resize
+
+#### 1.4.3
+* Update dependencies
+
+#### 1.4.2
+* Add checks to see if element exists before attempting resize state assignment
+
+#### 1.4.1
+* Optimizations
+
 #### 1.4.0
 * Refactor of instantiation to only put keys listened for on state instead of all keys
 

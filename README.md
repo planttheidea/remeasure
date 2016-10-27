@@ -80,7 +80,7 @@ Any component that has `measure` applied to it will be wrapped in a [Higher-Orde
   
 The `bottom`, `left`, `right`, and `top` properties in `position` are what you would expect from the result of `element.getBoundingClientRect()`. `naturalHeight` and `naturalWidth` are properties that are native to `img` elements, and for all non-`img` elements they are coalesced with `scrollHeight` and `scrollWidth`, respectively.
 
-These properties are retrieved on mount, but will also automatically update if the element is resized thanks to [element-resize-event](https://github.com/KyleAMathews/element-resize-event).
+These properties are retrieved on mount, but will also automatically update if the element is resized thanks to [element-resize-event](https://github.com/KyleAMathews/element-resize-event). Please note that elements that do not support content (such as `img`) are not supported by this resize listener; in the case that you need to support those elements, simply create a higher-order component that wraps that element in a `div` and decorate that component.
 
 #### Advanced usage
 
@@ -144,6 +144,7 @@ You can also pass an object with any of the following propeties (defaults shown)
    
 ```javascript
 {
+    debounce: Number, // value in milliseconds
     positionProp: String = 'position',
     renderOnResize: Boolean = true,
     sizeProp: String = 'size'
@@ -154,6 +155,7 @@ These will serve as options for the instance `remeasure` is applied to. For exam
 
 ```javascript
 const FOO_BAR_OPTIONS = {
+    debounce: 50,
     positionProp: 'foo',
     sizeProp: 'bar'
 };

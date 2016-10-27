@@ -21,12 +21,13 @@ const SECTION_STYLES = {
 };
 
 const IMG_STYLES = {
-  height: 324,
+  height: 'auto',
+  maxWidth: '100%',
   width: 719
 };
 
 const options = {
-  renderOnResize: false,
+  debounce: 50,
   positionProp: 'foo',
   sizeProp: 'bar'
 };
@@ -113,13 +114,13 @@ class Main extends Component {
   }
 }
 
-const meatureNaturalDimensions = measure(['naturalHeight', 'naturalWidth']);
+const meatureNaturalDimensions = measure(['naturalHeight', 'naturalWidth', 'clientWidth']);
 
 const Img = meatureNaturalDimensions(({position, size}) => {
-  // console.group('Img');
-  // console.log('img position', position);
-  // console.log('img size', size);
-  // console.groupEnd();
+  console.group('Img');
+  console.log('img position', position);
+  console.log('img size', size);
+  console.groupEnd();
 
   return (
     <img

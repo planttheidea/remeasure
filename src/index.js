@@ -1,9 +1,11 @@
+// external dependencies
+import isArray from 'lodash/isArray';
+import isPlainObject from 'lodash/isPlainObject';
+import isString from 'lodash/isString';
+
 // utils
 import {
-  getValidKeys,
-  isArray,
-  isObject,
-  isString
+  getValidKeys
 } from './utils';
 
 // constants
@@ -22,8 +24,8 @@ import getHigherOrderComponent from './getHigherOrderComponent';
  * create higher-order component that injects size and position properties
  * into OriginalComponent as an object under the prop name size and position
  *
- * @param {Component|array<string>} keys
- * @param {object} options
+ * @param {Component|Array<string>} keys
+ * @param {Object} options
  * @returns {RemeasureComponent}
  */
 const measure = (keys, options) => {
@@ -31,7 +33,7 @@ const measure = (keys, options) => {
     let position = POSITION_PROP_DEFAULT,
         size = SIZE_PROP_DEFAULT;
 
-    if (isObject(options)) {
+    if (isPlainObject(options)) {
       ({
         positionProp: position = POSITION_PROP_DEFAULT,
         sizeProp: size = SIZE_PROP_DEFAULT
@@ -61,7 +63,7 @@ const measure = (keys, options) => {
     };
   }
 
-  if (isObject(keys)) {
+  if (isPlainObject(keys)) {
     return (OriginalComponent) => {
       return getHigherOrderComponent(OriginalComponent, ALL_KEYS, keys);
     };

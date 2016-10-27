@@ -24,7 +24,7 @@ module.exports = {
         }
     },
 
-    devtool: '#inline-eval-source-map',
+    devtool: '#source-map',
 
     entry: [
         path.resolve (__dirname, 'DEV_ONLY', 'App.js')

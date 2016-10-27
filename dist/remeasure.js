@@ -7,7 +7,7 @@
 		exports["Remeasure"] = factory(require("react"), require("react-dom"));
 	else
 		root["Remeasure"] = factory(root["React"], root["ReactDOM"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_6__, __WEBPACK_EXTERNAL_MODULE_7__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_21__, __WEBPACK_EXTERNAL_MODULE_22__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -67,7 +67,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; // utils
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; }; // external dependencies
+	
+	
+	// utils
 	
 	
 	// constants
@@ -76,11 +79,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	// HOC
 	
 	
-	var _utils = __webpack_require__(2);
+	var _isArray = __webpack_require__(2);
 	
-	var _constants = __webpack_require__(3);
+	var _isArray2 = _interopRequireDefault(_isArray);
 	
-	var _getHigherOrderComponent = __webpack_require__(4);
+	var _isPlainObject = __webpack_require__(3);
+	
+	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
+	
+	var _isString = __webpack_require__(7);
+	
+	var _isString2 = _interopRequireDefault(_isString);
+	
+	var _utils = __webpack_require__(8);
+	
+	var _constants = __webpack_require__(12);
+	
+	var _getHigherOrderComponent = __webpack_require__(13);
 	
 	var _getHigherOrderComponent2 = _interopRequireDefault(_getHigherOrderComponent);
 	
@@ -90,16 +105,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * create higher-order component that injects size and position properties
 	 * into OriginalComponent as an object under the prop name size and position
 	 *
-	 * @param {Component|array<string>} keys
-	 * @param {object} options
+	 * @param {Component|Array<string>} keys
+	 * @param {Object} options
 	 * @returns {RemeasureComponent}
 	 */
 	var measure = function measure(keys, options) {
-	  if ((0, _utils.isString)(keys)) {
+	  if ((0, _isString2.default)(keys)) {
 	    var position = _constants.POSITION_PROP_DEFAULT,
 	        size = _constants.SIZE_PROP_DEFAULT;
 	
-	    if ((0, _utils.isObject)(options)) {
+	    if ((0, _isPlainObject2.default)(options)) {
 	      var _options$positionProp = options.positionProp;
 	      position = _options$positionProp === undefined ? _constants.POSITION_PROP_DEFAULT : _options$positionProp;
 	      var _options$sizeProp = options.sizeProp;
@@ -121,7 +136,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  }
 	
-	  if ((0, _utils.isArray)(keys)) {
+	  if ((0, _isArray2.default)(keys)) {
 	    var _ret = function () {
 	      var validKeys = (0, _utils.getValidKeys)(keys, _constants.ALL_KEYS);
 	
@@ -135,7 +150,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
 	  }
 	
-	  if ((0, _utils.isObject)(keys)) {
+	  if ((0, _isPlainObject2.default)(keys)) {
 	    return function (OriginalComponent) {
 	      return (0, _getHigherOrderComponent2.default)(OriginalComponent, _constants.ALL_KEYS, keys);
 	    };
@@ -149,6 +164,225 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 2 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if `value` is classified as an `Array` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.1.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an array, else `false`.
+	 * @example
+	 *
+	 * _.isArray([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isArray(document.body.children);
+	 * // => false
+	 *
+	 * _.isArray('abc');
+	 * // => false
+	 *
+	 * _.isArray(_.noop);
+	 * // => false
+	 */
+	var isArray = Array.isArray;
+	
+	module.exports = isArray;
+
+
+/***/ },
+/* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var getPrototype = __webpack_require__(4),
+	    isObjectLike = __webpack_require__(6);
+	
+	/** `Object#toString` result references. */
+	var objectTag = '[object Object]';
+	
+	/** Used for built-in method references. */
+	var funcProto = Function.prototype,
+	    objectProto = Object.prototype;
+	
+	/** Used to resolve the decompiled source of functions. */
+	var funcToString = funcProto.toString;
+	
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+	
+	/** Used to infer the `Object` constructor. */
+	var objectCtorString = funcToString.call(Object);
+	
+	/**
+	 * Used to resolve the
+	 * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var objectToString = objectProto.toString;
+	
+	/**
+	 * Checks if `value` is a plain object, that is, an object created by the
+	 * `Object` constructor or one with a `[[Prototype]]` of `null`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.8.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
+	 * @example
+	 *
+	 * function Foo() {
+	 *   this.a = 1;
+	 * }
+	 *
+	 * _.isPlainObject(new Foo);
+	 * // => false
+	 *
+	 * _.isPlainObject([1, 2, 3]);
+	 * // => false
+	 *
+	 * _.isPlainObject({ 'x': 0, 'y': 0 });
+	 * // => true
+	 *
+	 * _.isPlainObject(Object.create(null));
+	 * // => true
+	 */
+	function isPlainObject(value) {
+	  if (!isObjectLike(value) || objectToString.call(value) != objectTag) {
+	    return false;
+	  }
+	  var proto = getPrototype(value);
+	  if (proto === null) {
+	    return true;
+	  }
+	  var Ctor = hasOwnProperty.call(proto, 'constructor') && proto.constructor;
+	  return (typeof Ctor == 'function' &&
+	    Ctor instanceof Ctor && funcToString.call(Ctor) == objectCtorString);
+	}
+	
+	module.exports = isPlainObject;
+
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var overArg = __webpack_require__(5);
+	
+	/** Built-in value references. */
+	var getPrototype = overArg(Object.getPrototypeOf, Object);
+	
+	module.exports = getPrototype;
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+	/**
+	 * Creates a unary function that invokes `func` with its argument transformed.
+	 *
+	 * @private
+	 * @param {Function} func The function to wrap.
+	 * @param {Function} transform The argument transform.
+	 * @returns {Function} Returns the new function.
+	 */
+	function overArg(func, transform) {
+	  return function(arg) {
+	    return func(transform(arg));
+	  };
+	}
+	
+	module.exports = overArg;
+
+
+/***/ },
+/* 6 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if `value` is object-like. A value is object-like if it's not `null`
+	 * and has a `typeof` result of "object".
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.0.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+	 * @example
+	 *
+	 * _.isObjectLike({});
+	 * // => true
+	 *
+	 * _.isObjectLike([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObjectLike(_.noop);
+	 * // => false
+	 *
+	 * _.isObjectLike(null);
+	 * // => false
+	 */
+	function isObjectLike(value) {
+	  return value != null && typeof value == 'object';
+	}
+	
+	module.exports = isObjectLike;
+
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isArray = __webpack_require__(2),
+	    isObjectLike = __webpack_require__(6);
+	
+	/** `Object#toString` result references. */
+	var stringTag = '[object String]';
+	
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+	
+	/**
+	 * Used to resolve the
+	 * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var objectToString = objectProto.toString;
+	
+	/**
+	 * Checks if `value` is classified as a `String` primitive or object.
+	 *
+	 * @static
+	 * @since 0.1.0
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a string, else `false`.
+	 * @example
+	 *
+	 * _.isString('abc');
+	 * // => true
+	 *
+	 * _.isString(1);
+	 * // => false
+	 */
+	function isString(value) {
+	  return typeof value == 'string' ||
+	    (!isArray(value) && isObjectLike(value) && objectToString.call(value) == stringTag);
+	}
+	
+	module.exports = isString;
+
+
+/***/ },
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -156,108 +390,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.isUndefined = exports.isString = exports.isObject = exports.isArray = exports.haveValuesChanged = exports.getValues = exports.getValidKeys = exports.getNaturalDimensionValue = exports.forEach = exports.createObjectFromKeys = exports.arraySubset = exports.arrayContains = undefined;
+	exports.reduceStateToMatchingKeys = exports.haveValuesChanged = exports.getValues = exports.getValidKeys = exports.getRequestAnimationFrame = exports.getNaturalDimensionValue = exports.createObjectFromKeys = exports.getArraySubset = undefined;
 	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; // constants
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; // external dependencies
 	
 	
-	var _constants = __webpack_require__(3);
+	// constants
+	
+	
+	var _includes = __webpack_require__(9);
+	
+	var _includes2 = _interopRequireDefault(_includes);
+	
+	var _isArray = __webpack_require__(2);
+	
+	var _isArray2 = _interopRequireDefault(_isArray);
+	
+	var _isUndefined = __webpack_require__(11);
+	
+	var _isUndefined2 = _interopRequireDefault(_isUndefined);
+	
+	var _constants = __webpack_require__(12);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-	
-	var NATURAL_REGEXP = /natural/;
-	
-	/**
-	 * get the toString value for the object
-	 *
-	 * @param {any} object
-	 * @returns {string}
-	 */
-	var toString = function toString(object) {
-	  return Object.prototype.toString.call(object);
-	};
-	
-	/**
-	 * loop over array, executing fn
-	 *
-	 * @param {array<any>} array
-	 * @param {function} fn
-	 */
-	var forEach = function forEach(array, fn) {
-	  var length = array.length;
-	
-	  var index = -1;
-	
-	  while (++index < length) {
-	    fn(array[index], index, array);
-	  }
-	};
-	
-	/**
-	 * determine if object is an array
-	 *
-	 * @param {any} object
-	 * @returns {boolean}
-	 */
-	var isArray = function isArray(object) {
-	  return toString(object) === '[object Array]';
-	};
-	
-	/**
-	 * determine if object is an object
-	 *
-	 * @param {any} object
-	 * @returns {boolean}
-	 */
-	var isObject = function isObject(object) {
-	  return toString(object) === '[object Object]' && !!object;
-	};
-	
-	/**
-	 * determine if object is a string
-	 *
-	 * @param {any} object
-	 * @returns {boolean}
-	 */
-	var isString = function isString(object) {
-	  return toString(object) === '[object String]';
-	};
-	
-	/**
-	 * determine if object is undefined
-	 *
-	 * @param {any} object
-	 * @returns {boolean}
-	 */
-	var isUndefined = function isUndefined(object) {
-	  return object === void 0;
-	};
-	
-	/**
-	 * determine if array contains item at one of the indices
-	 *
-	 * @param {array<any>} array
-	 * @param {any} item
-	 * @returns {boolean}
-	 */
-	var arrayContains = function arrayContains(array, item) {
-	  return isArray(array) && !!~array.indexOf(item);
-	};
-	
-	/**
-	 * get subset of array1 based on items existing in array2
-	 *
-	 * @param {array<*>} array1
-	 * @param {array<*>} array2
-	 * @returns {array<T>}
-	 */
-	var arraySubset = function arraySubset(array1, array2) {
-	  return array1.filter(function (item) {
-	    return array2.includes(item);
-	  });
-	};
 	
 	/**
 	 * For naturalHeight and naturalWidth, coalesce the values
@@ -269,8 +428,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {number}
 	 */
 	var getNaturalDimensionValue = function getNaturalDimensionValue(source, key) {
-	  if (isUndefined(source[key])) {
-	    return source[key.replace(NATURAL_REGEXP, 'scroll')];
+	  if ((0, _isUndefined2.default)(source[key])) {
+	    return source[key.replace(_constants.NATURAL_REGEXP, 'scroll')];
 	  }
 	
 	  return source[key];
@@ -280,11 +439,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * create an object based on the keys passed and their value
 	 * in the source object
 	 *
-	 * @param {array<string>} keys
+	 * @param {Array<string>} keys
 	 * @param {function} keys.reduce
-	 * @param {object|ClientRect} source
+	 * @param {Object|ClientRect} source
 	 * @param {boolean} shouldAlterNaturalKeys=true
-	 * @returns {object}
+	 * @returns {Object}
 	 */
 	var createObjectFromKeys = function createObjectFromKeys(keys, source) {
 	  var shouldAlterNaturalKeys = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
@@ -295,46 +454,65 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/**
+	 * get subset of array1 based on items existing in array2
+	 *
+	 * @param {Array<*>} array1
+	 * @param {Array<*>} array2
+	 * @returns {Array<T>}
+	 */
+	var getArraySubset = function getArraySubset(array1, array2) {
+	  return array1.filter(function (item) {
+	    return (0, _includes2.default)(array2, item);
+	  });
+	};
+	
+	/**
+	 * wait to assign the raf until mount, so it has access to the
+	 * window object
+	 *
+	 * @returns {function}
+	 */
+	var getRequestAnimationFrame = function getRequestAnimationFrame() {
+	  return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (callback) {
+	    window.setTimeout(callback, 1000 / 60);
+	  };
+	};
+	
+	/**
 	 * based on their existence in keysToTestAgainst, determine which of the keys
 	 * passed are considered valid
 	 *
-	 * @param {array<string>} keys
-	 * @param {array<string>} keysToTestAgainst
-	 * @returns {array<string>}
+	 * @param {Array<string>} keys
+	 * @param {Array<string>} keysToTestAgainst
+	 * @returns {Array<string>}
 	 */
 	var getValidKeys = function getValidKeys(keys, keysToTestAgainst) {
-	  var validKeys = [];
-	
-	  forEach(keys, function (key) {
-	    if (arrayContains(keysToTestAgainst, key)) {
-	      validKeys.push(key);
-	    }
+	  return keys.filter(function (key) {
+	    return (0, _includes2.default)(keysToTestAgainst, key);
 	  });
-	
-	  return validKeys;
 	};
 	
 	/**
 	 * get the position and size, and booleans to identify they're
 	 * intended existence in state
 	 *
-	 * @param {array<string>} keys
-	 * @param {object} currentState
-	 * @returns {{hasPosition: boolean, hasSize: boolean, position: object, size: object}}
+	 * @param {Array<string>} keys
+	 * @param {Object} currentState
+	 * @returns {{hasPosition: boolean, hasSize: boolean, position: Object, size: Object}}
 	 */
 	var getValuesProperties = function getValuesProperties(keys, currentState) {
-	  if (isArray(keys)) {
+	  if ((0, _isArray2.default)(keys)) {
 	    var _ret = function () {
 	      var position = {},
 	          size = {},
 	          hasPosition = false,
 	          hasSize = false;
 	
-	      forEach(keys, function (key) {
-	        if (arrayContains(_constants.ALL_POSITION_KEYS, key)) {
+	      keys.forEach(function (key) {
+	        if ((0, _includes2.default)(_constants.ALL_POSITION_KEYS, key)) {
 	          position[key] = currentState[key];
 	          hasPosition = true;
-	        } else if (arrayContains(_constants.ALL_SIZE_KEYS, key)) {
+	        } else if ((0, _includes2.default)(_constants.ALL_SIZE_KEYS, key)) {
 	          size[key] = currentState[key];
 	          hasSize = true;
 	        }
@@ -369,11 +547,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * or size or both properties that are objects containing the respective
 	 * values for the associated keys
 	 *
-	 * @param {array<string>} keys
-	 * @param {object} currentState
+	 * @param {Array<string>} keys
+	 * @param {Object} currentState
 	 * @param {string} positionProp
 	 * @param {string} sizeProp
-	 * @returns {object}
+	 * @returns {Object}
 	 */
 	var getValues = function getValues(keys, currentState, _ref) {
 	  var positionProp = _ref.positionProp;
@@ -404,41 +582,125 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * iterate through keys and determine if the values have
 	 * changed compared to what is stored in state
 	 *
-	 * @param {array<string>} keys
-	 * @param {object} values
-	 * @param {object} currentState
+	 * @param {Array<string>} keys
+	 * @param {Object} values
+	 * @param {Object} currentState
 	 * @returns {boolean}
 	 */
 	var haveValuesChanged = function haveValuesChanged(keys, values, currentState) {
-	  var index = -1,
-	      key = void 0;
-	
-	  while (++index < keys.length) {
-	    key = keys[index];
-	
-	    if (values[key] !== currentState[key]) {
-	      return true;
-	    }
-	  }
-	
-	  return false;
+	  return keys.some(function (key) {
+	    return values[key] !== currentState[key];
+	  });
 	};
 	
-	exports.arrayContains = arrayContains;
-	exports.arraySubset = arraySubset;
+	/**
+	 * based on desiredKeys, build the initialState object
+	 *
+	 * @param {Array<string>} allKeys
+	 * @param {Array<string>} desiredKeys
+	 * @returns {Array<T>}
+	 */
+	var reduceStateToMatchingKeys = function reduceStateToMatchingKeys(allKeys, desiredKeys) {
+	  return allKeys.reduce(function (accumulatedInitialState, key) {
+	    if ((0, _includes2.default)(desiredKeys, key)) {
+	      accumulatedInitialState[key] = 0;
+	    }
+	
+	    return accumulatedInitialState;
+	  }, {});
+	};
+	
+	exports.getArraySubset = getArraySubset;
 	exports.createObjectFromKeys = createObjectFromKeys;
-	exports.forEach = forEach;
 	exports.getNaturalDimensionValue = getNaturalDimensionValue;
+	exports.getRequestAnimationFrame = getRequestAnimationFrame;
 	exports.getValidKeys = getValidKeys;
 	exports.getValues = getValues;
 	exports.haveValuesChanged = haveValuesChanged;
-	exports.isArray = isArray;
-	exports.isObject = isObject;
-	exports.isString = isString;
-	exports.isUndefined = isUndefined;
+	exports.reduceStateToMatchingKeys = reduceStateToMatchingKeys;
 
 /***/ },
-/* 3 */
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseIndexOf = __webpack_require__(10);
+	
+	/**
+	 * A specialized version of `_.includes` for arrays without support for
+	 * specifying an index to search from.
+	 *
+	 * @private
+	 * @param {Array} [array] The array to inspect.
+	 * @param {*} target The value to search for.
+	 * @returns {boolean} Returns `true` if `target` is found, else `false`.
+	 */
+	function arrayIncludes(array, value) {
+	  var length = array ? array.length : 0;
+	  return !!length && baseIndexOf(array, value, 0) > -1;
+	}
+	
+	module.exports = arrayIncludes;
+
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	/**
+	 * A specialized version of `_.indexOf` which performs strict equality
+	 * comparisons of values, i.e. `===`.
+	 *
+	 * @private
+	 * @param {Array} array The array to inspect.
+	 * @param {*} value The value to search for.
+	 * @param {number} fromIndex The index to search from.
+	 * @returns {number} Returns the index of the matched value, else `-1`.
+	 */
+	function strictIndexOf(array, value, fromIndex) {
+	  var index = fromIndex - 1,
+	      length = array.length;
+	
+	  while (++index < length) {
+	    if (array[index] === value) {
+	      return index;
+	    }
+	  }
+	  return -1;
+	}
+	
+	module.exports = strictIndexOf;
+
+
+/***/ },
+/* 11 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if `value` is `undefined`.
+	 *
+	 * @static
+	 * @since 0.1.0
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is `undefined`, else `false`.
+	 * @example
+	 *
+	 * _.isUndefined(void 0);
+	 * // => true
+	 *
+	 * _.isUndefined(null);
+	 * // => false
+	 */
+	function isUndefined(value) {
+	  return value === undefined;
+	}
+	
+	module.exports = isUndefined;
+
+
+/***/ },
+/* 12 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -449,6 +711,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 	
+	var DEBOUNCE_VALUE_DEFAULT = 0;
 	var POSITION_PROP_DEFAULT = 'position';
 	var RENDER_ON_RESIZE_DEFAULT = true;
 	var SIZE_PROP_DEFAULT = 'size';
@@ -463,6 +726,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var DOM_ELEMENT_SIZE_KEYS = ['clientHeight', 'clientWidth', 'naturalHeight', 'naturalWidth', 'offsetHeight', 'offsetWidth', 'scrollHeight', 'scrollWidth'];
 	
+	var NATURAL_REGEXP = /natural/;
+	
+	var VOID_ELEMENT_TAG_NAMES = ['AREA', 'BASE', 'BR', 'COL', 'EMBED', 'HR', 'IMG', 'INPUT', 'LINK', 'MENUITEM', 'META', 'PARAM', 'SOURCE', 'TRACK', 'WBR'];
+	
 	var ALL_DOM_ELEMENT_KEYS = [].concat(DOM_ELEMENT_POSITION_KEYS, DOM_ELEMENT_SIZE_KEYS);
 	
 	var ALL_POSITION_KEYS = [].concat(DOM_ELEMENT_POSITION_KEYS, BOUNDING_CLIENT_RECT_POSITION_KEYS);
@@ -471,16 +738,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var ALL_KEYS = [].concat(_toConsumableArray(ALL_POSITION_KEYS), _toConsumableArray(ALL_SIZE_KEYS));
 	
-	var initialState = {},
-	    index = ALL_KEYS.length,
-	    key = void 0;
-	
-	while (index--) {
-	  key = ALL_KEYS[index];
-	
-	  initialState[key] = 0;
-	}
-	
 	exports.ALL_BOUNDING_CLIENT_RECT_KEYS = ALL_BOUNDING_CLIENT_RECT_KEYS;
 	exports.ALL_DOM_ELEMENT_KEYS = ALL_DOM_ELEMENT_KEYS;
 	exports.ALL_KEYS = ALL_KEYS;
@@ -488,15 +745,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.ALL_SIZE_KEYS = ALL_SIZE_KEYS;
 	exports.BOUNDING_CLIENT_RECT_POSITION_KEYS = BOUNDING_CLIENT_RECT_POSITION_KEYS;
 	exports.BOUNDING_CLIENT_RECT_SIZE_KEYS = BOUNDING_CLIENT_RECT_SIZE_KEYS;
+	exports.DEBOUNCE_VALUE_DEFAULT = DEBOUNCE_VALUE_DEFAULT;
 	exports.DOM_ELEMENT_POSITION_KEYS = DOM_ELEMENT_POSITION_KEYS;
 	exports.DOM_ELEMENT_SIZE_KEYS = DOM_ELEMENT_SIZE_KEYS;
-	exports.initialState = initialState;
+	exports.NATURAL_REGEXP = NATURAL_REGEXP;
 	exports.POSITION_PROP_DEFAULT = POSITION_PROP_DEFAULT;
 	exports.RENDER_ON_RESIZE_DEFAULT = RENDER_ON_RESIZE_DEFAULT;
 	exports.SIZE_PROP_DEFAULT = SIZE_PROP_DEFAULT;
+	exports.VOID_ELEMENT_TAG_NAMES = VOID_ELEMENT_TAG_NAMES;
 
 /***/ },
-/* 4 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -505,9 +764,39 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; // external dependencies
+	var _elementResizeEvent = __webpack_require__(14);
+	
+	var _elementResizeEvent2 = _interopRequireDefault(_elementResizeEvent);
+	
+	var _debounce = __webpack_require__(15);
+	
+	var _debounce2 = _interopRequireDefault(_debounce);
+	
+	var _includes = __webpack_require__(9);
+	
+	var _includes2 = _interopRequireDefault(_includes);
+	
+	var _react = __webpack_require__(21);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactDom = __webpack_require__(22);
+	
+	var _utils = __webpack_require__(8);
+	
+	var _constants = __webpack_require__(12);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // external dependencies
 	
 	
 	// utils
@@ -516,58 +805,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	// constants
 	
 	
-	var _elementResizeEvent = __webpack_require__(5);
-	
-	var _elementResizeEvent2 = _interopRequireDefault(_elementResizeEvent);
-	
-	var _react = __webpack_require__(6);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactDom = __webpack_require__(7);
-	
-	var _utils = __webpack_require__(2);
-	
-	var _constants = __webpack_require__(3);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-	
 	var raf = void 0;
-	
-	/**
-	 * wait to assign the raf until mount, so it has access to the
-	 * window object
-	 */
-	var setRaf = function setRaf() {
-	  raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (callback) {
-	    window.setTimeout(callback, 1000 / 60);
-	  };
-	};
-	
-	/**
-	 * based on desiredKeys, build the initialState object
-	 *
-	 * @param {array<string>} allKeys
-	 * @param {array<string>} desiredKeys
-	 * @returns {array<T>}
-	 */
-	var reduceStateToMatchingKeys = function reduceStateToMatchingKeys(allKeys, desiredKeys) {
-	  return allKeys.reduce(function (accumulatedInitialState, key) {
-	    if (desiredKeys.includes(key)) {
-	      return _extends({}, accumulatedInitialState, _defineProperty({}, key, 0));
-	    }
-	
-	    return accumulatedInitialState;
-	  }, {});
-	};
 	
 	/**
 	 * create the HOC that injects the position and size props
@@ -575,12 +813,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * for one or both of those)
 	 *
 	 * @param {Component} OriginalComponent
-	 * @param {array<string>} keys
-	 * @param {object} options={}
+	 * @param {Array<string>} keys
+	 * @param {Object} options={}
 	 * @returns {RemeasureComponent}
 	 */
 	var getHigherOrderComponent = function getHigherOrderComponent(OriginalComponent, keys) {
 	  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+	  var _options$debounce = options.debounce;
+	  var debounceValue = _options$debounce === undefined ? _constants.DEBOUNCE_VALUE_DEFAULT : _options$debounce;
 	  var _options$positionProp = options.positionProp;
 	  var positionProp = _options$positionProp === undefined ? _constants.POSITION_PROP_DEFAULT : _options$positionProp;
 	  var _options$renderOnResi = options.renderOnResize;
@@ -594,12 +834,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    sizeProp: sizeProp
 	  };
 	
-	  var boundingClientRectKeys = (0, _utils.arraySubset)(_constants.ALL_BOUNDING_CLIENT_RECT_KEYS, keys);
-	  var domElementKeys = (0, _utils.arraySubset)(_constants.ALL_DOM_ELEMENT_KEYS, keys);
-	  var initialState = reduceStateToMatchingKeys(_constants.ALL_KEYS, keys);
+	  var boundingClientRectKeys = (0, _utils.getArraySubset)(_constants.ALL_BOUNDING_CLIENT_RECT_KEYS, keys);
+	  var domElementKeys = (0, _utils.getArraySubset)(_constants.ALL_DOM_ELEMENT_KEYS, keys);
+	  var initialState = (0, _utils.reduceStateToMatchingKeys)(_constants.ALL_KEYS, keys);
 	
 	  if (!raf) {
-	    setRaf();
+	    raf = (0, _utils.getRequestAnimationFrame)();
 	  }
 	
 	  var RemeasureComponent = function (_Component) {
@@ -616,7 +856,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        args[_key] = arguments[_key];
 	      }
 	
-	      return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = RemeasureComponent.__proto__ || Object.getPrototypeOf(RemeasureComponent)).call.apply(_ref, [this].concat(args))), _this), _this.state = initialState, _this.domElement = null, _this.setDomElement = function () {
+	      return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = RemeasureComponent.__proto__ || Object.getPrototypeOf(RemeasureComponent)).call.apply(_ref, [this].concat(args))), _this), _this.state = initialState, _this.domElement = null, _this.debouncedSetValues = (0, _debounce2.default)(function () {
+	        if (_this.domElement) {
+	          _this.setStateIfChanged();
+	        }
+	      }, debounceValue || _constants.DEBOUNCE_VALUE_DEFAULT), _this.setDomElement = function () {
 	        var domElement = (0, _reactDom.findDOMNode)(_this);
 	
 	        if (domElement) {
@@ -624,21 +868,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	          _this.setOnResize();
 	        }
 	      }, _this.setOnResize = function () {
-	        if (renderOnResize) {
-	          (0, _elementResizeEvent2.default)(_this.domElement, _this.setValues);
+	        if (renderOnResize && !(0, _includes2.default)(_constants.VOID_ELEMENT_TAG_NAMES, _this.domElement.tagName.toUpperCase())) {
+	          var resizeFunction = debounceValue ? _this.debouncedSetValues : _this.setValues;
+	
+	          (0, _elementResizeEvent2.default)(_this.domElement, resizeFunction);
+	        }
+	      }, _this.setStateIfChanged = function () {
+	        var domElement = _this.domElement;
+	        var boundingClientRect = domElement.getBoundingClientRect();
+	
+	        var values = _extends({}, (0, _utils.createObjectFromKeys)(boundingClientRectKeys, boundingClientRect), (0, _utils.createObjectFromKeys)(domElementKeys, domElement));
+	
+	        if ((0, _utils.haveValuesChanged)(keys, values, _this.state)) {
+	          _this.setState(values);
 	        }
 	      }, _this.setValues = function () {
 	        if (_this.domElement) {
-	          raf(function () {
-	            var domElement = _this.domElement;
-	            var boundingClientRect = domElement.getBoundingClientRect();
-	
-	            var values = _extends({}, (0, _utils.createObjectFromKeys)(boundingClientRectKeys, boundingClientRect), (0, _utils.createObjectFromKeys)(domElementKeys, domElement));
-	
-	            if ((0, _utils.haveValuesChanged)(keys, values, _this.state)) {
-	              _this.setState(values);
-	            }
-	          });
+	          raf(_this.setStateIfChanged);
 	        }
 	      }, _temp), _possibleConstructorReturn(_this, _ret);
 	    }
@@ -668,6 +914,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	
 	      /**
+	       * debounce the assignment of new state if the debounceValue is provided
+	       */
+	
+	
+	      /**
+	       * set the domElement associated with the instance
+	       */
+	
+	
+	      /**
+	       * set the onResize function if renderOnResize is true
+	       */
+	
+	
+	      /**
+	       * update the state of the HOC if any of the values requested have changed
+	       */
+	
+	
+	      /**
 	       * based on the current DOM element, get the values
 	       * and determine if the state should be updated (only
 	       * if things have changed)
@@ -690,7 +956,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 5 */
+/* 14 */
 /***/ function(module, exports) {
 
 	var exports = function exports(element, fn) {
@@ -790,16 +1056,329 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 6 */
-/***/ function(module, exports) {
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_6__;
+	var isObject = __webpack_require__(16),
+	    now = __webpack_require__(17),
+	    toNumber = __webpack_require__(20);
+	
+	/** Error message constants. */
+	var FUNC_ERROR_TEXT = 'Expected a function';
+	
+	/* Built-in method references for those with the same name as other `lodash` methods. */
+	var nativeMax = Math.max,
+	    nativeMin = Math.min;
+	
+	/**
+	 * Creates a debounced function that delays invoking `func` until after `wait`
+	 * milliseconds have elapsed since the last time the debounced function was
+	 * invoked. The debounced function comes with a `cancel` method to cancel
+	 * delayed `func` invocations and a `flush` method to immediately invoke them.
+	 * Provide `options` to indicate whether `func` should be invoked on the
+	 * leading and/or trailing edge of the `wait` timeout. The `func` is invoked
+	 * with the last arguments provided to the debounced function. Subsequent
+	 * calls to the debounced function return the result of the last `func`
+	 * invocation.
+	 *
+	 * **Note:** If `leading` and `trailing` options are `true`, `func` is
+	 * invoked on the trailing edge of the timeout only if the debounced function
+	 * is invoked more than once during the `wait` timeout.
+	 *
+	 * If `wait` is `0` and `leading` is `false`, `func` invocation is deferred
+	 * until to the next tick, similar to `setTimeout` with a timeout of `0`.
+	 *
+	 * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
+	 * for details over the differences between `_.debounce` and `_.throttle`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.1.0
+	 * @category Function
+	 * @param {Function} func The function to debounce.
+	 * @param {number} [wait=0] The number of milliseconds to delay.
+	 * @param {Object} [options={}] The options object.
+	 * @param {boolean} [options.leading=false]
+	 *  Specify invoking on the leading edge of the timeout.
+	 * @param {number} [options.maxWait]
+	 *  The maximum time `func` is allowed to be delayed before it's invoked.
+	 * @param {boolean} [options.trailing=true]
+	 *  Specify invoking on the trailing edge of the timeout.
+	 * @returns {Function} Returns the new debounced function.
+	 * @example
+	 *
+	 * // Avoid costly calculations while the window size is in flux.
+	 * jQuery(window).on('resize', _.debounce(calculateLayout, 150));
+	 *
+	 * // Invoke `sendMail` when clicked, debouncing subsequent calls.
+	 * jQuery(element).on('click', _.debounce(sendMail, 300, {
+	 *   'leading': true,
+	 *   'trailing': false
+	 * }));
+	 *
+	 * // Ensure `batchLog` is invoked once after 1 second of debounced calls.
+	 * var debounced = _.debounce(batchLog, 250, { 'maxWait': 1000 });
+	 * var source = new EventSource('/stream');
+	 * jQuery(source).on('message', debounced);
+	 *
+	 * // Cancel the trailing debounced invocation.
+	 * jQuery(window).on('popstate', debounced.cancel);
+	 */
+	function debounce(func, wait, options) {
+	  var lastArgs,
+	      lastThis,
+	      maxWait,
+	      result,
+	      timerId,
+	      lastCallTime,
+	      lastInvokeTime = 0,
+	      leading = false,
+	      maxing = false,
+	      trailing = true;
+	
+	  if (typeof func != 'function') {
+	    throw new TypeError(FUNC_ERROR_TEXT);
+	  }
+	  wait = toNumber(wait) || 0;
+	  if (isObject(options)) {
+	    leading = !!options.leading;
+	    maxing = 'maxWait' in options;
+	    maxWait = maxing ? nativeMax(toNumber(options.maxWait) || 0, wait) : maxWait;
+	    trailing = 'trailing' in options ? !!options.trailing : trailing;
+	  }
+	
+	  function invokeFunc(time) {
+	    var args = lastArgs,
+	        thisArg = lastThis;
+	
+	    lastArgs = lastThis = undefined;
+	    lastInvokeTime = time;
+	    result = func.apply(thisArg, args);
+	    return result;
+	  }
+	
+	  function leadingEdge(time) {
+	    // Reset any `maxWait` timer.
+	    lastInvokeTime = time;
+	    // Start the timer for the trailing edge.
+	    timerId = setTimeout(timerExpired, wait);
+	    // Invoke the leading edge.
+	    return leading ? invokeFunc(time) : result;
+	  }
+	
+	  function remainingWait(time) {
+	    var timeSinceLastCall = time - lastCallTime,
+	        timeSinceLastInvoke = time - lastInvokeTime,
+	        result = wait - timeSinceLastCall;
+	
+	    return maxing ? nativeMin(result, maxWait - timeSinceLastInvoke) : result;
+	  }
+	
+	  function shouldInvoke(time) {
+	    var timeSinceLastCall = time - lastCallTime,
+	        timeSinceLastInvoke = time - lastInvokeTime;
+	
+	    // Either this is the first call, activity has stopped and we're at the
+	    // trailing edge, the system time has gone backwards and we're treating
+	    // it as the trailing edge, or we've hit the `maxWait` limit.
+	    return (lastCallTime === undefined || (timeSinceLastCall >= wait) ||
+	      (timeSinceLastCall < 0) || (maxing && timeSinceLastInvoke >= maxWait));
+	  }
+	
+	  function timerExpired() {
+	    var time = now();
+	    if (shouldInvoke(time)) {
+	      return trailingEdge(time);
+	    }
+	    // Restart the timer.
+	    timerId = setTimeout(timerExpired, remainingWait(time));
+	  }
+	
+	  function trailingEdge(time) {
+	    timerId = undefined;
+	
+	    // Only invoke if we have `lastArgs` which means `func` has been
+	    // debounced at least once.
+	    if (trailing && lastArgs) {
+	      return invokeFunc(time);
+	    }
+	    lastArgs = lastThis = undefined;
+	    return result;
+	  }
+	
+	  function cancel() {
+	    if (timerId !== undefined) {
+	      clearTimeout(timerId);
+	    }
+	    lastInvokeTime = 0;
+	    lastArgs = lastCallTime = lastThis = timerId = undefined;
+	  }
+	
+	  function flush() {
+	    return timerId === undefined ? result : trailingEdge(now());
+	  }
+	
+	  function debounced() {
+	    var time = now(),
+	        isInvoking = shouldInvoke(time);
+	
+	    lastArgs = arguments;
+	    lastThis = this;
+	    lastCallTime = time;
+	
+	    if (isInvoking) {
+	      if (timerId === undefined) {
+	        return leadingEdge(lastCallTime);
+	      }
+	      if (maxing) {
+	        // Handle invocations in a tight loop.
+	        timerId = setTimeout(timerExpired, wait);
+	        return invokeFunc(lastCallTime);
+	      }
+	    }
+	    if (timerId === undefined) {
+	      timerId = setTimeout(timerExpired, wait);
+	    }
+	    return result;
+	  }
+	  debounced.cancel = cancel;
+	  debounced.flush = flush;
+	  return debounced;
+	}
+	
+	module.exports = debounce;
+
 
 /***/ },
-/* 7 */
+/* 16 */
 /***/ function(module, exports) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_7__;
+	/**
+	 * Checks if `value` is the
+	 * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
+	 * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.1.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+	 * @example
+	 *
+	 * _.isObject({});
+	 * // => true
+	 *
+	 * _.isObject([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObject(_.noop);
+	 * // => true
+	 *
+	 * _.isObject(null);
+	 * // => false
+	 */
+	function isObject(value) {
+	  var type = typeof value;
+	  return value != null && (type == 'object' || type == 'function');
+	}
+	
+	module.exports = isObject;
+
+
+/***/ },
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var root = __webpack_require__(18);
+	
+	/**
+	 * Gets the timestamp of the number of milliseconds that have elapsed since
+	 * the Unix epoch (1 January 1970 00:00:00 UTC).
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 2.4.0
+	 * @category Date
+	 * @returns {number} Returns the timestamp.
+	 * @example
+	 *
+	 * _.defer(function(stamp) {
+	 *   console.log(_.now() - stamp);
+	 * }, _.now());
+	 * // => Logs the number of milliseconds it took for the deferred invocation.
+	 */
+	var now = function() {
+	  return root.Date.now();
+	};
+	
+	module.exports = now;
+
+
+/***/ },
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var freeGlobal = __webpack_require__(19);
+	
+	/** Detect free variable `self`. */
+	var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+	
+	/** Used as a reference to the global object. */
+	var root = freeGlobal || freeSelf || Function('return this')();
+	
+	module.exports = root;
+
+
+/***/ },
+/* 19 */
+/***/ function(module, exports) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
+	var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
+	
+	module.exports = freeGlobal;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 20 */
+/***/ function(module, exports) {
+
+	/**
+	 * This method returns the first argument it receives.
+	 *
+	 * @static
+	 * @since 0.1.0
+	 * @memberOf _
+	 * @category Util
+	 * @param {*} value Any value.
+	 * @returns {*} Returns `value`.
+	 * @example
+	 *
+	 * var object = { 'a': 1 };
+	 *
+	 * console.log(_.identity(object) === object);
+	 * // => true
+	 */
+	function identity(value) {
+	  return value;
+	}
+	
+	module.exports = identity;
+
+
+/***/ },
+/* 21 */
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_21__;
+
+/***/ },
+/* 22 */
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_22__;
 
 /***/ }
 /******/ ])

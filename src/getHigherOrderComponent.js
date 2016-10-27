@@ -1,5 +1,7 @@
 // external dependencies
 import onElementResize from 'element-resize-event';
+import debounce from 'lodash/debounce';
+import includes from 'lodash/includes';
 import React, {
   Component
 } from 'react';
@@ -9,10 +11,12 @@ import {
 
 // utils
 import {
-  arraySubset,
   createObjectFromKeys,
+  getArraySubset,
+  getRequestAnimationFrame,
   getValues,
-  haveValuesChanged
+  haveValuesChanged,
+  reduceStateToMatchingKeys
 } from './utils';
 
 // constants
@@ -20,47 +24,14 @@ import {
   ALL_BOUNDING_CLIENT_RECT_KEYS,
   ALL_DOM_ELEMENT_KEYS,
   ALL_KEYS,
+  DEBOUNCE_VALUE_DEFAULT,
   POSITION_PROP_DEFAULT,
   RENDER_ON_RESIZE_DEFAULT,
-  SIZE_PROP_DEFAULT
+  SIZE_PROP_DEFAULT,
+  VOID_ELEMENT_TAG_NAMES
 } from './constants';
 
 let raf;
-
-/**
- * wait to assign the raf until mount, so it has access to the
- * window object
- */
-const setRaf = () => {
-  raf = (
-    window.requestAnimationFrame ||
-    window.webkitRequestAnimationFrame ||
-    window.mozRequestAnimationFrame ||
-    function(callback) {
-      window.setTimeout(callback, 1000 / 60);
-    }
-  );
-};
-
-/**
- * based on desiredKeys, build the initialState object
- *
- * @param {array<string>} allKeys
- * @param {array<string>} desiredKeys
- * @returns {array<T>}
- */
-const reduceStateToMatchingKeys = (allKeys, desiredKeys) => {
-  return allKeys.reduce((accumulatedInitialState, key) => {
-    if (desiredKeys.includes(key)) {
-      return {
-        ...accumulatedInitialState,
-        [key]: 0
-      };
-    }
-
-    return accumulatedInitialState;
-  }, {});
-};
 
 /**
  * create the HOC that injects the position and size props
@@ -68,12 +39,13 @@ const reduceStateToMatchingKeys = (allKeys, desiredKeys) => {
  * for one or both of those)
  *
  * @param {Component} OriginalComponent
- * @param {array<string>} keys
- * @param {object} options={}
+ * @param {Array<string>} keys
+ * @param {Object} options={}
  * @returns {RemeasureComponent}
  */
 const getHigherOrderComponent = (OriginalComponent, keys, options = {}) => {
   const {
+    debounce: debounceValue = DEBOUNCE_VALUE_DEFAULT,
     positionProp = POSITION_PROP_DEFAULT,
     renderOnResize = RENDER_ON_RESIZE_DEFAULT,
     sizeProp = SIZE_PROP_DEFAULT
@@ -84,12 +56,12 @@ const getHigherOrderComponent = (OriginalComponent, keys, options = {}) => {
     sizeProp
   };
 
-  const boundingClientRectKeys = arraySubset(ALL_BOUNDING_CLIENT_RECT_KEYS, keys);
-  const domElementKeys = arraySubset(ALL_DOM_ELEMENT_KEYS, keys);
+  const boundingClientRectKeys = getArraySubset(ALL_BOUNDING_CLIENT_RECT_KEYS, keys);
+  const domElementKeys = getArraySubset(ALL_DOM_ELEMENT_KEYS, keys);
   const initialState = reduceStateToMatchingKeys(ALL_KEYS, keys);
 
   if (!raf) {
-    setRaf();
+    raf = getRequestAnimationFrame();
   }
 
   class RemeasureComponent extends Component {
@@ -117,6 +89,19 @@ const getHigherOrderComponent = (OriginalComponent, keys, options = {}) => {
 
     domElement = null;
 
+    /**
+     * debounce the assignment of new state if the debounceValue is provided
+     */
+    debouncedSetValues = debounce(() => {
+      if (this.domElement) {
+        this.setStateIfChanged();
+      }
+
+    }, debounceValue || DEBOUNCE_VALUE_DEFAULT);
+
+    /**
+     * set the domElement associated with the instance
+     */
     setDomElement = () => {
       const domElement = findDOMNode(this);
 
@@ -126,9 +111,31 @@ const getHigherOrderComponent = (OriginalComponent, keys, options = {}) => {
       }
     };
 
+    /**
+     * set the onResize function if renderOnResize is true
+     */
     setOnResize = () => {
-      if (renderOnResize) {
-        onElementResize(this.domElement, this.setValues);
+      if (renderOnResize && !includes(VOID_ELEMENT_TAG_NAMES, this.domElement.tagName.toUpperCase())) {
+        const resizeFunction = debounceValue ? this.debouncedSetValues : this.setValues;
+
+        onElementResize(this.domElement, resizeFunction);
+      }
+    };
+
+    /**
+     * update the state of the HOC if any of the values requested have changed
+     */
+    setStateIfChanged = () => {
+      const domElement = this.domElement;
+      const boundingClientRect = domElement.getBoundingClientRect();
+
+      const values = {
+        ...createObjectFromKeys(boundingClientRectKeys, boundingClientRect),
+        ...createObjectFromKeys(domElementKeys, domElement)
+      };
+
+      if (haveValuesChanged(keys, values, this.state)) {
+        this.setState(values);
       }
     };
 
@@ -139,19 +146,7 @@ const getHigherOrderComponent = (OriginalComponent, keys, options = {}) => {
      */
     setValues = () => {
       if (this.domElement) {
-        raf(() => {
-          const domElement = this.domElement;
-          const boundingClientRect = domElement.getBoundingClientRect();
-
-          const values = {
-            ...createObjectFromKeys(boundingClientRectKeys, boundingClientRect),
-            ...createObjectFromKeys(domElementKeys, domElement)
-          };
-
-          if (haveValuesChanged(keys, values, this.state)) {
-            this.setState(values);
-          }
-        });
+        raf(this.setStateIfChanged);
       }
     };
 

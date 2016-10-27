@@ -30,7 +30,7 @@ const TestStateless = measure(() => {
 });
 
 const options = {
-  renderOnResize: false
+  debounce: true
 };
 
 @measure(options)
