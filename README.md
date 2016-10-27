@@ -144,9 +144,19 @@ You can also pass an object with any of the following propeties (defaults shown)
    
 ```javascript
 {
-    debounce: Number, // value in milliseconds
+    // value in milliseconds to debounce rerenders
+    debounce: Number,
+    
+    // should the properties not be grouped under position / size
+    flatten: Boolean = false,
+    
+    // sets position property name
     positionProp: String = 'position',
+    
+    // should element rerender when resized
     renderOnResize: Boolean = true,
+    
+    // sets size property name
     sizeProp: String = 'size'
 }
 ```
@@ -154,14 +164,8 @@ You can also pass an object with any of the following propeties (defaults shown)
 These will serve as options for the instance `remeasure` is applied to. For example, if you want all position-related properties to be injected under the prop `foo` and the size-related properties to be injected under the prop `bar`, you can do this:
 
 ```javascript
-const FOO_BAR_OPTIONS = {
-    debounce: 50,
-    positionProp: 'foo',
-    sizeProp: 'bar'
-};
-
 // use the options by themselves
-@measure(FOO_BAR_OPTIONS)
+@measure({positionProp: 'foo', sizeProp: 'bar'})
 class MyComponent extends Component {
     render() {
         const {
@@ -178,9 +182,9 @@ class MyComponent extends Component {
 }
 
 // or you can use them with keys
-const measureWithKeysAndOptions = measure(['height', 'width'], FOO_BAR_OPTIONS);
+const measureWithKeysAndOptions = measure(['height', 'width'], {debounce: 50, flatten: true});
 
-const MyStatelessComponent = measureWithKeysAndOptions(({foo, bar}) => {
+const MyStatelessComponent = measureWithKeysAndOptions(({height, width}) => {
     return (
         <div>
             You can still pass options when you want to specify keys, as the
@@ -190,7 +194,7 @@ const MyStatelessComponent = measureWithKeysAndOptions(({foo, bar}) => {
 };
 
 // you can even use the custom props with the shorthand notation
-@measure('bar', FOO_BAR_OPTIONS)
+@measure('bar', {sizeProp: 'bar'})
 class MySizedComponent extends Component {
     render() {
         return (

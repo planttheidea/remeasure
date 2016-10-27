@@ -542,6 +542,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 	};
 	
+	/* eslint-disable valid-jsdoc */
 	/**
 	 * based on the keys passed, create an object with either position
 	 * or size or both properties that are objects containing the respective
@@ -551,9 +552,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {Object} currentState
 	 * @param {string} positionProp
 	 * @param {string} sizeProp
+	 * @param {boolean} isFlattened
 	 * @returns {Object}
 	 */
-	var getValues = function getValues(keys, currentState, _ref) {
+	/* eslint-enabled */
+	var getValues = function getValues(keys, currentState, _ref, isFlattened) {
 	  var positionProp = _ref.positionProp;
 	  var sizeProp = _ref.sizeProp;
 	
@@ -566,6 +569,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  var values = {};
+	
+	  if (isFlattened) {
+	    return _extends({}, hasSize ? size : null, hasPosition ? position : null);
+	  }
 	
 	  if (hasSize) {
 	    values[sizeProp] = size;
@@ -712,6 +719,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 	
 	var DEBOUNCE_VALUE_DEFAULT = 0;
+	var FLATTEN_DEFAULT = false;
 	var POSITION_PROP_DEFAULT = 'position';
 	var RENDER_ON_RESIZE_DEFAULT = true;
 	var SIZE_PROP_DEFAULT = 'size';
@@ -748,6 +756,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.DEBOUNCE_VALUE_DEFAULT = DEBOUNCE_VALUE_DEFAULT;
 	exports.DOM_ELEMENT_POSITION_KEYS = DOM_ELEMENT_POSITION_KEYS;
 	exports.DOM_ELEMENT_SIZE_KEYS = DOM_ELEMENT_SIZE_KEYS;
+	exports.FLATTEN_DEFAULT = FLATTEN_DEFAULT;
 	exports.NATURAL_REGEXP = NATURAL_REGEXP;
 	exports.POSITION_PROP_DEFAULT = POSITION_PROP_DEFAULT;
 	exports.RENDER_ON_RESIZE_DEFAULT = RENDER_ON_RESIZE_DEFAULT;
@@ -821,6 +830,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 	  var _options$debounce = options.debounce;
 	  var debounceValue = _options$debounce === undefined ? _constants.DEBOUNCE_VALUE_DEFAULT : _options$debounce;
+	  var _options$flatten = options.flatten;
+	  var flatten = _options$flatten === undefined ? _constants.FLATTEN_DEFAULT : _options$flatten;
 	  var _options$positionProp = options.positionProp;
 	  var positionProp = _options$positionProp === undefined ? _constants.POSITION_PROP_DEFAULT : _options$positionProp;
 	  var _options$renderOnResi = options.renderOnResize;
@@ -942,7 +953,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	      key: 'render',
 	      value: function render() {
-	        return _react2.default.createElement(OriginalComponent, _extends({}, this.props, (0, _utils.getValues)(keys, this.state, propKeyNames)));
+	        return _react2.default.createElement(OriginalComponent, _extends({}, this.props, (0, _utils.getValues)(keys, this.state, propKeyNames, flatten)));
 	      }
 	    }]);
 	

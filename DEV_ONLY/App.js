@@ -32,6 +32,10 @@ const options = {
   sizeProp: 'bar'
 };
 
+const otherOptions = {
+  flatten: true
+};
+
 @measure
 class Div extends Component {
   render() {
@@ -39,10 +43,10 @@ class Div extends Component {
       children
     } = this.props;
 
-    console.group('Div');
-    console.log('div position', this.props.position);
-    console.log('div size', this.props.size);
-    console.groupEnd();
+    // console.group('Div');
+    // console.log('div position', this.props.position);
+    // console.log('div size', this.props.size);
+    // console.groupEnd();
 
     return (
       <div style={DIV_STYLES}>
@@ -74,17 +78,16 @@ class AnotherDiv extends Component {
   }
 }
 
-@measure('size')
+@measure('size', otherOptions)
 class Section extends Component {
   render() {
     const {
       children
     } = this.props;
 
-    // console.group('Section');
-    // console.log('section position', this.props.position);
-    // console.log('section size', this.props.size);
-    // console.groupEnd();
+    console.group('Section');
+    console.log('section props', this.props);
+    console.groupEnd();
 
     return (
       <section style={SECTION_STYLES}>

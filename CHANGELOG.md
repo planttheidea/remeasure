@@ -1,5 +1,8 @@
 # remeasure changelog
 
+#### 1.6.0
+* Add `flatten` option, to prevent grouping under `position` and `size` properties
+
 #### 1.5.0
 * Add `debounce` option, to debounce recalculation on resize
 

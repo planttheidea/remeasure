@@ -25,6 +25,7 @@ import {
   ALL_DOM_ELEMENT_KEYS,
   ALL_KEYS,
   DEBOUNCE_VALUE_DEFAULT,
+  FLATTEN_DEFAULT,
   POSITION_PROP_DEFAULT,
   RENDER_ON_RESIZE_DEFAULT,
   SIZE_PROP_DEFAULT,
@@ -46,6 +47,7 @@ let raf;
 const getHigherOrderComponent = (OriginalComponent, keys, options = {}) => {
   const {
     debounce: debounceValue = DEBOUNCE_VALUE_DEFAULT,
+    flatten = FLATTEN_DEFAULT,
     positionProp = POSITION_PROP_DEFAULT,
     renderOnResize = RENDER_ON_RESIZE_DEFAULT,
     sizeProp = SIZE_PROP_DEFAULT
@@ -154,7 +156,7 @@ const getHigherOrderComponent = (OriginalComponent, keys, options = {}) => {
       return (
         <OriginalComponent
           {...this.props}
-          {...getValues(keys, this.state, propKeyNames)}
+          {...getValues(keys, this.state, propKeyNames, flatten)}
         />
       );
     }

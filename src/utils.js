@@ -134,6 +134,7 @@ const getValuesProperties = (keys, currentState) => {
   };
 };
 
+/* eslint-disable valid-jsdoc */
 /**
  * based on the keys passed, create an object with either position
  * or size or both properties that are objects containing the respective
@@ -143,9 +144,11 @@ const getValuesProperties = (keys, currentState) => {
  * @param {Object} currentState
  * @param {string} positionProp
  * @param {string} sizeProp
+ * @param {boolean} isFlattened
  * @returns {Object}
  */
-const getValues = (keys, currentState, {positionProp, sizeProp}) => {
+/* eslint-enabled */
+const getValues = (keys, currentState, {positionProp, sizeProp}, isFlattened) => {
   const {
     hasPosition,
     hasSize,
@@ -154,6 +157,13 @@ const getValues = (keys, currentState, {positionProp, sizeProp}) => {
   } = getValuesProperties(keys, currentState);
 
   let values = {};
+
+  if (isFlattened) {
+    return {
+      ...(hasSize ? size : null),
+      ...(hasPosition ? position : null)
+    };
+  }
 
   if (hasSize) {
     values[sizeProp] = size;
