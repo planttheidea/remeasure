@@ -105,10 +105,9 @@ const getHigherOrderComponent = (OriginalComponent, keys, options = {}) => {
      * set the domElement associated with the instance
      */
     setDomElement = () => {
-      const domElement = findDOMNode(this);
+      this.domElement = findDOMNode(this);
 
-      if (domElement) {
-        this.domElement = domElement;
+      if (this.domElement) {
         this.setOnResize();
       }
     };
@@ -129,15 +128,18 @@ const getHigherOrderComponent = (OriginalComponent, keys, options = {}) => {
      */
     setStateIfChanged = () => {
       const domElement = this.domElement;
-      const boundingClientRect = domElement.getBoundingClientRect();
 
-      const values = {
-        ...createObjectFromKeys(boundingClientRectKeys, boundingClientRect),
-        ...createObjectFromKeys(domElementKeys, domElement)
-      };
+      if (domElement) {
+        const boundingClientRect = domElement.getBoundingClientRect();
 
-      if (haveValuesChanged(keys, values, this.state)) {
-        this.setState(values);
+        const values = {
+          ...createObjectFromKeys(boundingClientRectKeys, boundingClientRect),
+          ...createObjectFromKeys(domElementKeys, domElement)
+        };
+
+        if (haveValuesChanged(keys, values, this.state)) {
+          this.setState(values);
+        }
       }
     };
 
