@@ -35,14 +35,19 @@ import {
 let raf;
 
 /**
+ * @private
+ *
+ * @function getHigherOrderComponent
+ *
+ * @description
  * create the HOC that injects the position and size props
  * into the child (assuming they have keys that are valid
  * for one or both of those)
  *
- * @param {Component} OriginalComponent
- * @param {Array<string>} keys
- * @param {Object} options={}
- * @returns {RemeasureComponent}
+ * @param {Component} OriginalComponent the component to be wrapped in a higher-order component
+ * @param {Array<string>} keys the keys to check the values of for size / position
+ * @param {Object} [options={}] any options passed for the decoration
+ * @returns {RemeasureComponent} the higher-order component to measure the OriginalComponent
  */
 const getHigherOrderComponent = (OriginalComponent, keys, options = {}) => {
   const {

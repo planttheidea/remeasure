@@ -21,12 +21,21 @@ import {
 import getHigherOrderComponent from './getHigherOrderComponent';
 
 /**
+ * @module remeasure
+ */
+
+/**
+ * @function measure
+ *
+ * @description
  * create higher-order component that injects size and position properties
  * into OriginalComponent as an object under the prop name size and position
  *
- * @param {Component|Array<string>} keys
- * @param {Object} options
- * @returns {RemeasureComponent}
+ * @param {Component|Array<string>|Object} keys if used without parameters, the component that will be measured,
+ * else either an array of keys to watch for measurement or an object of options
+ * @param {Object} options an object of options to apply for measuring
+ * @returns {RemeasureComponent} the higher-order component that will measure the child and pass down size and position
+ * values as props
  */
 const measure = (keys, options) => {
   if (isString(keys)) {

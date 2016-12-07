@@ -102,12 +102,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	/**
+	 * @module remeasure
+	 */
+	
+	/**
+	 * @function measure
+	 *
+	 * @description
 	 * create higher-order component that injects size and position properties
 	 * into OriginalComponent as an object under the prop name size and position
 	 *
-	 * @param {Component|Array<string>} keys
-	 * @param {Object} options
-	 * @returns {RemeasureComponent}
+	 * @param {Component|Array<string>|Object} keys if used without parameters, the component that will be measured,
+	 * else either an array of keys to watch for measurement or an object of options
+	 * @param {Object} options an object of options to apply for measuring
+	 * @returns {RemeasureComponent} the higher-order component that will measure the child and pass down size and position
+	 * values as props
 	 */
 	var measure = function measure(keys, options) {
 	  if ((0, _isString2.default)(keys)) {
@@ -432,12 +441,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 	
 	/**
+	 * @private
+	 *
+	 * @function getNaturalDimensionValue
+	 *
+	 * @description
 	 * For naturalHeight and naturalWidth, coalesce the values
 	 * with scrollHeight and scrollWIdth if the element does not
 	 * natively support it
 	 *
-	 * @param {HTMLElement} source
-	 * @param {string} key
+	 * @param {HTMLElement} source the element to get the size / position value from
+	 * @param {string} key the size / position value to retrieve from source
 	 * @returns {number}
 	 */
 	var getNaturalDimensionValue = function getNaturalDimensionValue(source, key) {
@@ -449,14 +463,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/**
+	 * @private
+	 *
+	 * @function createObjectFromKeys
+	 *
+	 * @description
 	 * create an object based on the keys passed and their value
 	 * in the source object
 	 *
-	 * @param {Array<string>} keys
-	 * @param {function} keys.reduce
-	 * @param {Object|ClientRect} source
-	 * @param {boolean} shouldAlterNaturalKeys=true
-	 * @returns {Object}
+	 * @param {Array<string>} keys the keys to produce the object from
+	 * @param {Object|ClientRect} source the source element to retrieve the values from
+	 * @param {boolean} [shouldAlterNaturalKeys=true] whether to alter the natural keys or not
+	 * @returns {Object} the object of key: value pairs produced from the keys
 	 */
 	var createObjectFromKeys = function createObjectFromKeys(keys, source) {
 	  var shouldAlterNaturalKeys = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
@@ -467,11 +485,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/**
+	 * @private
+	 *
+	 * @function getArraySubset
+	 *
+	 * @description
 	 * get subset of array1 based on items existing in array2
 	 *
-	 * @param {Array<*>} array1
-	 * @param {Array<*>} array2
-	 * @returns {Array<T>}
+	 * @param {Array<*>} array1 the array to filter
+	 * @param {Array<*>} array2 the array to find matches in
+	 * @returns {Array<T>} the resulting array of matching values from array1 and array2
 	 */
 	var getArraySubset = function getArraySubset(array1, array2) {
 	  return array1.filter(function (item) {
@@ -480,10 +503,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/**
+	 * @private
+	 *
+	 * @description
 	 * wait to assign the raf until mount, so it has access to the
 	 * window object
 	 *
-	 * @returns {function}
+	 * @returns {function} the polyfilled requestAnimationFrame method
 	 */
 	var getRequestAnimationFrame = function getRequestAnimationFrame() {
 	  return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (callback) {
@@ -492,12 +518,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/**
+	 * @private
+	 *
+	 * @description
 	 * based on their existence in keysToTestAgainst, determine which of the keys
 	 * passed are considered valid
 	 *
-	 * @param {Array<string>} keys
-	 * @param {Array<string>} keysToTestAgainst
-	 * @returns {Array<string>}
+	 * @param {Array<string>} keys the keys to test
+	 * @param {Array<string>} keysToTestAgainst the keys to find matches from
+	 * @returns {Array<string>} the resulting matching key set
 	 */
 	var getValidKeys = function getValidKeys(keys, keysToTestAgainst) {
 	  return keys.filter(function (key) {
@@ -506,12 +535,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/**
+	 * @private
+	 *
+	 * @description
 	 * get the position and size, and booleans to identify they're
 	 * intended existence in state
 	 *
-	 * @param {Array<string>} keys
-	 * @param {Object} currentState
-	 * @returns {{hasPosition: boolean, hasSize: boolean, position: Object, size: Object}}
+	 * @param {Array<string>} keys the keys to get the values from the state with
+	 * @param {Object} currentState the state to get the values from
+	 * @returns {{hasPosition: boolean, hasSize: boolean, position: Object, size: Object}} the state object matching
+	 * the keys passed
 	 */
 	var getValuesProperties = function getValuesProperties(keys, currentState) {
 	  if ((0, _isArray2.default)(keys)) {
@@ -557,16 +590,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	/* eslint-disable valid-jsdoc */
 	/**
+	 * @private
+	 *
+	 * @function getValues
+	 *
+	 * @description
 	 * based on the keys passed, create an object with either position
 	 * or size or both properties that are objects containing the respective
 	 * values for the associated keys
 	 *
-	 * @param {Array<string>} keys
-	 * @param {Object} currentState
-	 * @param {string} positionProp
-	 * @param {string} sizeProp
-	 * @param {boolean} isFlattened
-	 * @returns {Object}
+	 * @param {Array<string>} keys keys to associate in state
+	 * @param {Object} currentState state object of size / position properties
+	 * @param {string} positionProp the name of the property associated with position values
+	 * @param {string} sizeProp the name of the property associated with size values
+	 * @param {boolean} isFlattened are the props passed a flattened object or not
+	 * @returns {Object} the values to pass down as props
 	 */
 	/* eslint-enabled */
 	var getValues = function getValues(keys, currentState, _ref, isFlattened) {
@@ -597,13 +635,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/**
+	 * @private
+	 *
+	 * @function haveValuesChanged
+	 *
+	 * @description
 	 * iterate through keys and determine if the values have
 	 * changed compared to what is stored in state
 	 *
-	 * @param {Array<string>} keys
-	 * @param {Object} values
-	 * @param {Object} currentState
-	 * @returns {boolean}
+	 * @param {Array<string>} keys keys to get from the state
+	 * @param {Object} values the new values to test
+	 * @param {Object} currentState the current values in state
+	 * @returns {boolean} have any of the keys changed
 	 */
 	var haveValuesChanged = function haveValuesChanged(keys, values, currentState) {
 	  return keys.some(function (key) {
@@ -612,11 +655,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/**
+	 * @private
+	 *
+	 * @function reduceStateToMatchingKeys
+	 *
+	 * @description
 	 * based on desiredKeys, build the initialState object
 	 *
-	 * @param {Array<string>} allKeys
-	 * @param {Array<string>} desiredKeys
-	 * @returns {Array<T>}
+	 * @param {Array<string>} allKeys all the keys that are possible
+	 * @param {Array<string>} desiredKeys the keys requested from the decorator
+	 * @returns {Array<T>} the object of key: 0 default values
 	 */
 	var reduceStateToMatchingKeys = function reduceStateToMatchingKeys(allKeys, desiredKeys) {
 	  return allKeys.reduce(function (accumulatedInitialState, key) {
@@ -828,14 +876,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	var raf = void 0;
 	
 	/**
+	 * @private
+	 *
+	 * @function getHigherOrderComponent
+	 *
+	 * @description
 	 * create the HOC that injects the position and size props
 	 * into the child (assuming they have keys that are valid
 	 * for one or both of those)
 	 *
-	 * @param {Component} OriginalComponent
-	 * @param {Array<string>} keys
-	 * @param {Object} options={}
-	 * @returns {RemeasureComponent}
+	 * @param {Component} OriginalComponent the component to be wrapped in a higher-order component
+	 * @param {Array<string>} keys the keys to check the values of for size / position
+	 * @param {Object} [options={}] any options passed for the decoration
+	 * @returns {RemeasureComponent} the higher-order component to measure the OriginalComponent
 	 */
 	var getHigherOrderComponent = function getHigherOrderComponent(OriginalComponent, keys) {
 	  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};

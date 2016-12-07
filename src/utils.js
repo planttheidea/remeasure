@@ -11,12 +11,17 @@ import {
 } from './constants';
 
 /**
+ * @private
+ *
+ * @function getNaturalDimensionValue
+ *
+ * @description
  * For naturalHeight and naturalWidth, coalesce the values
  * with scrollHeight and scrollWIdth if the element does not
  * natively support it
  *
- * @param {HTMLElement} source
- * @param {string} key
+ * @param {HTMLElement} source the element to get the size / position value from
+ * @param {string} key the size / position value to retrieve from source
  * @returns {number}
  */
 const getNaturalDimensionValue = (source, key) => {
@@ -28,14 +33,18 @@ const getNaturalDimensionValue = (source, key) => {
 };
 
 /**
+ * @private
+ *
+ * @function createObjectFromKeys
+ *
+ * @description
  * create an object based on the keys passed and their value
  * in the source object
  *
- * @param {Array<string>} keys
- * @param {function} keys.reduce
- * @param {Object|ClientRect} source
- * @param {boolean} shouldAlterNaturalKeys=true
- * @returns {Object}
+ * @param {Array<string>} keys the keys to produce the object from
+ * @param {Object|ClientRect} source the source element to retrieve the values from
+ * @param {boolean} [shouldAlterNaturalKeys=true] whether to alter the natural keys or not
+ * @returns {Object} the object of key: value pairs produced from the keys
  */
 const createObjectFromKeys = (keys, source, shouldAlterNaturalKeys = true) => {
   return keys.reduce((target, key) => {
@@ -47,11 +56,16 @@ const createObjectFromKeys = (keys, source, shouldAlterNaturalKeys = true) => {
 };
 
 /**
+ * @private
+ *
+ * @function getArraySubset
+ *
+ * @description
  * get subset of array1 based on items existing in array2
  *
- * @param {Array<*>} array1
- * @param {Array<*>} array2
- * @returns {Array<T>}
+ * @param {Array<*>} array1 the array to filter
+ * @param {Array<*>} array2 the array to find matches in
+ * @returns {Array<T>} the resulting array of matching values from array1 and array2
  */
 const getArraySubset = (array1, array2) => {
   return array1.filter((item) => {
@@ -60,10 +74,13 @@ const getArraySubset = (array1, array2) => {
 };
 
 /**
+ * @private
+ *
+ * @description
  * wait to assign the raf until mount, so it has access to the
  * window object
  *
- * @returns {function}
+ * @returns {function} the polyfilled requestAnimationFrame method
  */
 const getRequestAnimationFrame = () => {
   return (
@@ -77,12 +94,15 @@ const getRequestAnimationFrame = () => {
 };
 
 /**
+ * @private
+ *
+ * @description
  * based on their existence in keysToTestAgainst, determine which of the keys
  * passed are considered valid
  *
- * @param {Array<string>} keys
- * @param {Array<string>} keysToTestAgainst
- * @returns {Array<string>}
+ * @param {Array<string>} keys the keys to test
+ * @param {Array<string>} keysToTestAgainst the keys to find matches from
+ * @returns {Array<string>} the resulting matching key set
  */
 const getValidKeys = (keys, keysToTestAgainst) => {
   return keys.filter((key) => {
@@ -91,12 +111,16 @@ const getValidKeys = (keys, keysToTestAgainst) => {
 };
 
 /**
+ * @private
+ *
+ * @description
  * get the position and size, and booleans to identify they're
  * intended existence in state
  *
- * @param {Array<string>} keys
- * @param {Object} currentState
- * @returns {{hasPosition: boolean, hasSize: boolean, position: Object, size: Object}}
+ * @param {Array<string>} keys the keys to get the values from the state with
+ * @param {Object} currentState the state to get the values from
+ * @returns {{hasPosition: boolean, hasSize: boolean, position: Object, size: Object}} the state object matching
+ * the keys passed
  */
 const getValuesProperties = (keys, currentState) => {
   if (isArray(keys)) {
@@ -136,16 +160,21 @@ const getValuesProperties = (keys, currentState) => {
 
 /* eslint-disable valid-jsdoc */
 /**
+ * @private
+ *
+ * @function getValues
+ *
+ * @description
  * based on the keys passed, create an object with either position
  * or size or both properties that are objects containing the respective
  * values for the associated keys
  *
- * @param {Array<string>} keys
- * @param {Object} currentState
- * @param {string} positionProp
- * @param {string} sizeProp
- * @param {boolean} isFlattened
- * @returns {Object}
+ * @param {Array<string>} keys keys to associate in state
+ * @param {Object} currentState state object of size / position properties
+ * @param {string} positionProp the name of the property associated with position values
+ * @param {string} sizeProp the name of the property associated with size values
+ * @param {boolean} isFlattened are the props passed a flattened object or not
+ * @returns {Object} the values to pass down as props
  */
 /* eslint-enabled */
 const getValues = (keys, currentState, {positionProp, sizeProp}, isFlattened) => {
@@ -177,13 +206,18 @@ const getValues = (keys, currentState, {positionProp, sizeProp}, isFlattened) =>
 };
 
 /**
+ * @private
+ *
+ * @function haveValuesChanged
+ *
+ * @description
  * iterate through keys and determine if the values have
  * changed compared to what is stored in state
  *
- * @param {Array<string>} keys
- * @param {Object} values
- * @param {Object} currentState
- * @returns {boolean}
+ * @param {Array<string>} keys keys to get from the state
+ * @param {Object} values the new values to test
+ * @param {Object} currentState the current values in state
+ * @returns {boolean} have any of the keys changed
  */
 const haveValuesChanged = (keys, values, currentState) => {
   return keys.some((key) => {
@@ -192,11 +226,16 @@ const haveValuesChanged = (keys, values, currentState) => {
 };
 
 /**
+ * @private
+ *
+ * @function reduceStateToMatchingKeys
+ *
+ * @description
  * based on desiredKeys, build the initialState object
  *
- * @param {Array<string>} allKeys
- * @param {Array<string>} desiredKeys
- * @returns {Array<T>}
+ * @param {Array<string>} allKeys all the keys that are possible
+ * @param {Array<string>} desiredKeys the keys requested from the decorator
+ * @returns {Array<T>} the object of key: 0 default values
  */
 const reduceStateToMatchingKeys = (allKeys, desiredKeys) => {
   return allKeys.reduce((accumulatedInitialState, key) => {
