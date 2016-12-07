@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>remeasure Index</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.paper.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">remeasure</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-remeasure.html">remeasure</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-8">
+	
+		<div id="main">
+			
+
+	
+	
+
+
+
+    <h3>remeasure 1.6.1</h3>
+
+
+
+
+
+
+
+
+
+	
+	
+
+
+
+
+
+    <section class="readme-section">
+        <article><h1 id="remeasure">remeasure</h1>
+<p>Get position and size of the DOM element for any React Component</p>
+<h4 id="installation">Installation</h4>
+<pre class="prettyprint source"><code>$ npm i remeasure --save</code></pre><h4 id="usage">Usage</h4>
+<pre class="prettyprint source lang-javascript"><code>// ES2015
+import measure from 'remeasure';
+
+// CommonJS
+const measure = require('remeasure');
+
+// script
+var measure = window.Remeasure;
+
+// apply it as a decorator
+@measure
+class MyComponent extends React.Component {
+  render() {
+    const {
+      position,
+      size
+    } = this.props;
+
+    return (
+      &lt;div>
+        I have access to my size and position through props!
+      &lt;/div>
+    );
+  }
+}
+
+// or as a function wrapper
+const StatelessComponent = measure(({position, size}) => {
+  return (
+    &lt;div>
+      In here too!
+    &lt;/div>
+  );
+});</code></pre><p>Any component that has <code>measure</code> applied to it will be wrapped in a <a href="https://medium.com/@dan_abramov/mixins-are-dead-long-live-higher-order-components-94a0d2f9e750#.k0th02ffm">Higher-Order Component</a> that will pass in the props <code>position</code> and <code>size</code>, which contain a variety of measurements related to (you guessed it) the component's position and size. A complete list of properties:</p>
+<pre class="prettyprint source lang-javascript"><code>{
+  position: {
+    bottom: Number,
+    clientLeft: Number,
+    clientTop: Number,
+    offsetLeft: Number,
+    offsetTop: Number,
+    left: Number,
+    right: Number,
+    scrollLeft: Number,
+    scrollTop: Number,
+    top: Number
+  },
+  size: {
+    clientHeight: Number,
+    clientWidth: Number,
+    height: Number,
+    naturalHeight: Number,
+    naturalWidth: Number,
+    offsetHeight: Number,
+    offsetWidth: Number,
+    scrollHeight: Number,
+    scrollWidth: Number,
+    width: Number
+  }
+}</code></pre><p>The <code>bottom</code>, <code>left</code>, <code>right</code>, and <code>top</code> properties in <code>position</code> are what you would expect from the result of <code>element.getBoundingClientRect()</code>. <code>naturalHeight</code> and <code>naturalWidth</code> are properties that are native to <code>img</code> elements, and for all non-<code>img</code> elements they are coalesced with <code>scrollHeight</code> and <code>scrollWidth</code>, respectively.</p>
+<p>These properties are retrieved on mount, but will also automatically update if the element is resized thanks to <a href="https://github.com/KyleAMathews/element-resize-event">element-resize-event</a>. Please note that elements that do not support content (such as <code>img</code>) are not supported by this resize listener; in the case that you need to support those elements, simply create a higher-order component that wraps that element in a <code>div</code> and decorate that component.</p>
+<h4 id="advanced-usage">Advanced usage</h4>
+<p>If you want to limit the items that are injected into the component, you can pass either a key or array of keys to the decorator before wrapping the component.</p>
+<p><strong>measure(<code>String|Array&lt;String&gt;|Object[, Object]</code>)</strong> <em>returns <code>Function</code></em></p>
+<p>Examples:</p>
+<pre class="prettyprint source lang-javascript"><code>import measure from 'remeasure';
+
+// pass a string value for a single property
+const measureOnlyOffsetWidth = measure('offsetWidth');
+
+const MyStatelessComponent = measureOnlyOffsetWidth(({size}) => {
+  return (
+    &lt;div>
+      Only size is injected (because no position values were requested), 
+      with offsetWidth as the only property
+    &lt;/div>
+  );
+});
+
+// or an array of string values for multiple properties
+@measure(['top', 'height'])
+class MyComponent extends Component {
+  render() {
+    const {
+      position,
+      size
+    } = this.props;
+
+    return (
+      &lt;div>
+        Both the position and size props are injected (because values
+        from both position and size were requested), and each will have
+        a single property on them (top on position, height on size).
+      &lt;/div>
+    );
+  }
+}
+
+// or quickly select the complete list of either size or position
+@measure('size')
+class MySizedComponent extends Component {
+  render() {
+    const size = this.props.size;
+
+    return (
+      &lt;div>
+        I have the size prop injected with all properties, but not
+        position.
+      &lt;/div>
+    );
+  }
+}</code></pre><p>You can also pass an object with any of the following propeties (defaults shown):</p>
+<pre class="prettyprint source lang-javascript"><code>{
+    // value in milliseconds to debounce rerenders
+    debounce: Number,
+
+    // should the properties not be grouped under position / size
+    flatten: Boolean = false,
+
+    // sets position property name
+    positionProp: String = 'position',
+
+    // should element rerender when resized
+    renderOnResize: Boolean = true,
+
+    // sets size property name
+    sizeProp: String = 'size'
+}</code></pre><p>These will serve as options for the instance <code>remeasure</code> is applied to. For example, if you want all position-related properties to be injected under the prop <code>foo</code> and the size-related properties to be injected under the prop <code>bar</code>, you can do this:</p>
+<pre class="prettyprint source lang-javascript"><code>// use the options by themselves
+@measure({positionProp: 'foo', sizeProp: 'bar'})
+class MyComponent extends Component {
+    render() {
+        const {
+            foo,
+            bar
+        } = this.props;
+
+        return (
+            &lt;div>
+                The foo and bar props now represent position and size, respectively.
+            &lt;/div>
+        );
+    }
+}
+
+// or you can use them with keys
+const measureWithKeysAndOptions = measure(['height', 'width'], {debounce: 50, flatten: true});
+
+const MyStatelessComponent = measureWithKeysAndOptions(({height, width}) => {
+    return (
+        &lt;div>
+            You can still pass options when you want to specify keys, as the
+            second parameter.
+        &lt;/div>
+    );
+};
+
+// you can even use the custom props with the shorthand notation
+@measure('bar', {sizeProp: 'bar'})
+class MySizedComponent extends Component {
+    render() {
+        return (
+            &lt;div>
+                I will have access to all the size properties under the prop
+                bar, but foo will not be injected.
+            &lt;/div>
+        );
+    }
+}</code></pre><h4 id="support">Support</h4>
+<p><code>remeasure</code> has been tested and confirmed to work on the following browsers:</p>
+<ul>
+<li>Chrome</li>
+<li>Firefox</li>
+<li>Opera</li>
+<li>Edge</li>
+<li>IE9+</li>
+</ul>
+<p><code>remeasure</code> also works with universal / isomorphic applications.</p>
+<h4 id="development">Development</h4>
+<p>Standard stuff, clone the repo and <code>npm i</code> to get the dependencies. npm scripts available:</p>
+<ul>
+<li><code>build</code> =&gt; builds the distributed JS with <code>NODE_ENV=development</code> and with sourcemaps</li>
+<li><code>build-minified</code> =&gt; builds the distributed JS with <code>NODE_ENV=production</code> and minified</li>
+<li><code>compile-for-publish</code> =&gt; runs the <code>lint</code>, <code>test</code>, <code>transpile</code>, <code>dist</code> scripts</li>
+<li><code>dev</code> =&gt; runs the webpack dev server for the playground</li>
+<li><code>dist</code> =&gt; runs the <code>build</code> and <code>build-minified</code></li>
+<li><code>lint</code> =&gt; runs ESLint against files in the <code>src</code> folder</li>
+<li><code>prepublish</code> =&gt; if in publish, runs <code>compile-for-publish</code></li>
+<li><code>test</code> =&gt; run ava with NODE_ENV=test</li>
+<li><code>test:watch</code> =&gt; runs <code>test</code> but with persistent watcher</li>
+<li><code>transpile</code> =&gt; runs Babel against files in <code>src</code> to files in <code>lib</code></li>
+</ul></article>
+    </section>
+
+
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+<script>
+	$( function () {
+		$( '#main' ).localScroll( {
+			offset : { top : 60 } //offset by the height of your header (give or take a few px, see what works for you)
+		} );
+		$( "dt.name" ).each( function () {
+			var $this = $( this ).find("h4");
+			var icon = $( "<i/>" ).addClass( "icon-plus-sign" ).addClass( "pull-right" ).addClass( "icon-white" );
+			var dt = $(this);
+			var children = dt.next( "dd" );
+
+			dt.prepend( icon ).css( {cursor : "pointer"} );
+			dt.addClass( "member-collapsed" ).addClass( "member" );
+
+
+			children.hide();
+
+			dt.children().on( "click", function () {
+				children = dt.next( "dd" );
+				children.slideToggle( "fast", function () {
+
+					if ( children.is( ":visible" ) ) {
+						icon.addClass( "icon-minus-sign" ).removeClass( "icon-plus-sign" ).removeClass( "icon-white" );
+						dt.addClass( "member-open" ).animate( "member-collapsed" );
+					} else {
+						icon.addClass( "icon-plus-sign" ).removeClass( "icon-minus-sign" ).addClass( "icon-white" );
+						dt.addClass( "member-collapsed" ).removeClass( "member-open" );
+					}
+				} );
+			} );
+
+		} );
+	} );
+</script>
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>
