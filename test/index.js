@@ -106,34 +106,34 @@ test('if measure returns a higher-order component', (t) => {
   const testStatelessWithKeysAndOptions = <TestStatelessWithKeysAndOptions/>;
 
   t.is(typeof TestStateful, 'function');
-  t.is(TestStateful.name, 'RemeasureComponent');
+  t.is(TestStateful.name, 'MeasuredComponent');
   t.is(testStateful.$$typeof, REACT_ELEMENT_TYPE);
 
   t.is(typeof TestStateless, 'function');
-  t.is(TestStateless.name, 'RemeasureComponent');
+  t.is(TestStateless.name, 'MeasuredComponent');
   t.is(testStateless.$$typeof, REACT_ELEMENT_TYPE);
 
   t.is(typeof TestStatefulWithOptions, 'function');
-  t.is(TestStatefulWithOptions.name, 'RemeasureComponent');
+  t.is(TestStatefulWithOptions.name, 'MeasuredComponent');
   t.is(testStatefulWithOptions.$$typeof, REACT_ELEMENT_TYPE);
 
   t.is(typeof TestStatelessWithOptions, 'function');
-  t.is(TestStatelessWithOptions.name, 'RemeasureComponent');
+  t.is(TestStatelessWithOptions.name, 'MeasuredComponent');
   t.is(testStatelessWithOptions.$$typeof, REACT_ELEMENT_TYPE);
 
   t.is(typeof TestStatefulWithKeys, 'function');
-  t.is(TestStatefulWithKeys.name, 'RemeasureComponent');
+  t.is(TestStatefulWithKeys.name, 'MeasuredComponent');
   t.is(testStatefulWithKeys.$$typeof, REACT_ELEMENT_TYPE);
 
   t.is(typeof TestStatelessWithKeys, 'function');
-  t.is(TestStatelessWithKeys.name, 'RemeasureComponent');
+  t.is(TestStatelessWithKeys.name, 'MeasuredComponent');
   t.is(testStatelessWithKeys.$$typeof, REACT_ELEMENT_TYPE);
 
   t.is(typeof TestStatefulWithKeysAndOptions, 'function');
-  t.is(TestStatefulWithKeysAndOptions.name, 'RemeasureComponent');
+  t.is(TestStatefulWithKeysAndOptions.name, 'MeasuredComponent');
   t.is(testStatefulWithKeysAndOptions.$$typeof, REACT_ELEMENT_TYPE);
 
   t.is(typeof TestStatelessWithKeysAndOptions, 'function');
-  t.is(TestStatelessWithKeysAndOptions.name, 'RemeasureComponent');
+  t.is(TestStatelessWithKeysAndOptions.name, 'MeasuredComponent');
   t.is(testStatelessWithKeysAndOptions.$$typeof, REACT_ELEMENT_TYPE);
 });

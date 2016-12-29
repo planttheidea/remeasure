@@ -2,13 +2,21 @@
 
 Get position and size of the DOM element for any React Component
 
-#### Installation
+### Table of contents
+* [Installation](#installation)
+* [Usage](#usage)
+* [Advanced usage](#advanced-usage)
+* [Caveats](#caveats)
+* [Support](#support)
+* [Development](#development)
+
+### Installation
 
 ```
 $ npm i remeasure --save
 ```
 
-#### Usage
+### Usage
 
 ```javascript
 // ES2015
@@ -82,7 +90,7 @@ The `bottom`, `left`, `right`, and `top` properties in `position` are what you w
 
 These properties are retrieved on mount, but will also automatically update if the element is resized thanks to [element-resize-event](https://github.com/KyleAMathews/element-resize-event). Please note that elements that do not support content (such as `img`) are not supported by this resize listener; in the case that you need to support those elements, simply create a higher-order component that wraps that element in a `div` and decorate that component.
 
-#### Advanced usage
+### Advanced usage
 
 If you want to limit the items that are injected into the component, you can pass either a key or array of keys to the decorator before wrapping the component.
 
@@ -207,7 +215,19 @@ class MySizedComponent extends Component {
 }
 ```
 
-#### Support
+### Caveats
+
+A couple things to keep in mind when using `remeasure`:
+
+**Void tags cannot detect element resize**
+
+If children on a tag are considered invalid HTML (such as for `<input/>`, `<img/>`, etc), then the internal element resize detector cannot not work. The easy solution to this is to update the component via props (on update a recalculation of values is triggered).
+
+**Components may render twice on update**
+
+If you perform an update to the component `props` or `state` that also happens to change its dimensions, the component will update twice, once for the changes to `props` / `state`, and again for the changes to its dimensions. This is because the component needs to render in the DOM before updated values can be calculated.
+
+### Support
 `remeasure` has been tested and confirmed to work on the following browsers:
 * Chrome
 * Firefox
@@ -217,7 +237,7 @@ class MySizedComponent extends Component {
 
 `remeasure` also works with universal / isomorphic applications.
 
-#### Development
+### Development
 
 Standard stuff, clone the repo and `npm i` to get the dependencies. npm scripts available:
 * `build` => builds the distributed JS with `NODE_ENV=development` and with sourcemaps

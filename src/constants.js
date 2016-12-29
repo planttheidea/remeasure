@@ -1,27 +1,27 @@
-const DEBOUNCE_VALUE_DEFAULT = 0;
-const FLATTEN_DEFAULT = false;
-const POSITION_PROP_DEFAULT = 'position';
-const RENDER_ON_RESIZE_DEFAULT = true;
-const SIZE_PROP_DEFAULT = 'size';
+export const DEBOUNCE_VALUE_DEFAULT = 0;
+export const FLATTEN_DEFAULT = false;
+export const POSITION_PROP_DEFAULT = 'position';
+export const RENDER_ON_RESIZE_DEFAULT = true;
+export const SIZE_PROP_DEFAULT = 'size';
 
-const BOUNDING_CLIENT_RECT_SIZE_KEYS = [
+export const BOUNDING_CLIENT_RECT_SIZE_KEYS = [
   'height',
   'width'
 ];
 
-const BOUNDING_CLIENT_RECT_POSITION_KEYS = [
+export const BOUNDING_CLIENT_RECT_POSITION_KEYS = [
   'bottom',
   'left',
   'right',
   'top'
 ];
 
-const ALL_BOUNDING_CLIENT_RECT_KEYS = [
+export const ALL_BOUNDING_CLIENT_RECT_KEYS = [
   ...BOUNDING_CLIENT_RECT_POSITION_KEYS,
   ...BOUNDING_CLIENT_RECT_SIZE_KEYS
 ];
 
-const DOM_ELEMENT_POSITION_KEYS = [
+export const DOM_ELEMENT_POSITION_KEYS = [
   'clientLeft',
   'clientTop',
   'offsetLeft',
@@ -30,7 +30,7 @@ const DOM_ELEMENT_POSITION_KEYS = [
   'scrollTop'
 ];
 
-const DOM_ELEMENT_SIZE_KEYS = [
+export const DOM_ELEMENT_SIZE_KEYS = [
   'clientHeight',
   'clientWidth',
   'naturalHeight',
@@ -41,9 +41,9 @@ const DOM_ELEMENT_SIZE_KEYS = [
   'scrollWidth'
 ];
 
-const NATURAL_REGEXP = /natural/;
+export const NATURAL_REGEXP = /natural/;
 
-const VOID_ELEMENT_TAG_NAMES = [
+export const VOID_ELEMENT_TAG_NAMES = [
   'AREA',
   'BASE',
   'BR',
@@ -61,39 +61,25 @@ const VOID_ELEMENT_TAG_NAMES = [
   'WBR'
 ];
 
-const ALL_DOM_ELEMENT_KEYS = [
+export const ALL_DOM_ELEMENT_KEYS = [
   ...DOM_ELEMENT_POSITION_KEYS,
   ...DOM_ELEMENT_SIZE_KEYS
 ];
 
-const ALL_POSITION_KEYS = [
+export const ALL_POSITION_KEYS = [
   ...DOM_ELEMENT_POSITION_KEYS,
   ...BOUNDING_CLIENT_RECT_POSITION_KEYS
 ];
 
-const ALL_SIZE_KEYS = [
+export const ALL_SIZE_KEYS = [
   ...DOM_ELEMENT_SIZE_KEYS,
   ...BOUNDING_CLIENT_RECT_SIZE_KEYS
 ];
 
-const ALL_KEYS = [
+export const ALL_KEYS = [
   ...ALL_POSITION_KEYS,
   ...ALL_SIZE_KEYS
 ];
 
-export {ALL_BOUNDING_CLIENT_RECT_KEYS};
-export {ALL_DOM_ELEMENT_KEYS};
-export {ALL_KEYS};
-export {ALL_POSITION_KEYS};
-export {ALL_SIZE_KEYS};
-export {BOUNDING_CLIENT_RECT_POSITION_KEYS};
-export {BOUNDING_CLIENT_RECT_SIZE_KEYS};
-export {DEBOUNCE_VALUE_DEFAULT};
-export {DOM_ELEMENT_POSITION_KEYS};
-export {DOM_ELEMENT_SIZE_KEYS};
-export {FLATTEN_DEFAULT};
-export {NATURAL_REGEXP};
-export {POSITION_PROP_DEFAULT};
-export {RENDER_ON_RESIZE_DEFAULT};
-export {SIZE_PROP_DEFAULT};
-export {VOID_ELEMENT_TAG_NAMES};
+export const CLIENT_RECT_TYPE = 'clientRect';
+export const ELEMENT_TYPE = 'element';

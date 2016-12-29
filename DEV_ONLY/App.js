@@ -1,5 +1,6 @@
 import React, {
-  Component
+  Component,
+  PureComponent
 } from 'react';
 import {
   render
@@ -7,208 +8,239 @@ import {
 
 import measure from '../src/index';
 
-const DIV_STYLES = {
-  border: '10px solid black',
-  height: 100,
-  marginBottom: 15,
-  padding: 20
-};
-
-const SECTION_STYLES = {
-  height: 100,
-  overflow: 'auto',
-  marginBottom: 15
-};
-
-const IMG_STYLES = {
-  height: 'auto',
-  maxWidth: '100%',
-  width: 719
-};
-
-const options = {
-  debounce: 50,
-  positionProp: 'foo',
-  sizeProp: 'bar'
-};
-
-const otherOptions = {
-  flatten: true
-};
-
 @measure
-class Div extends Component {
+class NoParams extends PureComponent {
   render() {
     const {
-      children
+      children,
+      position,
+      size
     } = this.props;
 
-    // console.group('Div');
-    // console.log('div position', this.props.position);
-    // console.log('div size', this.props.size);
-    // console.groupEnd();
-
-    return (
-      <div style={DIV_STYLES}>
-        {children}
-      </div>
-    );
-  }
-}
-
-@measure('foo', options)
-class AnotherDiv extends Component {
-  render() {
-    const {
-      children
-    } = this.props;
-
-    // console.group('AnotherDiv');
-    // console.log('another div position', this.props.position);
-    // console.log('another div foo', this.props.foo);
-    // console.log('another div size', this.props.size);
-    // console.log('another div bar', this.props.bar);
-    // console.groupEnd();
-
-    return (
-      <div style={DIV_STYLES}>
-        {children}
-      </div>
-    );
-  }
-}
-
-@measure('size', otherOptions)
-class Section extends Component {
-  render() {
-    const {
-      children
-    } = this.props;
-
-    console.group('Section');
-    console.log('section props', this.props);
+    console.group('no params');
+    console.log('position', position);
+    console.log('size', size);
     console.groupEnd();
 
     return (
-      <section style={SECTION_STYLES}>
+      <div>
         {children}
-      </section>
+      </div>
     );
   }
 }
 
-@measure('width')
-class Main extends Component {
+@measure('size')
+class SizeOnly extends PureComponent {
   render() {
     const {
-      children
+      children,
+      position,
+      size
     } = this.props;
 
-    // console.group('Main');
-    // console.log('main position', this.props.position);
-    // console.log('main size', this.props.size);
-    // console.groupEnd();
+    console.group('size only');
+    console.log('position', position);
+    console.log('size', size);
+    console.groupEnd();
 
     return (
-      <main>
+      <div>
         {children}
-      </main>
+      </div>
     );
   }
 }
 
-const meatureNaturalDimensions = measure(['naturalHeight', 'naturalWidth', 'clientWidth']);
+@measure('position')
+class PositionOnly extends PureComponent {
+  render() {
+    const {
+      children,
+      position,
+      size
+    } = this.props;
 
-const Img = meatureNaturalDimensions(({position, size}) => {
-  console.group('Img');
-  console.log('img position', position);
-  console.log('img size', size);
+    console.group('position only');
+    console.log('position', position);
+    console.log('size', size);
+    console.groupEnd();
+
+    return (
+      <div>
+        {children}
+      </div>
+    );
+  }
+}
+
+@measure(['height', 'width', 'top', 'left'])
+class SpecificProperties extends PureComponent {
+  render() {
+    const {
+      children,
+      position,
+      size
+    } = this.props;
+
+    console.group('specific properties');
+    console.log('position', position);
+    console.log('size', size);
+    console.groupEnd();
+
+    return (
+      <div>
+        {children}
+      </div>
+    );
+  }
+}
+
+@measure({positionProp: 'foo', sizeProp: 'bar'})
+class CustomCategories extends PureComponent {
+  render() {
+    const {
+      bar,
+      children,
+      foo
+    } = this.props;
+
+    console.group('custom categories');
+    console.log('foo', foo);
+    console.log('bar', bar);
+    console.groupEnd();
+
+    return (
+      <div>
+        {children}
+      </div>
+    );
+  }
+}
+
+@measure(['height', 'width', 'top', 'left'], {positionProp: 'foo', sizeProp: 'bar'})
+class CustomCategoriesWithSpecificProperties extends PureComponent {
+  render() {
+    const {
+      bar,
+      children,
+      foo
+    } = this.props;
+
+    console.group('custom categories with specific properties');
+    console.log('foo', foo);
+    console.log('bar', bar);
+    console.groupEnd();
+
+    return (
+      <div>
+        {children}
+      </div>
+    );
+  }
+}
+
+const StatelessComponent = measure(({children, position, size}) => {
+  console.group('stateless component');
+  console.log('position', position);
+  console.log('size', size);
   console.groupEnd();
 
   return (
-    <img
-      src="https://placeholdit.imgix.net/~text?txtsize=33&txt=350%C3%97150&w=350&h=150"
-      style={IMG_STYLES}
-    />
-  );
-});
-
-@measure
-class NullReturn extends Component {
-  render() {
-    return null;
-  }
-}
-
-const measureWithSpecificKeys = measure(['left', 'offsetLeft']);
-
-const App = measureWithSpecificKeys(({position, size}) => {
-  // console.group('App');
-  // console.log('app position', position);
-  // console.log('app size', size);
-  // console.groupEnd();
-
-  return (
     <div>
-      <Div>
-        I am a DIV with stuff
-      </Div>
-
-      <AnotherDiv>
-        I am a another DIV with stuff
-      </AnotherDiv>
-
-      <Section>
-        I am a SECTION that is scrollable with...
-
-        <p>
-          Lots
-        </p>
-        <p>
-          of
-        </p>
-        <p>
-          stuff
-        </p>
-        <p>
-          Lots
-        </p>
-        <p>
-          of
-        </p>
-        <p>
-          stuff
-        </p>
-        <p>
-          Lots
-        </p>
-        <p>
-          of
-        </p>
-        <p>
-          stuff
-        </p>
-        <p>
-          Lots
-        </p>
-        <p>
-          of
-        </p>
-        <p>
-          stuff
-        </p>
-      </Section>
-
-      <Main>
-        Hello!
-      </Main>
-
-      <Img/>
-
-      <NullReturn />
+      {children}
     </div>
   );
 });
+
+const ConditionalComponent = measure(({children, isShown, position, size}) => {
+  console.group('conditional component');
+  console.log('position', position);
+  console.log('size', size);
+  console.groupEnd();
+
+  if (!isShown) {
+    return null;
+  }
+
+  return (
+    <div>
+      {children}
+    </div>
+  );
+});
+
+class App extends Component {
+  state = {
+    isConditionalElementShown: true
+  };
+
+  onClickToggleConditionalElement = () => {
+    const {
+      isConditionalElementShown
+    } = this.state;
+
+    this.setState({
+      isConditionalElementShown: !isConditionalElementShown
+    });
+  };
+
+  render() {
+    const {
+      isConditionalElementShown
+    } = this.state;
+
+    return (
+      <div>
+        <h1>
+          App
+        </h1>
+
+        <NoParams>
+          I don't have any parameters passed to the decorators.
+        </NoParams>
+
+        <PositionOnly>
+          I only have the position property.
+        </PositionOnly>
+
+        <SizeOnly>
+          I only have the size property.
+        </SizeOnly>
+
+        <SpecificProperties>
+          I only have the height and width properties in size, and top and left properties in position.
+        </SpecificProperties>
+
+        <CustomCategories>
+          I have custom position property (foo) and size property (bar).
+        </CustomCategories>
+
+        <CustomCategoriesWithSpecificProperties>
+          I only have the height and width properties in size (under the prop bar), and top and left properties
+          in position (under the prop foo).
+        </CustomCategoriesWithSpecificProperties>
+
+        <StatelessComponent>
+          I am a stateless component with the same props available.
+        </StatelessComponent>
+
+        <div>
+          <button
+            onClick={this.onClickToggleConditionalElement}
+            type="button"
+          >
+            Toggle conditional element
+          </button>
+        </div>
+
+        <ConditionalComponent isShown={isConditionalElementShown}>
+          I am a measured element that is shown conditionally.
+        </ConditionalComponent>
+      </div>
+    );
+  }
+};
 
 const div = document.createElement('div');
 

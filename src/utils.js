@@ -1,14 +1,36 @@
 // external dependencies
+import filter from 'lodash/filter';
 import includes from 'lodash/includes';
-import isArray from 'lodash/isArray';
+import isNull from 'lodash/isNull';
 import isUndefined from 'lodash/isUndefined';
+import reduce from 'lodash/reduce';
+import some from 'lodash/some';
 
 // constants
 import {
   ALL_POSITION_KEYS,
   ALL_SIZE_KEYS,
-  NATURAL_REGEXP
+  CLIENT_RECT_TYPE,
+  NATURAL_REGEXP,
+  VOID_ELEMENT_TAG_NAMES
 } from './constants';
+
+/**
+ * @private
+ *
+ * @function createIsKeyType
+ *
+ * @description
+ * create a key type checker function
+ *
+ * @param {Array<string>} typeArray
+ * @returns {function(string): boolean}
+ */
+export const createIsKeyType = (typeArray) => {
+  return (key) => {
+    return !!~typeArray.indexOf(key);
+  };
+};
 
 /**
  * @private
@@ -24,57 +46,123 @@ import {
  * @param {string} key the size / position value to retrieve from source
  * @returns {number}
  */
-const getNaturalDimensionValue = (source, key) => {
-  if (isUndefined(source[key])) {
-    return source[key.replace(NATURAL_REGEXP, 'scroll')];
-  }
+export const getNaturalDimensionValue = (source, key) => {
+  const value = source[key];
 
-  return source[key];
+  return isUndefined(value) ? source[key.replace(NATURAL_REGEXP, 'scroll')] : value;
 };
 
 /**
  * @private
  *
- * @function createObjectFromKeys
+ * @function getElementValues
  *
  * @description
- * create an object based on the keys passed and their value
- * in the source object
+ * get the values of the element or its bounding client rect
  *
- * @param {Array<string>} keys the keys to produce the object from
- * @param {Object|ClientRect} source the source element to retrieve the values from
- * @param {boolean} [shouldAlterNaturalKeys=true] whether to alter the natural keys or not
- * @returns {Object} the object of key: value pairs produced from the keys
+ * @param {HTMLElement} element
+ * @param {Array<Object>} keys
+ * @returns {Object}
  */
-const createObjectFromKeys = (keys, source, shouldAlterNaturalKeys = true) => {
-  return keys.reduce((target, key) => {
-    return {
-      ...target,
-      [key]: shouldAlterNaturalKeys ? getNaturalDimensionValue(source, key) : source[key]
-    };
+export const getElementValues = (element, keys) => {
+  const boundingClientRect = element.getBoundingClientRect();
+
+  return reduce(keys, (values, {key, source}) => {
+    values[key] = source === CLIENT_RECT_TYPE ?
+      boundingClientRect[key] :
+      getNaturalDimensionValue(element, key);
+
+    return values;
   }, {});
 };
 
 /**
  * @private
  *
- * @function getArraySubset
+ * @function isPositionKey
  *
  * @description
- * get subset of array1 based on items existing in array2
+ * is the key passed a position key
  *
- * @param {Array<*>} array1 the array to filter
- * @param {Array<*>} array2 the array to find matches in
- * @returns {Array<T>} the resulting array of matching values from array1 and array2
+ * @param {string} key
+ * @returns {boolean}
  */
-const getArraySubset = (array1, array2) => {
-  return array1.filter((item) => {
-    return includes(array2, item);
-  });
+export const isPositionKey = createIsKeyType(ALL_POSITION_KEYS);
+
+/**
+ * @private
+ *
+ * @function isSizeKey
+ *
+ * @description
+ * is the key passed a size key
+ *
+ * @param {string} key
+ * @returns {boolean}
+ */
+export const isSizeKey = createIsKeyType(ALL_SIZE_KEYS);
+
+/**
+ * @private
+ *
+ * @function getKeyType
+ *
+ * @description
+ * get the type (position or size) of the key passed
+ *
+ * @param {string} key
+ * @param {string} positionProp
+ * @param {string} sizeProp
+ * @returns {string}
+ */
+export const getKeyType = (key, {positionProp, sizeProp}) => {
+  if (isPositionKey(key)) {
+    return positionProp;
+  }
+
+  if (isSizeKey(key)) {
+    return sizeProp;
+  }
+
+  return null;
 };
 
 /**
  * @private
+ *
+ * @function getKeysSubsetWithType
+ *
+ * @description
+ * get subset of array1 based on items existing in array2
+ *
+ * @param {Array<*>} sourceArray the array to filter
+ * @param {Array<*>} valuesToExtract the array to find matches in
+ * @param {string} source the source of the value the key relates to
+ * @param {{positionProp: string, sizeProp: string}} propTypes the names of the scope categories
+ * @returns {Array<T>} the resulting array of matching values from array1 and array2
+ */
+export const getKeysSubsetWithType = (sourceArray, valuesToExtract, source, propTypes) => {
+  return reduce(sourceArray, (valuesWithTypes, key) => {
+    if (includes(valuesToExtract, key)) {
+      const type = getKeyType(key, propTypes);
+
+      if (!isNull(type)) {
+        valuesWithTypes.push({
+          key,
+          source,
+          type
+        });
+      }
+    }
+
+    return valuesWithTypes;
+  }, []);
+};
+
+/**
+ * @private
+ *
+ * @function getRequestAnimationFrame
  *
  * @description
  * wait to assign the raf until mount, so it has access to the
@@ -82,7 +170,7 @@ const getArraySubset = (array1, array2) => {
  *
  * @returns {function} the polyfilled requestAnimationFrame method
  */
-const getRequestAnimationFrame = () => {
+export const getRequestAnimationFrame = () => {
   return (
     window.requestAnimationFrame ||
     window.webkitRequestAnimationFrame ||
@@ -96,72 +184,6 @@ const getRequestAnimationFrame = () => {
 /**
  * @private
  *
- * @description
- * based on their existence in keysToTestAgainst, determine which of the keys
- * passed are considered valid
- *
- * @param {Array<string>} keys the keys to test
- * @param {Array<string>} keysToTestAgainst the keys to find matches from
- * @returns {Array<string>} the resulting matching key set
- */
-const getValidKeys = (keys, keysToTestAgainst) => {
-  return keys.filter((key) => {
-    return includes(keysToTestAgainst, key);
-  });
-};
-
-/**
- * @private
- *
- * @description
- * get the position and size, and booleans to identify they're
- * intended existence in state
- *
- * @param {Array<string>} keys the keys to get the values from the state with
- * @param {Object} currentState the state to get the values from
- * @returns {{hasPosition: boolean, hasSize: boolean, position: Object, size: Object}} the state object matching
- * the keys passed
- */
-const getValuesProperties = (keys, currentState) => {
-  if (isArray(keys)) {
-    let position = {},
-        size = {},
-        hasPosition = false,
-        hasSize = false;
-
-    keys.forEach((key) => {
-      if (includes(ALL_POSITION_KEYS, key)) {
-        position[key] = currentState[key];
-        hasPosition = true;
-      } else if (includes(ALL_SIZE_KEYS, key)) {
-        size[key] = currentState[key];
-        hasSize = true;
-      }
-    });
-
-    return {
-      hasPosition,
-      hasSize,
-      position,
-      size
-    };
-  }
-
-  const position = createObjectFromKeys(ALL_POSITION_KEYS, currentState, false);
-  const size = createObjectFromKeys(ALL_SIZE_KEYS, currentState, false);
-
-  return {
-    hasPosition: true,
-    hasSize: true,
-    position,
-    size
-  };
-};
-
-/* eslint-disable valid-jsdoc */
-/**
- * @private
- *
  * @function getValues
  *
  * @description
@@ -170,39 +192,41 @@ const getValuesProperties = (keys, currentState) => {
  * values for the associated keys
  *
  * @param {Array<string>} keys keys to associate in state
- * @param {Object} currentState state object of size / position properties
- * @param {string} positionProp the name of the property associated with position values
- * @param {string} sizeProp the name of the property associated with size values
+ * @param {Object} values state object of size / position properties
  * @param {boolean} isFlattened are the props passed a flattened object or not
  * @returns {Object} the values to pass down as props
  */
-/* eslint-enabled */
-const getValues = (keys, currentState, {positionProp, sizeProp}, isFlattened) => {
-  const {
-    hasPosition,
-    hasSize,
-    position,
-    size
-  } = getValuesProperties(keys, currentState);
-
-  let values = {};
-
+export const getScopedValues = (keys, values, isFlattened) => {
   if (isFlattened) {
-    return {
-      ...(hasSize ? size : null),
-      ...(hasPosition ? position : null)
-    };
+    return values;
   }
 
-  if (hasSize) {
-    values[sizeProp] = size;
-  }
+  return reduce(keys, (scopedValues, {key, type}) => {
+    if (!scopedValues[type]) {
+      scopedValues[type] = {};
+    }
 
-  if (hasPosition) {
-    values[positionProp] = position;
-  }
+    scopedValues[type][key] = values[key];
 
-  return values;
+    return scopedValues;
+  }, {});
+};
+
+/**
+ * @private
+ *
+ * @description
+ * based on their existence in keysToTestAgainst, determine which of the keys
+ * passed are considered valid
+ *
+ * @param {Array<string>} keys the keys to test
+ * @param {Array<string>} keysToTestAgainst the keys to find matches from
+ * @returns {Array<string>} the resulting matching key set
+ */
+export const getValidKeys = (keys, keysToTestAgainst) => {
+  return filter(keys, (key) => {
+    return includes(keysToTestAgainst, key);
+  });
 };
 
 /**
@@ -214,15 +238,30 @@ const getValues = (keys, currentState, {positionProp, sizeProp}, isFlattened) =>
  * iterate through keys and determine if the values have
  * changed compared to what is stored in state
  *
- * @param {Array<string>} keys keys to get from the state
+ * @param {Array<Object>} keys keys to get from the state
  * @param {Object} values the new values to test
  * @param {Object} currentState the current values in state
  * @returns {boolean} have any of the keys changed
  */
-const haveValuesChanged = (keys, values, currentState) => {
-  return keys.some((key) => {
+export const haveValuesChanged = (keys, values, currentState) => {
+  return some(keys, ({key}) => {
     return values[key] !== currentState[key];
   });
+};
+
+/**
+ * @private
+ *
+ * @function isElementVoidTag
+ *
+ * @description
+ * is the element passed a void tag name
+ *
+ * @param {HTMLElement} element
+ * @returns {boolean}
+ */
+export const isElementVoidTag = (element) => {
+  return includes(VOID_ELEMENT_TAG_NAMES, element.tagName.toUpperCase());
 };
 
 /**
@@ -233,25 +272,13 @@ const haveValuesChanged = (keys, values, currentState) => {
  * @description
  * based on desiredKeys, build the initialState object
  *
- * @param {Array<string>} allKeys all the keys that are possible
- * @param {Array<string>} desiredKeys the keys requested from the decorator
+ * @param {Array<string>} keys the keys requested from the decorator
  * @returns {Array<T>} the object of key: 0 default values
  */
-const reduceStateToMatchingKeys = (allKeys, desiredKeys) => {
-  return allKeys.reduce((accumulatedInitialState, key) => {
-    if (includes(desiredKeys, key)) {
-      accumulatedInitialState[key] = 0;
-    }
+export const reduceStateToMatchingKeys = (keys) => {
+  return reduce(keys, (accumulatedInitialState, {key}) => {
+    accumulatedInitialState[key] = 0;
 
     return accumulatedInitialState;
   }, {});
 };
-
-export {getArraySubset};
-export {createObjectFromKeys};
-export {getNaturalDimensionValue};
-export {getRequestAnimationFrame};
-export {getValidKeys};
-export {getValues};
-export {haveValuesChanged};
-export {reduceStateToMatchingKeys};

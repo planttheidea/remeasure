@@ -70,7 +70,7 @@
 
 
 
-    <h3>remeasure 1.6.1</h3>
+    <h3>remeasure 2.0.0</h3>
 
 
 
@@ -90,8 +90,8 @@
     <section class="readme-section">
         <article><h1 id="remeasure">remeasure</h1>
 <p>Get position and size of the DOM element for any React Component</p>
-<h4 id="installation">Installation</h4>
-<pre class="prettyprint source"><code>$ npm i remeasure --save</code></pre><h4 id="usage">Usage</h4>
+<h3 id="installation">Installation</h3>
+<pre class="prettyprint source"><code>$ npm i remeasure --save</code></pre><h3 id="usage">Usage</h3>
 <pre class="prettyprint source lang-javascript"><code>// ES2015
 import measure from 'remeasure';
 
@@ -153,7 +153,7 @@ const StatelessComponent = measure(({position, size}) => {
   }
 }</code></pre><p>The <code>bottom</code>, <code>left</code>, <code>right</code>, and <code>top</code> properties in <code>position</code> are what you would expect from the result of <code>element.getBoundingClientRect()</code>. <code>naturalHeight</code> and <code>naturalWidth</code> are properties that are native to <code>img</code> elements, and for all non-<code>img</code> elements they are coalesced with <code>scrollHeight</code> and <code>scrollWidth</code>, respectively.</p>
 <p>These properties are retrieved on mount, but will also automatically update if the element is resized thanks to <a href="https://github.com/KyleAMathews/element-resize-event">element-resize-event</a>. Please note that elements that do not support content (such as <code>img</code>) are not supported by this resize listener; in the case that you need to support those elements, simply create a higher-order component that wraps that element in a <code>div</code> and decorate that component.</p>
-<h4 id="advanced-usage">Advanced usage</h4>
+<h3 id="advanced-usage">Advanced usage</h3>
 <p>If you want to limit the items that are injected into the component, you can pass either a key or array of keys to the decorator before wrapping the component.</p>
 <p><strong>measure(<code>String|Array&lt;String&gt;|Object[, Object]</code>)</strong> <em>returns <code>Function</code></em></p>
 <p>Examples:</p>
@@ -260,7 +260,13 @@ class MySizedComponent extends Component {
             &lt;/div>
         );
     }
-}</code></pre><h4 id="support">Support</h4>
+}</code></pre><h3 id="caveats">Caveats</h3>
+<p>A couple things to keep in mind when using <code>remeasure</code>:</p>
+<p><strong>Void tags cannot detect element resize</strong></p>
+<p>If children on a tag are considered invalid HTML (such as for <code>&lt;input/&gt;</code>, <code>&lt;img/&gt;</code>, etc), then the internal element resize detector cannot not work. The easy solution to this is to update the component via props (on update a recalculation of values is triggered).</p>
+<p><strong>Components may render twice on update</strong></p>
+<p>If you perform an update to the component <code>props</code> or <code>state</code> that also happens to change its dimensions, the component will update twice, once for the changes to <code>props</code> / <code>state</code>, and again for the changes to its dimensions. This is because the component needs to render in the DOM before updated values can be calculated.</p>
+<h3 id="support">Support</h3>
 <p><code>remeasure</code> has been tested and confirmed to work on the following browsers:</p>
 <ul>
 <li>Chrome</li>
@@ -270,7 +276,7 @@ class MySizedComponent extends Component {
 <li>IE9+</li>
 </ul>
 <p><code>remeasure</code> also works with universal / isomorphic applications.</p>
-<h4 id="development">Development</h4>
+<h3 id="development">Development</h3>
 <p>Standard stuff, clone the repo and <code>npm i</code> to get the dependencies. npm scripts available:</p>
 <ul>
 <li><code>build</code> =&gt; builds the distributed JS with <code>NODE_ENV=development</code> and with sourcemaps</li>

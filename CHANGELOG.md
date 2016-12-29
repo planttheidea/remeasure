@@ -1,5 +1,13 @@
 # remeasure changelog
 
+#### 2.0.0
+* Major refactor to be more functional (same functionality, but due to scope of refactor there may be regressions)
+* Substantial performance improvement
+* Zero out measurements when element is null
+
+#### 1.6.1
+* Add documentation site
+
 #### 1.6.0
 * Add `flatten` option, to prevent grouping under `position` and `size` properties
 

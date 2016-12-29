@@ -114,7 +114,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="index.js.html">index.js</a>,
-				 <a href="index.js.html#sunlight-1-line-41">line 41</a>
+				 <a href="index.js.html#sunlight-1-line-45">line 45</a>
 			</li>
 		</ul>
 	</dd>
@@ -151,7 +151,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="~measure"><span class="type-signature">&lt;inner> </span>measure(keys, options)</h4>
+    <h4 class="name" id="~measure"><span class="type-signature">&lt;inner> </span>measure(passedKeys [, passedOptions])</h4>
     
     
 </dt>
@@ -183,7 +183,11 @@ into OriginalComponent as an object under the prop name size and position</p>
         <th>Type</th>
 
         
+        <th>Argument</th>
+        
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -195,7 +199,7 @@ into OriginalComponent as an object under the prop name size and position</p>
 
         <tr>
             
-                <td class="name"><code>keys</code></td>
+                <td class="name"><code>passedKeys</code></td>
             
 
             <td class="type">
@@ -215,18 +219,30 @@ into OriginalComponent as an object under the prop name size and position</p>
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+
+                
+                </td>
             
 
-            <td class="description last"><p>if used without parameters, the component that will be measured,
-else either an array of keys to watch for measurement or an object of options</p></td>
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>if used without parameters, the component that will be
+measured, else either an array of keys to watch for measurement or an object of options</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>options</code></td>
+                <td class="name"><code>passedOptions</code></td>
             
 
             <td class="type">
@@ -240,7 +256,23 @@ else either an array of keys to watch for measurement or an object of options</p
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    {}
+                
+                </td>
             
 
             <td class="description last"><p>an object of options to apply for measuring</p></td>
@@ -288,7 +320,7 @@ else either an array of keys to watch for measurement or an object of options</p
 		<ul class="dummy">
 			<li>
 				<a href="index.js.html">index.js</a>,
-				 <a href="index.js.html#sunlight-1-line-45">line 45</a>
+				 <a href="index.js.html#sunlight-1-line-49">line 49</a>
 			</li>
 		</ul>
 	</dd>
@@ -317,8 +349,8 @@ else either an array of keys to watch for measurement or an object of options</p
     
             
 <div class="param-desc">
-    <p>the higher-order component that will measure the child and pass down size and position
-values as props</p>
+    <p>the higher-order component that will measure the child and pass down size and
+position values as props</p>
 </div>
 
 
@@ -329,7 +361,7 @@ values as props</p>
     </dt>
     <dd>
         
-<span class="param-type">RemeasureComponent</span>
+<span class="param-type">MeasuredComponent</span>
 
 
 
