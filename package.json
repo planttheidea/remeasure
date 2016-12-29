@@ -26,6 +26,7 @@
     "element-resize-event": "~2.0.7",
     "lodash": "^4.17.3",
     "moize": "^1.3.2",
+    "raf": "^3.3.0",
     "react": ">=0.14.0"
   },
   "description": "Get position and size of the DOM element for any React Component",
@@ -102,5 +103,5 @@
     "test:watch": "NODE_ENV=test ava --watch",
     "transpile": "babel src --out-dir lib"
   },
-  "version": "2.0.0"
+  "version": "2.0.1"
 }

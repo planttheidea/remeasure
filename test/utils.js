@@ -7,7 +7,6 @@ import {
   getKeyType,
   getKeysSubsetWithType,
   getNaturalDimensionValue,
-  getRequestAnimationFrame,
   getScopedValues,
   getValidKeys,
   haveValuesChanged,
@@ -105,24 +104,6 @@ test('if getNaturalDimensionValue gets the correct value based on key', (t) => {
 
   t.is(getNaturalDimensionValue(objectWithoutNaturalValue, 'naturalHeight'), objectWithNaturalValue.scrollHeight);
   t.is(getNaturalDimensionValue(objectWithNaturalValue, 'naturalHeight'), objectWithNaturalValue.naturalHeight);
-});
-
-test('if getRequestAnimationFrame gets requestAnimationFrame from the global object', async (t) => {
-  const result = getRequestAnimationFrame();
-
-  t.true(_.isFunction(result));
-
-  let hasRun = false;
-
-  result(() => {
-    hasRun = true;
-  });
-
-  t.false(hasRun);
-
-  await sleep(1000 / 60);
-
-  t.true(hasRun);
 });
 
 test('if getScopedValues returns an object with size or position or both with the correct values', (t) => {

@@ -1,8 +1,8 @@
 // external dependencies
 import onElementResize from 'element-resize-event';
 import debounce from 'lodash/debounce';
-import isFunction from 'lodash/isFunction';
 import moize from 'moize';
+import raf from 'raf';
 import React, {
   Component
 } from 'react';
@@ -27,14 +27,11 @@ import {
 import {
   getKeysSubsetWithType,
   getElementValues,
-  getRequestAnimationFrame,
   getScopedValues,
   haveValuesChanged,
   isElementVoidTag,
   reduceStateToMatchingKeys
 } from './utils';
-
-let raf;
 
 const getMeasuredComponent = (keys, options) => {
   const {
@@ -59,12 +56,6 @@ const getMeasuredComponent = (keys, options) => {
   return (PassedComponent) => {
     class MeasuredComponent extends Component {
       state = {...initialState};
-
-      componentWillMount() {
-        if (!isFunction(raf)) {
-          raf = getRequestAnimationFrame();
-        }
-      }
 
       componentDidMount() {
         const element = this.getDOMElement();

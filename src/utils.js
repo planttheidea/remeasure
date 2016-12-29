@@ -162,28 +162,6 @@ export const getKeysSubsetWithType = (sourceArray, valuesToExtract, source, prop
 /**
  * @private
  *
- * @function getRequestAnimationFrame
- *
- * @description
- * wait to assign the raf until mount, so it has access to the
- * window object
- *
- * @returns {function} the polyfilled requestAnimationFrame method
- */
-export const getRequestAnimationFrame = () => {
-  return (
-    window.requestAnimationFrame ||
-    window.webkitRequestAnimationFrame ||
-    window.mozRequestAnimationFrame ||
-    function(callback) {
-      window.setTimeout(callback, 1000 / 60);
-    }
-  );
-};
-
-/**
- * @private
- *
  * @function getValues
  *
  * @description
