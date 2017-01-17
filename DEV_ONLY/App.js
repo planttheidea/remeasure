@@ -30,18 +30,20 @@ class NoParams extends PureComponent {
   }
 }
 
-@measure('size')
-class SizeOnly extends PureComponent {
+@measure.width({renderOnResize: false})
+class WidthOnly extends PureComponent {
   render() {
     const {
       children,
       position,
-      size
+      size,
+      width
     } = this.props;
 
-    console.group('size only');
+    console.group('width only');
     console.log('position', position);
     console.log('size', size);
+    console.log('width', width);
     console.groupEnd();
 
     return (
@@ -204,9 +206,9 @@ class App extends Component {
           I only have the position property.
         </PositionOnly>
 
-        <SizeOnly>
-          I only have the size property.
-        </SizeOnly>
+        <WidthOnly>
+          I only have the width property, and will not rerender on resize.
+        </WidthOnly>
 
         <SpecificProperties>
           I only have the height and width properties in size, and top and left properties in position.

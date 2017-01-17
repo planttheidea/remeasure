@@ -1,12 +1,13 @@
+import test from 'ava';
+import _ from 'lodash';
 import React, {
   Component
 } from 'react';
 
-import test from 'ava';
-
-import './utils';
-
 import measure from '../src/index';
+import {
+  ALL_KEYS
+} from '../src/constants';
 
 const REACT_ELEMENT_TYPE = (typeof Symbol === 'function' && Symbol.for && Symbol.for('react.element')) || 0xeac7;
 
@@ -136,4 +137,14 @@ test('if measure returns a higher-order component', (t) => {
   t.is(typeof TestStatelessWithKeysAndOptions, 'function');
   t.is(TestStatelessWithKeysAndOptions.name, 'MeasuredComponent');
   t.is(testStatelessWithKeysAndOptions.$$typeof, REACT_ELEMENT_TYPE);
+});
+
+test('if each member of ALL_KEYS has a convenience method on measure', (t) => {
+  const keys = Object.keys(measure);
+
+  t.deepEqual(keys, ALL_KEYS);
+
+  keys.forEach((key) => {
+    t.true(_.isFunction(measure[key]));
+  });
 });
