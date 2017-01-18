@@ -86,3 +86,4 @@ export const ELEMENT_TYPE = 'element';
 
 export const DEFAULT_INSTANCE_ELEMENT_VALUE = null;
 export const DEFAULT_INSTANCE_HAS_RESIZE_VALUE = false;
+export const DEFAULT_INSTANCE_MOUNTED_VALUE = false;

@@ -6,7 +6,8 @@ import React, {
 // constants
 import {
   DEFAULT_INSTANCE_ELEMENT_VALUE,
-  DEFAULT_INSTANCE_HAS_RESIZE_VALUE
+  DEFAULT_INSTANCE_HAS_RESIZE_VALUE,
+  DEFAULT_INSTANCE_MOUNTED_VALUE
 } from './constants';
 
 // utils
@@ -28,13 +29,14 @@ const getMeasuredComponent = (keys, options) => {
       state = reduceStateToMatchingKeys(selectedKeys);
 
       // lifecycle methods
-      componentDidMount = createSetInstanceElement(this, selectedKeys, options);
+      componentDidMount = createSetInstanceElement(this, selectedKeys, options, true);
       componentDidUpdate = createSetInstanceElement(this, selectedKeys, options);
       componentWillUmount = createRemoveInstanceElement(this);
 
       // instance variables
       element = DEFAULT_INSTANCE_ELEMENT_VALUE;
       hasResize = DEFAULT_INSTANCE_HAS_RESIZE_VALUE;
+      mounted = DEFAULT_INSTANCE_MOUNTED_VALUE;
 
       // instance methods
       getDOMElement = createGetDOMElement(this);

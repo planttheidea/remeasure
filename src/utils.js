@@ -24,6 +24,7 @@ import {
   DEBOUNCE_VALUE_DEFAULT,
   DEFAULT_INSTANCE_ELEMENT_VALUE,
   DEFAULT_INSTANCE_HAS_RESIZE_VALUE,
+  DEFAULT_INSTANCE_MOUNTED_VALUE,
   ELEMENT_TYPE,
   NATURAL_REGEXP,
   POSITION_PROP_DEFAULT,
@@ -31,6 +32,64 @@ import {
   SIZE_PROP_DEFAULT,
   VOID_ELEMENT_TAG_NAMES
 } from './constants';
+
+/**
+ * @private
+ *
+ * @function haveValuesChanged
+ *
+ * @description
+ * iterate through keys and determine if the values have
+ * changed compared to what is stored in state
+ *
+ * @param {Array<Object>} keys keys to get from the state
+ * @param {Object} values the new values to test
+ * @param {Object} currentState the current values in state
+ * @returns {boolean} have any of the keys changed
+ */
+export const haveValuesChanged = (keys, values, currentState) => {
+  return some(keys, ({key}) => {
+    return values[key] !== currentState[key];
+  });
+};
+
+/**
+ * @private
+ *
+ * @function setValuesIfChanged
+ *
+ * @description
+ * if the values have changed and the instance is mounted then set the values in state
+ *
+ * @param {MeasuredComponent} instance component instance
+ * @param {function} instance.setState setState method of instance component
+ * @param {Array<string>} keys keys to store in state
+ * @param {Object} values updated values to store in state
+ */
+export const setValuesIfChanged = (instance, keys, values) => {
+  if (haveValuesChanged(keys, values, instance.state) && instance.mounted) {
+    instance.setState(values);
+  }
+};
+
+/**
+ * @private
+ *
+ * @function reduceStateToMatchingKeys
+ *
+ * @description
+ * based on desiredKeys, build the initialState object
+ *
+ * @param {Array<string>} keys the keys requested from the decorator
+ * @returns {Array<T>} the object of key: 0 default values
+ */
+export const reduceStateToMatchingKeys = (keys) => {
+  return reduce(keys, (accumulatedInitialState, {key}) => {
+    accumulatedInitialState[key] = 0;
+
+    return accumulatedInitialState;
+  }, {});
+};
 
 /**
  * @private
@@ -47,9 +106,7 @@ import {
 export const clearValues = (instance, selectedKeys) => {
   const emptyValues = reduceStateToMatchingKeys(selectedKeys);
 
-  if (haveValuesChanged(selectedKeys, emptyValues, instance.state)) {
-    instance.setState(emptyValues);
-  }
+  setValuesIfChanged(instance, selectedKeys, emptyValues);
 };
 
 /**
@@ -86,6 +143,21 @@ export const updateValuesViaRaf = (instance) => {
   if (instance.element) {
     raf(instance.updateValuesIfChanged);
   }
+};
+
+/**
+ * @private
+ *
+ * @function isElementVoidTag
+ *
+ * @description
+ * is the element passed a void tag name
+ *
+ * @param {HTMLElement} element
+ * @returns {boolean}
+ */
+export const isElementVoidTag = (element) => {
+  return includes(VOID_ELEMENT_TAG_NAMES, element.tagName.toUpperCase());
 };
 
 /**
@@ -153,6 +225,7 @@ export const createRemoveInstanceElement = (instance) => {
   return () => {
     instance.element = DEFAULT_INSTANCE_ELEMENT_VALUE;
     instance.hasResize = DEFAULT_INSTANCE_HAS_RESIZE_VALUE;
+    instance.mounted = DEFAULT_INSTANCE_MOUNTED_VALUE;
   };
 };
 
@@ -166,16 +239,24 @@ export const createRemoveInstanceElement = (instance) => {
  *
  * @param {MeasuredComponent} instance component instance
  * @param {Array<string>} selectedKeys keys to store in state
- * @param {number} [debounceValue=DEBOUNCE_VALUE_DEFAULT] value to use for debounce of updates
- * @param {boolean} [renderOnResize=RENDER_ON_RESIZE_DEFAULT] should the component rerender on resize
+ * @param {Object} [options={}] options passed to the instance
+ * @param {number} [options.debounceValue=DEBOUNCE_VALUE_DEFAULT] value to use for debounce of updates
+ * @param {boolean} [options.renderOnResize=RENDER_ON_RESIZE_DEFAULT] should the component rerender on resize
+ * @param {boolean} [shouldMount=false] if the method should set mounted to true
  * @returns {function(): void} componentDidUpdate method
  */
-export const createSetInstanceElement = (instance, selectedKeys, {
-  debounce: debounceValue = DEBOUNCE_VALUE_DEFAULT,
-  renderOnResize = RENDER_ON_RESIZE_DEFAULT
-}) => {
+export const createSetInstanceElement = (instance, selectedKeys, options = {}, shouldMount = false) => {
+  const {
+    debounce: debounceValue = DEBOUNCE_VALUE_DEFAULT,
+    renderOnResize = RENDER_ON_RESIZE_DEFAULT
+  } = options;
+
   return () => {
     const element = instance.getDOMElement();
+
+    if (shouldMount) {
+      instance.mounted = true;
+    }
 
     setElement(instance, element, debounceValue, renderOnResize);
 
@@ -279,33 +360,6 @@ export const createGetScopedValues = () => {
 /**
  * @private
  *
- * @function createUpdateValuesIfChanged
- *
- * @description
- * create the function to get the new values and assign them to state if they have changed
- *
- * @param {MeasuredComponent} instance component instance
- * @param {function} instance.setState setState method of instance component
- * @param {Array<string>} selectedKeys keys to store in state
- * @returns {function(): void} function to update the instance state values if they have changed
- */
-export const createUpdateValuesIfChanged = (instance, selectedKeys) => {
-  return () => {
-    const element = instance.element;
-
-    if (element) {
-      const values = getElementValues(element, selectedKeys);
-
-      if (haveValuesChanged(selectedKeys, values, instance.state)) {
-        instance.setState(values);
-      }
-    }
-  };
-};
-
-/**
- * @private
- *
  * @function getNaturalDimensionValue
  *
  * @description
@@ -343,6 +397,31 @@ export const getElementValues = (element, keys) => {
 
     return values;
   }, {});
+};
+
+/**
+ * @private
+ *
+ * @function createUpdateValuesIfChanged
+ *
+ * @description
+ * create the function to get the new values and assign them to state if they have changed
+ *
+ * @param {MeasuredComponent} instance component instance
+ * @param {function} instance.setState setState method of instance component
+ * @param {Array<string>} selectedKeys keys to store in state
+ * @returns {function(): void} function to update the instance state values if they have changed
+ */
+export const createUpdateValuesIfChanged = (instance, selectedKeys) => {
+  return () => {
+    const element = instance.element;
+
+    if (element) {
+      const values = getElementValues(element, selectedKeys);
+
+      setValuesIfChanged(instance, selectedKeys, values);
+    }
+  };
 };
 
 /**
@@ -508,58 +587,4 @@ export const getValidKeys = (keys, keysToTestAgainst) => {
   return filter(keys, (key) => {
     return includes(keysToTestAgainst, key);
   });
-};
-
-/**
- * @private
- *
- * @function haveValuesChanged
- *
- * @description
- * iterate through keys and determine if the values have
- * changed compared to what is stored in state
- *
- * @param {Array<Object>} keys keys to get from the state
- * @param {Object} values the new values to test
- * @param {Object} currentState the current values in state
- * @returns {boolean} have any of the keys changed
- */
-export const haveValuesChanged = (keys, values, currentState) => {
-  return some(keys, ({key}) => {
-    return values[key] !== currentState[key];
-  });
-};
-
-/**
- * @private
- *
- * @function isElementVoidTag
- *
- * @description
- * is the element passed a void tag name
- *
- * @param {HTMLElement} element
- * @returns {boolean}
- */
-export const isElementVoidTag = (element) => {
-  return includes(VOID_ELEMENT_TAG_NAMES, element.tagName.toUpperCase());
-};
-
-/**
- * @private
- *
- * @function reduceStateToMatchingKeys
- *
- * @description
- * based on desiredKeys, build the initialState object
- *
- * @param {Array<string>} keys the keys requested from the decorator
- * @returns {Array<T>} the object of key: 0 default values
- */
-export const reduceStateToMatchingKeys = (keys) => {
-  return reduce(keys, (accumulatedInitialState, {key}) => {
-    accumulatedInitialState[key] = 0;
-
-    return accumulatedInitialState;
-  }, {});
 };

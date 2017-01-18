@@ -470,6 +470,84 @@ test('if setElement will set hasResize to instance passed when renderOnResize is
 
 test.todo('setElementResize');
 
+test('if setValuesIfChanged will call setState with the values if they have changed', (t) => {
+  const key = 'width';
+  const keys = [
+    {
+      key,
+      source: CLIENT_RECT_TYPE,
+      type: POSITION_PROP_DEFAULT
+    }
+  ];
+  const values = {
+    [key]: 123
+  };
+
+  const instance = {
+    mounted: true,
+    setState(valuesPassed) {
+      t.is(values, valuesPassed);
+    },
+    state: {
+      [key]: 0
+    }
+  };
+
+  utils.setValuesIfChanged(instance, keys, values);
+});
+
+test('if setValuesIfChanged will not call setState if the values have not changed', (t) => {
+  const key = 'width';
+  const keys = [
+    {
+      key,
+      source: CLIENT_RECT_TYPE,
+      type: POSITION_PROP_DEFAULT
+    }
+  ];
+  const values = {
+    [key]: 123
+  };
+
+  const instance = {
+    mounted: true,
+    setState: sinon.stub(),
+    state: {
+      [key]: 123
+    }
+  };
+
+  utils.setValuesIfChanged(instance, keys, values);
+
+  t.false(instance.setState.calledOnce);
+});
+
+test('if setValuesIfChanged will not call setState if the values have changed but mounted is false', (t) => {
+  const key = 'width';
+  const keys = [
+    {
+      key,
+      source: CLIENT_RECT_TYPE,
+      type: POSITION_PROP_DEFAULT
+    }
+  ];
+  const values = {
+    [key]: 123
+  };
+
+  const instance = {
+    mounted: false,
+    setState: sinon.stub(),
+    state: {
+      [key]: 0
+    }
+  };
+
+  utils.setValuesIfChanged(instance, keys, values);
+
+  t.false(instance.setState.calledOnce);
+});
+
 test('if updateValuesViaRaf will call updateValuesIfChanged on the instance after an animation frame tick', (t) => {
   const instance = {
     element: 'foo',
