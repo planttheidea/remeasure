@@ -1,5 +1,18 @@
 # remeasure changelog
 
+#### 2.1.2
+* Add more descriptive `displayName` to `MeasuredComponent` for DevTools
+
+#### 2.1.1
+* Ensure component is mounted before attempting to update state
+
+#### 2.1.0
+* Add convenience methods for `flatten` option
+* Refactor for far more functional approach and performance improvements
+
+#### 2.0.1
+* Add `raf` as dependency for more robust `requestAnimationFrame` setup
+
 #### 2.0.0
 * Major refactor to be more functional (same functionality, but due to scope of refactor there may be regressions)
 * Substantial performance improvement

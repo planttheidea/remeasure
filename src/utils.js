@@ -36,6 +36,21 @@ import {
 /**
  * @private
  *
+ * @function getComponentName
+ *
+ * @description
+ * get the name of the component from displayName, the internal name, or fallback
+ *
+ * @param {Component} Component component to get the display name from
+ * @returns {string} Component name
+ */
+export const getComponentName = (Component) => {
+  return Component.displayName || Component.name || 'Component';
+};
+
+/**
+ * @private
+ *
  * @function haveValuesChanged
  *
  * @description
@@ -553,9 +568,9 @@ export const getKeysSubsetWithType = (sourceArray, valuesToExtract, source, prop
 
 /**
  * @private
- * 
+ *
  * @function getKeysWithSourceAndType
- * 
+ *
  * @description
  * get the keys with mapped source (rect or element) and type (position or size)
  *

@@ -17,6 +17,7 @@ import {
   createGetDOMElement,
   createGetScopedValues,
   createUpdateValuesIfChanged,
+  getComponentName,
   getKeysWithSourceAndType,
   reduceStateToMatchingKeys
 } from './utils';
@@ -25,7 +26,11 @@ const getMeasuredComponent = (keys, options) => {
   const selectedKeys = getKeysWithSourceAndType(keys, options);
 
   return (PassedComponent) => {
+    const displayName = getComponentName(PassedComponent);
+
     class MeasuredComponent extends Component {
+      static displayName = `Measured(${displayName})`;
+
       state = reduceStateToMatchingKeys(selectedKeys);
 
       // lifecycle methods

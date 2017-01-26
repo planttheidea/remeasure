@@ -192,6 +192,24 @@ test('if createUpdateValuesViaDebounce creates a debounced function that fires u
   t.true(instance.updateValuesIfChanged.calledOnce);
 });
 
+test('if getComponentName will return the correct name for the Component', (t) => {
+  const Foo = () => {};
+
+  const fooResult = utils.getComponentName(Foo);
+
+  t.is(fooResult, 'Foo');
+
+  Foo.displayName = 'Overridden';
+
+  const overriddenResult = utils.getComponentName(Foo);
+
+  t.is(overriddenResult, 'Overridden');
+
+  const lamdaResult = utils.getComponentName(() => {});
+
+  t.is(lamdaResult, 'Component');
+});
+
 test('if getElementValues will return an object of key => value pairs representing the property and measurement', (t) => {
   const normalKey = 'offsetWidth';
   const rectKey = 'width';

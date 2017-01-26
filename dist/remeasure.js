@@ -545,6 +545,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var selectedKeys = (0, _utils.getKeysWithSourceAndType)(keys, options);
 	
 	  return function (PassedComponent) {
+	    var displayName = (0, _utils.getComponentName)(PassedComponent);
+	
 	    var MeasuredComponent = function (_Component) {
 	      _inherits(MeasuredComponent, _Component);
 	
@@ -578,6 +580,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return MeasuredComponent;
 	    }(_react.Component);
 	
+	    MeasuredComponent.displayName = 'Measured(' + displayName + ')';
+	
+	
 	    return MeasuredComponent;
 	  };
 	};
@@ -598,7 +603,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 	
 	exports.__esModule = true;
-	exports.getValidKeys = exports.getKeysWithSourceAndType = exports.getKeysSubsetWithType = exports.getKeysFromStringKey = exports.getKeyType = exports.isSizeKey = exports.isPositionKey = exports.getPropKeyNames = exports.createUpdateValuesIfChanged = exports.getElementValues = exports.getNaturalDimensionValue = exports.createGetScopedValues = exports.createGetDOMElement = exports.createFlattenConvenienceFunction = exports.createIsKeyType = exports.createSetInstanceElement = exports.createRemoveInstanceElement = exports.setElement = exports.setElementResize = exports.isElementVoidTag = exports.updateValuesViaRaf = exports.createUpdateValuesViaDebounce = exports.clearValues = exports.reduceStateToMatchingKeys = exports.setValuesIfChanged = exports.haveValuesChanged = undefined;
+	exports.getValidKeys = exports.getKeysWithSourceAndType = exports.getKeysSubsetWithType = exports.getKeysFromStringKey = exports.getKeyType = exports.isSizeKey = exports.isPositionKey = exports.getPropKeyNames = exports.createUpdateValuesIfChanged = exports.getElementValues = exports.getNaturalDimensionValue = exports.createGetScopedValues = exports.createGetDOMElement = exports.createFlattenConvenienceFunction = exports.createIsKeyType = exports.createSetInstanceElement = exports.createRemoveInstanceElement = exports.setElement = exports.setElementResize = exports.isElementVoidTag = exports.updateValuesViaRaf = exports.createUpdateValuesViaDebounce = exports.clearValues = exports.reduceStateToMatchingKeys = exports.setValuesIfChanged = exports.haveValuesChanged = exports.getComponentName = undefined;
 	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; // external dependencies
 	
@@ -659,6 +664,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * @private
 	 *
+	 * @function getComponentName
+	 *
+	 * @description
+	 * get the name of the component from displayName, the internal name, or fallback
+	 *
+	 * @param {Component} Component component to get the display name from
+	 * @returns {string} Component name
+	 */
+	var getComponentName = exports.getComponentName = function getComponentName(Component) {
+	  return Component.displayName || Component.name || 'Component';
+	};
+	
+	/**
+	 * @private
+	 *
 	 * @function haveValuesChanged
 	 *
 	 * @description
@@ -681,7 +701,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * @private
 	 *
-	 * @function setValuesIfChanges
+	 * @function setValuesIfChanged
 	 *
 	 * @description
 	 * if the values have changed and the instance is mounted then set the values in state
@@ -1203,9 +1223,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	/**
 	 * @private
-	 * 
+	 *
 	 * @function getKeysWithSourceAndType
-	 * 
+	 *
 	 * @description
 	 * get the keys with mapped source (rect or element) and type (position or size)
 	 *

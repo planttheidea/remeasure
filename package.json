@@ -104,5 +104,5 @@
     "test:watch": "NODE_ENV=test ava --watch",
     "transpile": "babel src --out-dir lib"
   },
-  "version": "2.1.1"
+  "version": "2.1.2"
 }
