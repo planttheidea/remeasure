@@ -49,12 +49,10 @@ const getMeasuredComponent = (keys, options) => {
       updateValuesIfChanged = createUpdateValuesIfChanged(this, selectedKeys);
 
       render() {
-        const values = this.getScopedValues(selectedKeys, this.state, options);
-
         return (
           <PassedComponent
             {...this.props}
-            {...values}
+            {...this.getScopedValues(this.state, selectedKeys, options)}
           />
         );
       }

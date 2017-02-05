@@ -8,7 +8,6 @@ import isNull from 'lodash/isNull';
 import isUndefined from 'lodash/isUndefined';
 import reduce from 'lodash/reduce';
 import some from 'lodash/some';
-import moize from 'moize';
 import raf from 'raf';
 import {
   findDOMNode
@@ -359,7 +358,7 @@ export const createGetDOMElement = (instance) => {
  * @returns {function(Array<string>, Object, boolean): Object} the values to pass down as props
  */
 export const createGetScopedValues = () => {
-  return moize((keys, values, {flatten}) => {
+  return (values, keys, {flatten}) => {
     return flatten ? values : reduce(keys, (scopedValues, {key, type}) => {
       if (!scopedValues[type]) {
         scopedValues[type] = {};
@@ -369,7 +368,7 @@ export const createGetScopedValues = () => {
 
       return scopedValues;
     }, {});
-  });
+  };
 };
 
 /**

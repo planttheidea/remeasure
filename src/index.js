@@ -42,7 +42,9 @@ const measure = (passedKeys, passedOptions = {}) => {
   }
 
   const isKeysObject = isPlainObject(passedKeys);
-  const options = isKeysObject ? {...passedKeys} : {...passedOptions};
+  const options = {
+    ...(isKeysObject ? passedKeys : passedOptions)
+  };
 
   if (isKeysObject) {
     return getMeasuredComponent(ALL_KEYS, passedKeys);

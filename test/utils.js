@@ -157,12 +157,16 @@ test('if createGetScopedValues returns a function which returns an object with s
     ...positionResult
   };
 
-  const sizeValues = getScopedValues(sizeKeys, currentState, false);
-  const positionValues = getScopedValues(positionKeys, currentState, false);
-  const allValues = getScopedValues(allKeys, currentState, false);
+  const sizeValues = getScopedValues(currentState, sizeKeys, false);
 
   t.deepEqual(sizeValues, sizeResult);
+
+  const positionValues = getScopedValues(currentState, positionKeys, false);
+
   t.deepEqual(positionValues, positionResult);
+
+  const allValues = getScopedValues(currentState, allKeys, false);
+
   t.deepEqual(allValues, allResult);
 });
 
@@ -330,9 +334,9 @@ test('if getKeysWithSourceAndType returns an array of objects representing the k
 
     return {
       key,
-      source: !~lowercaseKey.indexOf('offset') ? CLIENT_RECT_TYPE: ELEMENT_TYPE,
-      type: !~lowercaseKey.indexOf('left') ? SIZE_PROP_DEFAULT : POSITION_PROP_DEFAULT,
-    }
+      source: !~lowercaseKey.indexOf('offset') ? CLIENT_RECT_TYPE : ELEMENT_TYPE,
+      type: !~lowercaseKey.indexOf('left') ? SIZE_PROP_DEFAULT : POSITION_PROP_DEFAULT
+    };
   });
 
   t.deepEqual(result, expectedResult);

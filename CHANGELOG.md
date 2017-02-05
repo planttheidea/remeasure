@@ -1,5 +1,8 @@
 # remeasure changelog
 
+#### 2.1.3
+* Remove moize dependency
+
 #### 2.1.2
 * Add more descriptive `displayName` to `MeasuredComponent` for DevTools
 
