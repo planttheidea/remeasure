@@ -87,28 +87,7 @@ test('if createFlattenConvenienceFunction will return a decorator function that 
   decorator(extraOpts);
 });
 
-test('if createGetDOMElement create a function that will call the findDOMNode method of ReactDOM with the instance passed', (t) => {
-  const foo = {};
-  const stub = sinon.stub(ReactDOM, 'findDOMNode', (instance) => {
-    t.is(instance, foo);
-  });
-
-  const getDOMNode = utils.createGetDOMElement(foo);
-
-  t.true(_.isFunction(getDOMNode));
-
-  getDOMNode();
-
-  t.true(stub.calledOnce);
-
-  stub.restore();
-});
-
 test('if createGetScopedValues returns a function which returns an object with size or position or both with the correct values', (t) => {
-  const getScopedValues = utils.createGetScopedValues();
-
-  t.true(_.isFunction(getScopedValues));
-
   const sizeKeys = [
     {
       key: 'height',
@@ -157,15 +136,15 @@ test('if createGetScopedValues returns a function which returns an object with s
     ...positionResult
   };
 
-  const sizeValues = getScopedValues(currentState, sizeKeys, false);
+  const sizeValues = utils.getScopedValues(currentState, sizeKeys, false);
 
   t.deepEqual(sizeValues, sizeResult);
 
-  const positionValues = getScopedValues(currentState, positionKeys, false);
+  const positionValues = utils.getScopedValues(currentState, positionKeys, false);
 
   t.deepEqual(positionValues, positionResult);
 
-  const allValues = getScopedValues(currentState, allKeys, false);
+  const allValues = utils.getScopedValues(currentState, allKeys, false);
 
   t.deepEqual(allValues, allResult);
 });
@@ -174,6 +153,38 @@ test('if createIsKeyType creates a function', (t) => {
   const result = utils.createIsKeyType(['foo']);
 
   t.true(_.isFunction(result));
+});
+
+test('if createUpdateValuesIfChanged will create a function that calls setUpdateValuesIfChanged if it exists', (t) => {
+  const instance = {
+    element: {
+      foo: 200,
+      getBoundingClientRect() {
+        return {
+          foo: 200
+        };
+      }
+    },
+    mounted: true,
+    setState(state) {
+      t.is(state.foo, instance.element.foo);
+    },
+    state: {
+      foo: 0
+    }
+  };
+  const selectedKeys = [
+    {
+      key: 'foo',
+      source: 'clientRect'
+    }
+  ];
+
+  const updateValuesIfChanged = utils.createUpdateValuesIfChanged(instance, selectedKeys);
+
+  t.true(_.isFunction(updateValuesIfChanged));
+
+  updateValuesIfChanged();
 });
 
 test('if createUpdateValuesViaDebounce creates a debounced function that fires updateValuesIfChanged', async (t) => {

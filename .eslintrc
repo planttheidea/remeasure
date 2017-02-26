@@ -1,8 +1,11 @@
 {
   "extends": "rapid7/browser",
   "globals": {
+    "__dirname": true,
     "global": true,
-    "process": true
+    "module": true,
+    "process": true,
+    "require": true
   },
   "parser": "babel-eslint",
   "parserOptions": {

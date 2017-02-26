@@ -266,7 +266,7 @@ export const createSetInstanceElement = (instance, selectedKeys, options = {}, s
   } = options;
 
   return () => {
-    const element = instance.getDOMElement();
+    const element = findDOMNode(instance);
 
     if (shouldMount) {
       instance.mounted = true;
@@ -276,12 +276,12 @@ export const createSetInstanceElement = (instance, selectedKeys, options = {}, s
 
     if (element) {
       updateValuesViaRaf(instance);
+
+      if (renderOnResize && !instance.hasResize) {
+        setElementResize(instance, debounceValue);
+      }
     } else {
       clearValues(instance, selectedKeys);
-    }
-
-    if (renderOnResize && !instance.hasResize) {
-      setElementResize(instance, debounceValue);
     }
   };
 };
@@ -331,44 +331,28 @@ export const createFlattenConvenienceFunction = (measure, property) => {
 /**
  * @private
  *
- * @function createGetDOMElement
+ * @function getScopedValues
  *
  * @description
- * create function to get the DOM element specific to the component
- *
- * @param {MeasuredComponent} instance component instance to find DOM node of
- * @returns {function(): (HTMLElement|null)}
- */
-export const createGetDOMElement = (instance) => {
-  return () => {
-    return findDOMNode(instance);
-  };
-};
-
-/**
- * @private
- *
- * @function createGetScopedValues
- *
- * @description
- * create a function to, based on the keys passed, create an object with either position
+ * based on the keys passed, create an object with either position
  * or size or both properties that are objects containing the respective
  * values for the associated keys
  *
- * @returns {function(Array<string>, Object, boolean): Object} the values to pass down as props
+ * @param {Object} values values to reduce by type
+ * @param {Array<string>} keys the keys to assign to scopedValues
+ * @param {boolean} flatten should the object be flat or not
+ * @returns {Object} reduced scoped values
  */
-export const createGetScopedValues = () => {
-  return (values, keys, {flatten}) => {
-    return flatten ? values : reduce(keys, (scopedValues, {key, type}) => {
-      if (!scopedValues[type]) {
-        scopedValues[type] = {};
-      }
+export const getScopedValues = (values, keys, {flatten}) => {
+  return flatten ? values : reduce(keys, (scopedValues, {key, type}) => {
+    if (!scopedValues[type]) {
+      scopedValues[type] = {};
+    }
 
-      scopedValues[type][key] = values[key];
+    scopedValues[type][key] = values[key];
 
-      return scopedValues;
-    }, {});
-  };
+    return scopedValues;
+  }, {});
 };
 
 /**

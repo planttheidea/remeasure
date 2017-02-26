@@ -14,11 +14,10 @@ import {
 import {
   createRemoveInstanceElement,
   createSetInstanceElement,
-  createGetDOMElement,
-  createGetScopedValues,
   createUpdateValuesIfChanged,
   getComponentName,
   getKeysWithSourceAndType,
+  getScopedValues,
   reduceStateToMatchingKeys
 } from './utils';
 
@@ -44,15 +43,13 @@ const getMeasuredComponent = (keys, options) => {
       mounted = DEFAULT_INSTANCE_MOUNTED_VALUE;
 
       // instance methods
-      getDOMElement = createGetDOMElement(this);
-      getScopedValues = createGetScopedValues();
       updateValuesIfChanged = createUpdateValuesIfChanged(this, selectedKeys);
 
       render() {
         return (
           <PassedComponent
             {...this.props}
-            {...this.getScopedValues(this.state, selectedKeys, options)}
+            {...getScopedValues(this.state, selectedKeys, options)}
           />
         );
       }

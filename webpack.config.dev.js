@@ -1,18 +1,14 @@
 'use strict';
 
 const path = require('path');
-const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackDashboard = require('webpack-dashboard/plugin');
-const eslintFriendlyFormatter = require('eslint-friendly-formatter');
+
+const defaultConfig = require('./webpack.config');
 
 const PORT = 3000;
 
-module.exports = {
-  cache: true,
-
-  debug: true,
-
+module.exports = Object.assign({}, {
   devServer: {
     contentBase: './dist',
     host: 'localhost',
@@ -27,76 +23,34 @@ module.exports = {
     }
   },
 
-  devtool: '#source-map',
-
   entry: [
     path.resolve(__dirname, 'DEV_ONLY', 'App.js')
   ],
 
-  eslint: {
-    configFile: '.eslintrc',
-    emitError: true,
-    failOnError: true,
-    failOnWarning: false,
-    formatter: eslintFriendlyFormatter
-  },
-
-  module: {
-    preLoaders: [
-      {
-        include: [
-          path.resolve(__dirname, 'src')
-        ],
-        loader: 'eslint-loader',
-        test: /\.js$/
+  module: Object.assign({}, defaultConfig.module, {
+    rules: defaultConfig.module.rules.map((rule) => {
+      if (rule.loader !== 'babel-loader') {
+        return rule;
       }
-    ],
 
-    loaders: [
-      {
-        include: [
-          path.resolve(__dirname, 'src'),
+      return Object.assign({}, rule, {
+        include: rule.include.concat([
           path.resolve(__dirname, 'DEV_ONLY')
-        ],
-        loader: 'babel',
-        query: {
+        ]),
+        options: Object.assign({}, rule.options, {
+          cacheDirectory: true,
           plugins: [
             'transform-decorators-legacy'
           ]
-        },
-        test: /\.js$/
-      }
-    ]
-  },
+        })
+      });
+    })
+  }),
 
-  output: {
-    filename: 'remeasure.js',
-    library: 'Remeasure',
-    path: path.resolve(__dirname, 'dist'),
-    publicPath: `http://localhost:${PORT}/`,
-    umdNamedDefine: true
-  },
-
-  plugins: [
-    new webpack.EnvironmentPlugin([
-      'NODE_ENV'
-    ]),
+  plugins: defaultConfig.plugins.concat([
     new HtmlWebpackPlugin(),
     new WebpackDashboard({
       port: 3210
     })
-  ],
-
-  resolve: {
-    extensions: [
-      '',
-      '.js'
-    ],
-
-    fallback: [
-      path.join(__dirname, 'src')
-    ],
-
-    root: __dirname
-  }
-};
+  ])
+});

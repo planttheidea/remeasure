@@ -8,24 +8,14 @@ const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 module.exports = {
   cache: true,
 
-  debug: true,
-
   devtool: '#source-map',
 
   entry: [
     path.resolve(__dirname, 'src', 'index.js')
   ],
 
-  eslint: {
-    configFile: '.eslintrc',
-    emitError: true,
-    failOnError: true,
-    failOnWarning: false,
-    formatter: require('eslint-friendly-formatter')
-  },
-
   externals: {
-    'react': {
+    react: {
       amd: 'react',
       commonjs: 'react',
       commonjs2: 'react',
@@ -40,22 +30,25 @@ module.exports = {
   },
 
   module: {
-    preLoaders: [
+    rules: [
       {
+        enforce: 'pre',
         include: [
           path.resolve(__dirname, 'src')
         ],
         loader: 'eslint-loader',
+        options: {
+          configFile: '.eslintrc',
+          failOnError: true,
+          failOnWarning: false,
+          formatter: require('eslint-friendly-formatter')
+        },
         test: /\.js$/
-      }
-    ],
-
-    loaders: [
-      {
+      }, {
         include: [
           path.resolve(__dirname, 'src')
         ],
-        loader: 'babel',
+        loader: 'babel-loader',
         test: /\.js$/
       }
     ]
@@ -78,14 +71,7 @@ module.exports = {
 
   resolve: {
     extensions: [
-      '',
       '.js'
-    ],
-
-    fallback: [
-      path.join(__dirname, 'src')
-    ],
-
-    root: __dirname
+    ]
   }
 };
