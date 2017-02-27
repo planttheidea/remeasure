@@ -1,5 +1,9 @@
 # remeasure changelog
 
+#### 2.1.4
+* Remove instance methods in favor of generic utilities
+* Update to Webpack 2 for `dist` builds
+
 #### 2.1.3
 * Remove moize dependency
 
