@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>remeasure Source: index.js</title>
+	<title>remeasure Global</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -67,90 +67,445 @@
 <div class="row">
 
 	
-	<div class="col-md-12">
+	<div class="col-md-8">
 	
 		<div id="main">
 			
 
-		<h1 class="page-title">Source: index.js</h1>
-    
+	<h1 class="page-title">Global</h1>
 <section>
-    <article>
-        <pre
-            class="sunlight-highlight-javascript linenums">// external dependencies
-import isArray from 'lodash/isArray';
-import isFunction from 'lodash/isFunction';
-import isPlainObject from 'lodash/isPlainObject';
-import isString from 'lodash/isString';
 
-// constants
-import {
-  ALL_KEYS
-} from './constants';
+<header>
+    
+        <h2>
+        
+        </h2>
+        
+    
+</header>
 
-// component
-import getMeasuredComponent from './getMeasuredComponent';
 
-// utils
-import {
-  createFlattenConvenienceFunction,
-  getKeysFromStringKey,
-  getValidKeys
-} from './utils';
+<article>
+    <div class="container-overview">
+    
+        
 
-/**
- * @module remeasure
- */
+        
+<dl class="details">
+    
 
-/**
- * @function measure
- *
- * @description
- * create higher-order component that injects size and position properties
- * into OriginalComponent as an object under the prop name size and position
- *
- * @param {Component|Array&lt;string>|Object|string} passedKeys if used without parameters, the component that will be
- * measured, else either single key or array of keys to watch for measurement, or an object of options
- * @param {Object} [passedOptions={}] an object of options to apply for measuring
- * @returns {MeasuredComponent} the higher-order component that will measure the child and pass down size and
- * position values as props
- */
-const measure = (passedKeys, passedOptions = {}) => {
-  if (isFunction(passedKeys)) {
-    return getMeasuredComponent(ALL_KEYS, passedOptions)(passedKeys);
-  }
+	
 
-  const isKeysObject = isPlainObject(passedKeys);
-  const options = {
-    ...(isKeysObject ? passedKeys : passedOptions)
-  };
+	
 
-  if (isKeysObject) {
-    return getMeasuredComponent(ALL_KEYS, passedKeys);
-  }
+	
 
-  let keys;
+    
 
-  if (isArray(passedKeys)) {
-    keys = getValidKeys(passedKeys, ALL_KEYS);
-  } else if (isString(passedKeys)) {
-    keys = getKeysFromStringKey(passedKeys, options);
-  } else {
-    keys = ALL_KEYS;
-  }
+    
 
-  return getMeasuredComponent(keys, options);
-};
+    
 
-ALL_KEYS.forEach((key) => {
-  measure[key] = createFlattenConvenienceFunction(measure, key);
-});
+    
 
-export default measure;
-</pre>
-    </article>
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
+<hr>
+<dt>
+    <h4 class="name" id="getShouldClear"><span class="type-signature"></span>getShouldClear(state, selectedKeys)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>get whether the values should be cleared or not based on values in state</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>state</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the current state values</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>selectedKeys</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Object></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the keys to iterate over</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="utils.js.html">utils.js</a>,
+				 <a href="utils.js.html#sunlight-1-line-131">line 131</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>should the values be cleared or not</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="removeElementResize"><span class="type-signature"></span>removeElementResize(instance, element)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>remove listeners from the given element</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>instance</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">MeasuredComponent</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>component instance</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>element</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>element to remove listeners from</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="utils.js.html">utils.js</a>,
+				 <a href="utils.js.html#sunlight-1-line-248">line 248</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+
+    
+</article>
+
 </section>
-
 
 
 
@@ -160,6 +515,10 @@ export default measure;
 
 	<div class="clearfix"></div>
 
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
 	
 
 </div>

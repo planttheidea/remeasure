@@ -13,6 +13,7 @@ import {
   ALL_POSITION_KEYS,
   ALL_SIZE_KEYS,
   CLIENT_RECT_TYPE,
+  ELEMENT_RESIZE_DETECTOR,
   ELEMENT_TYPE,
   POSITION_PROP_DEFAULT,
   SIZE_PROP_DEFAULT
@@ -46,7 +47,9 @@ test('if clearValues calls setState with emptyValues based on selectedKeys', (t)
 });
 
 test('if createRemoveInstanceElement will reset the instance values', (t) => {
-  const instance = {};
+  const instance = {
+    element: 'foo'
+  };
 
   const fn = utils.createRemoveInstanceElement(instance);
 
@@ -55,7 +58,7 @@ test('if createRemoveInstanceElement will reset the instance values', (t) => {
   fn();
 
   t.is(instance.element, null);
-  t.false(instance.hasResize);
+  t.is(instance.resizeListener, null);
 });
 
 test.todo('createSetInstanceElement');
@@ -384,6 +387,8 @@ test('if getPropKeyNames returns an object with positionProp and sizeProp popula
   t.deepEqual(customValue, customOptions);
 });
 
+test.todo('getShouldClear');
+
 test('if getValidKeys correctly limits the keys returned', (t) => {
   const keys = ['foo', 'bar', 'baz'];
   const keysToTestAgainst = ['foo', 'baz', 'blah', 'dee'];
@@ -455,6 +460,23 @@ test('if reduceStateToMatchingKeys will return the keys mapped to an object with
   t.deepEqual(result, expectedResult);
 });
 
+test('if removeElementResize will call uninstall on the ERD and set the listener to null', (t) => {
+  const instance = {
+    element: 'foo'
+  };
+
+  const stub = sinon.stub(ELEMENT_RESIZE_DETECTOR, 'uninstall');
+
+  utils.removeElementResize(instance, instance.element);
+
+  t.is(instance.resizeListener, null);
+
+  t.true(stub.calledOnce);
+  t.true(stub.calledWith(instance.element));
+
+  stub.restore();
+});
+
 test('if setElement will set element to instance passed', (t) => {
   const instance = {};
   const element = 'foo';
@@ -466,7 +488,7 @@ test('if setElement will set element to instance passed', (t) => {
   t.is(instance.element, element);
 });
 
-test('if setElement will set hasResize to instance passed when element is falsy', (t) => {
+test('if setElement will remove resizeListener from instance passed when element is falsy', (t) => {
   const instance = {};
   const element = null;
   const debounceValue = 0;
@@ -474,10 +496,10 @@ test('if setElement will set hasResize to instance passed when element is falsy'
 
   utils.setElement(instance, element, debounceValue, renderOnResize);
 
-  t.false(instance.hasResize);
+  t.is(instance.resizeListener, null);
 });
 
-test('if setElement will set hasResize to instance passed when renderOnResize is true', (t) => {
+test('if setElement will set resizeListener on instance passed when renderOnResize is true', (t) => {
   const instance = {};
   const element = {
     appendChild() {},
@@ -494,11 +516,18 @@ test('if setElement will set hasResize to instance passed when renderOnResize is
     position: 'relative'
   });
 
+  const stub = sinon.stub(ELEMENT_RESIZE_DETECTOR, 'listenTo');
+
   utils.setElement(instance, element, debounceValue, renderOnResize);
 
-  t.true(instance.hasResize);
+  t.is(typeof instance.resizeListener, 'function');
+
+  t.true(stub.calledOnce);
+  t.true(stub.calledWith(element, instance.resizeListener));
 
   global.getComputedStyle = original;
+
+  stub.restore();
 });
 
 test.todo('setElementResize');

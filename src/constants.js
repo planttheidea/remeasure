@@ -1,4 +1,9 @@
+import elementResizeDetectorMaker from 'element-resize-detector';
+
 export const DEBOUNCE_VALUE_DEFAULT = 0;
+export const ELEMENT_RESIZE_DETECTOR = elementResizeDetectorMaker({
+  strategy: 'scroll'
+});
 export const FLATTEN_DEFAULT = false;
 export const POSITION_PROP_DEFAULT = 'position';
 export const RENDER_ON_RESIZE_DEFAULT = true;
@@ -85,5 +90,4 @@ export const CLIENT_RECT_TYPE = 'clientRect';
 export const ELEMENT_TYPE = 'element';
 
 export const DEFAULT_INSTANCE_ELEMENT_VALUE = null;
-export const DEFAULT_INSTANCE_HAS_RESIZE_VALUE = false;
-export const DEFAULT_INSTANCE_MOUNTED_VALUE = false;
+export const DEFAULT_INSTANCE_RESIZE_LISTENER = null;

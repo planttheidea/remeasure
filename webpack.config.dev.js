@@ -27,6 +27,8 @@ module.exports = Object.assign({}, {
     path.resolve(__dirname, 'DEV_ONLY', 'App.js')
   ],
 
+  externals: undefined,
+
   module: Object.assign({}, defaultConfig.module, {
     rules: defaultConfig.module.rules.map((rule) => {
       if (rule.loader !== 'babel-loader') {

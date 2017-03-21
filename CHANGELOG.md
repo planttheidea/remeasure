@@ -1,5 +1,10 @@
 # remeasure changelog
 
+#### 2.2.0
+* Replace `element-resize-event` with `element-resize-detector` for better stability and removal of listeners
+* Listeners are now removed when element no longer exists, and will only set the element when it has changed
+* Remove `mounted` instance value in favor of just checking if `element` exists
+
 #### 2.1.4
 * Remove instance methods in favor of generic utilities
 * Update to Webpack 2 for `dist` builds

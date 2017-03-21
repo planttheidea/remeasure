@@ -1,4 +1,83 @@
-// external dependencies
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>remeasure Source: utils.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.paper.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">remeasure</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-remeasure.html">remeasure</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#getShouldClear">getShouldClear</a></li><li><a href="global.html#removeElementResize">removeElementResize</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: utils.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">// external dependencies
 import debounce from 'lodash/debounce';
 import filter from 'lodash/filter';
 import includes from 'lodash/includes';
@@ -55,7 +134,7 @@ export const getComponentName = (Component) => {
  * iterate through keys and determine if the values have
  * changed compared to what is stored in state
  *
- * @param {Array<Object>} keys keys to get from the state
+ * @param {Array&lt;Object>} keys keys to get from the state
  * @param {Object} values the new values to test
  * @param {Object} currentState the current values in state
  * @returns {boolean} have any of the keys changed
@@ -76,11 +155,11 @@ export const haveValuesChanged = (keys, values, currentState) => {
  *
  * @param {MeasuredComponent} instance component instance
  * @param {function} instance.setState setState method of instance component
- * @param {Array<string>} keys keys to store in state
+ * @param {Array&lt;string>} keys keys to store in state
  * @param {Object} values updated values to store in state
  */
 export const setValuesIfChanged = (instance, keys, values) => {
-  if (haveValuesChanged(keys, values, instance.state) && instance.element) {
+  if (haveValuesChanged(keys, values, instance.state) &amp;&amp; instance.element) {
     instance.setState(values);
   }
 };
@@ -93,8 +172,8 @@ export const setValuesIfChanged = (instance, keys, values) => {
  * @description
  * based on desiredKeys, build the initialState object
  *
- * @param {Array<string>} keys the keys requested from the decorator
- * @returns {Array<T>} the object of key: 0 default values
+ * @param {Array&lt;string>} keys the keys requested from the decorator
+ * @returns {Array&lt;T>} the object of key: 0 default values
  */
 export const reduceStateToMatchingKeys = (keys) => {
   return reduce(keys, (accumulatedInitialState, {key}) => {
@@ -111,7 +190,7 @@ export const reduceStateToMatchingKeys = (keys) => {
  * get whether the values should be cleared or not based on values in state
  *
  * @param {Object} state the current state values
- * @param {Array<Object>} selectedKeys the keys to iterate over
+ * @param {Array&lt;Object>} selectedKeys the keys to iterate over
  * @returns {boolean} should the values be cleared or not
  */
 export const getShouldClear = (state, selectedKeys) => {
@@ -119,7 +198,7 @@ export const getShouldClear = (state, selectedKeys) => {
 
   let index = -1;
 
-  while (++index < length) {
+  while (++index &lt; length) {
     if (state[selectedKeys[index].key]) {
       return true;
     }
@@ -137,7 +216,7 @@ export const getShouldClear = (state, selectedKeys) => {
  * create function to reset all values to 0 if there is no element present
  *
  * @param {MeasuredComponent} instance component instance
- * @param {Array<string>} selectedKeys keys to store in state
+ * @param {Array&lt;string>} selectedKeys keys to store in state
  */
 export const clearValues = (instance, selectedKeys) => {
   if (getShouldClear(instance.state, selectedKeys)) {
@@ -212,7 +291,7 @@ export const isElementVoidTag = (element) => {
 export const setElementResize = (instance, debounceValue) => {
   const element = instance.element;
 
-  if (element && !isElementVoidTag(element)) {
+  if (element &amp;&amp; !isElementVoidTag(element)) {
     const resizeFn = debounceValue ?
       createUpdateValuesViaDebounce(instance, debounceValue) :
       updateValuesViaRaf.bind(null, instance);
@@ -259,7 +338,7 @@ export const setElement = (instance, element, debounceValue, renderOnResize) => 
   instance.element = element;
 
   if (instance.element) {
-    if (renderOnResize && !instance.resizeListener) {
+    if (renderOnResize &amp;&amp; !instance.resizeListener) {
       setElementResize(instance, debounceValue);
     }
   } else {
@@ -297,7 +376,7 @@ export const createRemoveInstanceElement = (instance) => {
  * create the componentDidUpdate method for the given instance
  *
  * @param {MeasuredComponent} instance component instance
- * @param {Array<string>} selectedKeys keys to store in state
+ * @param {Array&lt;string>} selectedKeys keys to store in state
  * @param {Object} [options={}] options passed to the instance
  * @param {number} [options.debounceValue=DEBOUNCE_VALUE_DEFAULT] value to use for debounce of updates
  * @param {boolean} [options.renderOnResize=RENDER_ON_RESIZE_DEFAULT] should the component rerender on resize
@@ -332,7 +411,7 @@ export const createSetInstanceElement = (instance, selectedKeys, options = {}) =
  * @description
  * create a key type checker function
  *
- * @param {Array<string>} typeArray
+ * @param {Array&lt;string>} typeArray
  * @returns {function(string): boolean}
  */
 export const createIsKeyType = (typeArray) => {
@@ -377,7 +456,7 @@ export const createFlattenConvenienceFunction = (measure, property) => {
  * values for the associated keys
  *
  * @param {Object} values values to reduce by type
- * @param {Array<string>} keys the keys to assign to scopedValues
+ * @param {Array&lt;string>} keys the keys to assign to scopedValues
  * @param {boolean} flatten should the object be flat or not
  * @returns {Object} reduced scoped values
  */
@@ -422,7 +501,7 @@ export const getNaturalDimensionValue = (source, key) => {
  * get the values of the element or its bounding client rect
  *
  * @param {HTMLElement} element
- * @param {Array<Object>} keys
+ * @param {Array&lt;Object>} keys
  * @returns {Object}
  */
 export const getElementValues = (element, keys) => {
@@ -444,7 +523,7 @@ export const getElementValues = (element, keys) => {
  * create the function to get the new values and assign them to state if they have changed
  *
  * @param {MeasuredComponent} instance component instance
- * @param {Array<string>} selectedKeys keys to store in state
+ * @param {Array&lt;string>} selectedKeys keys to store in state
  * @returns {function(): void} function to update the instance state values if they have changed
  */
 export const createUpdateValuesIfChanged = (instance, selectedKeys) => {
@@ -540,7 +619,7 @@ export const getKeyType = (key, {positionProp, sizeProp}) => {
  * @param {string} key string key passed to decorator
  * @param {string} [positionProp=POSITION_PROP_DEFAULT] name of position property requested in options
  * @param {string} [sizeProp=SIZE_PROP_DEFAULT] name of position property requested in options
- * @returns {Array<string>} keys to store in state
+ * @returns {Array&lt;string>} keys to store in state
  */
 export const getKeysFromStringKey = (key, {positionProp = POSITION_PROP_DEFAULT, sizeProp = SIZE_PROP_DEFAULT}) => {
   if (key === positionProp) {
@@ -562,11 +641,11 @@ export const getKeysFromStringKey = (key, {positionProp = POSITION_PROP_DEFAULT,
  * @description
  * get subset of array1 based on items existing in array2
  *
- * @param {Array<*>} sourceArray the array to filter
- * @param {Array<*>} valuesToExtract the array to find matches in
+ * @param {Array&lt;*>} sourceArray the array to filter
+ * @param {Array&lt;*>} valuesToExtract the array to find matches in
  * @param {string} source the source of the value the key relates to
  * @param {{positionProp: string, sizeProp: string}} propTypes the names of the scope categories
- * @returns {Array<T>} the resulting array of matching values from array1 and array2
+ * @returns {Array&lt;T>} the resulting array of matching values from array1 and array2
  */
 export const getKeysSubsetWithType = (sourceArray, valuesToExtract, source, propTypes) => {
   return reduce(sourceArray, (valuesWithTypes, key) => {
@@ -594,9 +673,9 @@ export const getKeysSubsetWithType = (sourceArray, valuesToExtract, source, prop
  * @description
  * get the keys with mapped source (rect or element) and type (position or size)
  *
- * @param {Array<string>} keys keys to return mapped values for
+ * @param {Array&lt;string>} keys keys to return mapped values for
  * @param {Object} options options passed to instance
- * @returns {Array<{key: string, source: string, type: string}>} keys with source and type mapped
+ * @returns {Array&lt;{key: string, source: string, type: string}>} keys with source and type mapped
  */
 export const getKeysWithSourceAndType = (keys, options) => {
   const propKeyNames = getPropKeyNames(options);
@@ -614,12 +693,178 @@ export const getKeysWithSourceAndType = (keys, options) => {
  * based on their existence in keysToTestAgainst, determine which of the keys
  * passed are considered valid
  *
- * @param {Array<string>} keys the keys to test
- * @param {Array<string>} keysToTestAgainst the keys to find matches from
- * @returns {Array<string>} the resulting matching key set
+ * @param {Array&lt;string>} keys the keys to test
+ * @param {Array&lt;string>} keysToTestAgainst the keys to find matches from
+ * @returns {Array&lt;string>} the resulting matching key set
  */
 export const getValidKeys = (keys, keysToTestAgainst) => {
   return filter(keys, (key) => {
     return includes(keysToTestAgainst, key);
   });
 };
+</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+<script>
+	$( function () {
+		$( '#main' ).localScroll( {
+			offset : { top : 60 } //offset by the height of your header (give or take a few px, see what works for you)
+		} );
+		$( "dt.name" ).each( function () {
+			var $this = $( this ).find("h4");
+			var icon = $( "<i/>" ).addClass( "icon-plus-sign" ).addClass( "pull-right" ).addClass( "icon-white" );
+			var dt = $(this);
+			var children = dt.next( "dd" );
+
+			dt.prepend( icon ).css( {cursor : "pointer"} );
+			dt.addClass( "member-collapsed" ).addClass( "member" );
+
+
+			children.hide();
+
+			dt.children().on( "click", function () {
+				children = dt.next( "dd" );
+				children.slideToggle( "fast", function () {
+
+					if ( children.is( ":visible" ) ) {
+						icon.addClass( "icon-minus-sign" ).removeClass( "icon-plus-sign" ).removeClass( "icon-white" );
+						dt.addClass( "member-open" ).animate( "member-collapsed" );
+					} else {
+						icon.addClass( "icon-plus-sign" ).removeClass( "icon-minus-sign" ).addClass( "icon-white" );
+						dt.addClass( "member-collapsed" ).removeClass( "member-open" );
+					}
+				} );
+			} );
+
+		} );
+	} );
+</script>
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>
