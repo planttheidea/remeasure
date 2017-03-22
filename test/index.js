@@ -18,7 +18,7 @@ class TestStateful extends Component {
       <div>
         Test
       </div>
-    )
+    );
   }
 }
 
@@ -41,7 +41,7 @@ class TestStatefulWithOptions extends Component {
       <div>
         Test
       </div>
-    )
+    );
   }
 }
 
@@ -65,7 +65,7 @@ class TestStatefulWithKeys extends Component {
       <div>
         Test
       </div>
-    )
+    );
   }
 }
 
@@ -84,7 +84,7 @@ class TestStatefulWithKeysAndOptions extends Component {
       <div>
         Test
       </div>
-    )
+    );
   }
 }
 

@@ -60,7 +60,7 @@
     "react-dom": "15.4.2",
     "rimraf": "^2.6.1",
     "sinon": "^2.1.0",
-    "webpack": "^2.2.1",
+    "webpack": "^2.3.0",
     "webpack-dashboard": "^0.3.0",
     "webpack-dev-server": "^2.4.2"
   },
@@ -103,5 +103,5 @@
     "test:watch": "NODE_ENV=test ava --watch",
     "transpile": "babel src --out-dir lib"
   },
-  "version": "2.2.0"
+  "version": "2.2.1"
 }

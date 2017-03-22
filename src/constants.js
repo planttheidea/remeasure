@@ -88,6 +88,3 @@ export const ALL_KEYS = [
 
 export const CLIENT_RECT_TYPE = 'clientRect';
 export const ELEMENT_TYPE = 'element';
-
-export const DEFAULT_INSTANCE_ELEMENT_VALUE = null;
-export const DEFAULT_INSTANCE_RESIZE_LISTENER = null;

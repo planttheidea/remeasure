@@ -1,4 +1,8 @@
-# remeasure changelog
+# remeasure CHANGELOG
+
+#### 2.2.1
+* Replace `setState` with custom method that assigns to instance value and calls `forceUpdate` synchronously if mounted
+* Remove a lot of unnecessary `if (instance.element)` checks
 
 #### 2.2.0
 * Replace `element-resize-event` with `element-resize-detector` for better stability and removal of listeners

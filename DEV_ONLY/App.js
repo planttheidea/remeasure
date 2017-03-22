@@ -30,7 +30,7 @@ class NoParams extends PureComponent {
   }
 }
 
-@measure.width({renderOnResize: false})
+@measure.width({debounce: 150})
 class WidthOnly extends PureComponent {
   render() {
     const {
@@ -239,6 +239,12 @@ class App extends Component {
         <ConditionalComponent isShown={isConditionalElementShown}>
           I am a measured element that is shown conditionally.
         </ConditionalComponent>
+
+        {isConditionalElementShown && (
+          <StatelessComponent>
+            I am a stateless component that will be mounted and unmounted.
+          </StatelessComponent>
+        )}
       </div>
     );
   }

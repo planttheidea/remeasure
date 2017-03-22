@@ -84,7 +84,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 exports.__esModule = true;
-exports.DEFAULT_INSTANCE_RESIZE_LISTENER = exports.DEFAULT_INSTANCE_ELEMENT_VALUE = exports.ELEMENT_TYPE = exports.CLIENT_RECT_TYPE = exports.ALL_KEYS = exports.ALL_SIZE_KEYS = exports.ALL_POSITION_KEYS = exports.ALL_DOM_ELEMENT_KEYS = exports.VOID_ELEMENT_TAG_NAMES = exports.NATURAL_REGEXP = exports.DOM_ELEMENT_SIZE_KEYS = exports.DOM_ELEMENT_POSITION_KEYS = exports.ALL_BOUNDING_CLIENT_RECT_KEYS = exports.BOUNDING_CLIENT_RECT_POSITION_KEYS = exports.BOUNDING_CLIENT_RECT_SIZE_KEYS = exports.SIZE_PROP_DEFAULT = exports.RENDER_ON_RESIZE_DEFAULT = exports.POSITION_PROP_DEFAULT = exports.FLATTEN_DEFAULT = exports.ELEMENT_RESIZE_DETECTOR = exports.DEBOUNCE_VALUE_DEFAULT = undefined;
+exports.ELEMENT_TYPE = exports.CLIENT_RECT_TYPE = exports.ALL_KEYS = exports.ALL_SIZE_KEYS = exports.ALL_POSITION_KEYS = exports.ALL_DOM_ELEMENT_KEYS = exports.VOID_ELEMENT_TAG_NAMES = exports.NATURAL_REGEXP = exports.DOM_ELEMENT_SIZE_KEYS = exports.DOM_ELEMENT_POSITION_KEYS = exports.ALL_BOUNDING_CLIENT_RECT_KEYS = exports.BOUNDING_CLIENT_RECT_POSITION_KEYS = exports.BOUNDING_CLIENT_RECT_SIZE_KEYS = exports.SIZE_PROP_DEFAULT = exports.RENDER_ON_RESIZE_DEFAULT = exports.POSITION_PROP_DEFAULT = exports.FLATTEN_DEFAULT = exports.ELEMENT_RESIZE_DETECTOR = exports.DEBOUNCE_VALUE_DEFAULT = undefined;
 
 var _elementResizeDetector = __webpack_require__(16);
 
@@ -126,9 +126,6 @@ var ALL_KEYS = exports.ALL_KEYS = [].concat(ALL_POSITION_KEYS, ALL_SIZE_KEYS);
 var CLIENT_RECT_TYPE = exports.CLIENT_RECT_TYPE = 'clientRect';
 var ELEMENT_TYPE = exports.ELEMENT_TYPE = 'element';
 
-var DEFAULT_INSTANCE_ELEMENT_VALUE = exports.DEFAULT_INSTANCE_ELEMENT_VALUE = null;
-var DEFAULT_INSTANCE_RESIZE_LISTENER = exports.DEFAULT_INSTANCE_RESIZE_LISTENER = null;
-
 /***/ }),
 /* 1 */
 /***/ (function(module, exports) {
@@ -165,7 +162,7 @@ module.exports = objectToString;
 
 
 exports.__esModule = true;
-exports.getValidKeys = exports.getKeysWithSourceAndType = exports.getKeysSubsetWithType = exports.getKeysFromStringKey = exports.getKeyType = exports.isSizeKey = exports.isPositionKey = exports.getPropKeyNames = exports.createUpdateValuesIfChanged = exports.getElementValues = exports.getNaturalDimensionValue = exports.getScopedValues = exports.createFlattenConvenienceFunction = exports.createIsKeyType = exports.createSetInstanceElement = exports.createRemoveInstanceElement = exports.setElement = exports.removeElementResize = exports.setElementResize = exports.isElementVoidTag = exports.updateValuesViaRaf = exports.createUpdateValuesViaDebounce = exports.clearValues = exports.getShouldClear = exports.reduceStateToMatchingKeys = exports.setValuesIfChanged = exports.haveValuesChanged = exports.getComponentName = undefined;
+exports.getValidKeys = exports.getKeysWithSourceAndType = exports.getKeysSubsetWithType = exports.getKeysFromStringKey = exports.getKeyType = exports.isSizeKey = exports.isPositionKey = exports.getPropKeyNames = exports.getElementValues = exports.getNaturalDimensionValue = exports.getScopedValues = exports.createFlattenConvenienceFunction = exports.createIsKeyType = exports.setElement = exports.removeElementResize = exports.setElementResize = exports.isElementVoidTag = exports.updateValuesViaRaf = exports.createUpdateValuesViaDebounce = exports.clearValues = exports.getShouldClear = exports.reduceMeasurementsToMatchingKeys = exports.setValuesIfChanged = exports.haveValuesChanged = exports.getComponentName = undefined;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; // external dependencies
 
@@ -208,8 +205,6 @@ var _some2 = _interopRequireDefault(_some);
 var _raf = __webpack_require__(41);
 
 var _raf2 = _interopRequireDefault(_raf);
-
-var _reactDom = __webpack_require__(43);
 
 var _constants = __webpack_require__(0);
 
@@ -266,23 +261,23 @@ var haveValuesChanged = exports.haveValuesChanged = function haveValuesChanged(k
  * @param {Object} values updated values to store in state
  */
 var setValuesIfChanged = exports.setValuesIfChanged = function setValuesIfChanged(instance, keys, values) {
-  if (haveValuesChanged(keys, values, instance.state) && instance.element) {
-    instance.setState(values);
+  if (haveValuesChanged(keys, values, instance.measurements)) {
+    instance.setMeasurements(values);
   }
 };
 
 /**
  * @private
  *
- * @function reduceStateToMatchingKeys
+ * @function reduceMeasurementsToMatchingKeys
  *
  * @description
- * based on desiredKeys, build the initialState object
+ * based on desiredKeys, build the initial measurements object
  *
  * @param {Array<string>} keys the keys requested from the decorator
  * @returns {Array<T>} the object of key: 0 default values
  */
-var reduceStateToMatchingKeys = exports.reduceStateToMatchingKeys = function reduceStateToMatchingKeys(keys) {
+var reduceMeasurementsToMatchingKeys = exports.reduceMeasurementsToMatchingKeys = function reduceMeasurementsToMatchingKeys(keys) {
   return (0, _reduce2.default)(keys, function (accumulatedInitialState, _ref2) {
     var key = _ref2.key;
 
@@ -298,22 +293,16 @@ var reduceStateToMatchingKeys = exports.reduceStateToMatchingKeys = function red
  * @description
  * get whether the values should be cleared or not based on values in state
  *
- * @param {Object} state the current state values
+ * @param {Object} measurements the current measurement values
  * @param {Array<Object>} selectedKeys the keys to iterate over
  * @returns {boolean} should the values be cleared or not
  */
-var getShouldClear = exports.getShouldClear = function getShouldClear(state, selectedKeys) {
-  var length = selectedKeys.length;
+var getShouldClear = exports.getShouldClear = function getShouldClear(measurements, selectedKeys) {
+  return (0, _some2.default)(selectedKeys, function (_ref3) {
+    var key = _ref3.key;
 
-  var index = -1;
-
-  while (++index < length) {
-    if (state[selectedKeys[index].key]) {
-      return true;
-    }
-  }
-
-  return false;
+    return !!measurements[key];
+  });
 };
 
 /**
@@ -328,10 +317,8 @@ var getShouldClear = exports.getShouldClear = function getShouldClear(state, sel
  * @param {Array<string>} selectedKeys keys to store in state
  */
 var clearValues = exports.clearValues = function clearValues(instance, selectedKeys) {
-  if (getShouldClear(instance.state, selectedKeys)) {
-    var emptyValues = reduceStateToMatchingKeys(selectedKeys);
-
-    instance.setState(emptyValues);
+  if (getShouldClear(instance.measurements, selectedKeys)) {
+    instance.setMeasurements(reduceMeasurementsToMatchingKeys(selectedKeys));
   }
 };
 
@@ -348,11 +335,7 @@ var clearValues = exports.clearValues = function clearValues(instance, selectedK
  * @returns {function(): void} function to update the values after debounce timing has passed
  */
 var createUpdateValuesViaDebounce = exports.createUpdateValuesViaDebounce = function createUpdateValuesViaDebounce(instance, debounceValue) {
-  return (0, _debounce2.default)(function () {
-    if (instance.element) {
-      instance.updateValuesIfChanged();
-    }
-  }, debounceValue);
+  return (0, _debounce2.default)(instance.updateValuesIfChanged, debounceValue);
 };
 
 /**
@@ -366,9 +349,7 @@ var createUpdateValuesViaDebounce = exports.createUpdateValuesViaDebounce = func
  * @param {MeasuredComponent} instance component instance
  */
 var updateValuesViaRaf = exports.updateValuesViaRaf = function updateValuesViaRaf(instance) {
-  if (instance.element) {
-    (0, _raf2.default)(instance.updateValuesIfChanged);
-  }
+  (0, _raf2.default)(instance.updateValuesIfChanged);
 };
 
 /**
@@ -419,7 +400,7 @@ var setElementResize = exports.setElementResize = function setElementResize(inst
  * @param {HTMLElement} element element to remove listeners from
  */
 var removeElementResize = exports.removeElementResize = function removeElementResize(instance, element) {
-  instance.resizeListener = _constants.DEFAULT_INSTANCE_RESIZE_LISTENER;
+  instance.resizeListener = null;
 
   if (element) {
     _constants.ELEMENT_RESIZE_DETECTOR.uninstall(element);
@@ -451,65 +432,6 @@ var setElement = exports.setElement = function setElement(instance, element, deb
   } else {
     removeElementResize(instance, currentElement);
   }
-};
-
-/**
- * @private
- *
- * @function createRemoveInstanceElement
- *
- * @description
- * reset instance values to their original state
- *
- * @param {MeasuredComponent} instance component instance
- * @returns {function(): void} function to reset the instance values to defaults
- */
-var createRemoveInstanceElement = exports.createRemoveInstanceElement = function createRemoveInstanceElement(instance) {
-  return function () {
-    if (instance.element) {
-      removeElementResize(instance, instance.element);
-
-      instance.element = _constants.DEFAULT_INSTANCE_ELEMENT_VALUE;
-    }
-  };
-};
-
-/**
- * @private
- *
- * @function createSetInstanceElement
- *
- * @description
- * create the componentDidUpdate method for the given instance
- *
- * @param {MeasuredComponent} instance component instance
- * @param {Array<string>} selectedKeys keys to store in state
- * @param {Object} [options={}] options passed to the instance
- * @param {number} [options.debounceValue=DEBOUNCE_VALUE_DEFAULT] value to use for debounce of updates
- * @param {boolean} [options.renderOnResize=RENDER_ON_RESIZE_DEFAULT] should the component rerender on resize
- * @returns {function(): void} componentDidUpdate method
- */
-var createSetInstanceElement = exports.createSetInstanceElement = function createSetInstanceElement(instance, selectedKeys) {
-  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-  var _options$debounce = options.debounce,
-      debounceValue = _options$debounce === undefined ? _constants.DEBOUNCE_VALUE_DEFAULT : _options$debounce,
-      _options$renderOnResi = options.renderOnResize,
-      renderOnResize = _options$renderOnResi === undefined ? _constants.RENDER_ON_RESIZE_DEFAULT : _options$renderOnResi;
-
-
-  return function () {
-    var element = (0, _reactDom.findDOMNode)(instance);
-
-    if (element !== instance.element) {
-      setElement(instance, element, debounceValue, renderOnResize);
-    }
-
-    if (element) {
-      updateValuesViaRaf(instance);
-    } else {
-      clearValues(instance, selectedKeys);
-    }
-  };
 };
 
 /**
@@ -570,12 +492,12 @@ var createFlattenConvenienceFunction = exports.createFlattenConvenienceFunction 
  * @param {boolean} flatten should the object be flat or not
  * @returns {Object} reduced scoped values
  */
-var getScopedValues = exports.getScopedValues = function getScopedValues(values, keys, _ref3) {
-  var flatten = _ref3.flatten;
+var getScopedValues = exports.getScopedValues = function getScopedValues(values, keys, _ref4) {
+  var flatten = _ref4.flatten;
 
-  return flatten ? values : (0, _reduce2.default)(keys, function (scopedValues, _ref4) {
-    var key = _ref4.key,
-        type = _ref4.type;
+  return flatten ? values : (0, _reduce2.default)(keys, function (scopedValues, _ref5) {
+    var key = _ref5.key,
+        type = _ref5.type;
 
     if (!scopedValues[type]) {
       scopedValues[type] = {};
@@ -622,38 +544,14 @@ var getNaturalDimensionValue = exports.getNaturalDimensionValue = function getNa
 var getElementValues = exports.getElementValues = function getElementValues(element, keys) {
   var boundingClientRect = element.getBoundingClientRect();
 
-  return (0, _reduce2.default)(keys, function (values, _ref5) {
-    var key = _ref5.key,
-        source = _ref5.source;
+  return (0, _reduce2.default)(keys, function (values, _ref6) {
+    var key = _ref6.key,
+        source = _ref6.source;
 
     values[key] = source === _constants.CLIENT_RECT_TYPE ? boundingClientRect[key] : getNaturalDimensionValue(element, key);
 
     return values;
   }, {});
-};
-
-/**
- * @private
- *
- * @function createUpdateValuesIfChanged
- *
- * @description
- * create the function to get the new values and assign them to state if they have changed
- *
- * @param {MeasuredComponent} instance component instance
- * @param {Array<string>} selectedKeys keys to store in state
- * @returns {function(): void} function to update the instance state values if they have changed
- */
-var createUpdateValuesIfChanged = exports.createUpdateValuesIfChanged = function createUpdateValuesIfChanged(instance, selectedKeys) {
-  return function () {
-    var element = instance.element;
-
-    if (element) {
-      var values = getElementValues(element, selectedKeys);
-
-      setValuesIfChanged(instance, selectedKeys, values);
-    }
-  };
 };
 
 /**
@@ -668,11 +566,11 @@ var createUpdateValuesIfChanged = exports.createUpdateValuesIfChanged = function
  * @param {string} [sizeProp=SIZE_PROP_DEFAULT] size property name
  * @returns {{positionProp, sizeProp}} object of positionProp and sizeProp
  */
-var getPropKeyNames = exports.getPropKeyNames = function getPropKeyNames(_ref6) {
-  var _ref6$positionProp = _ref6.positionProp,
-      positionProp = _ref6$positionProp === undefined ? _constants.POSITION_PROP_DEFAULT : _ref6$positionProp,
-      _ref6$sizeProp = _ref6.sizeProp,
-      sizeProp = _ref6$sizeProp === undefined ? _constants.SIZE_PROP_DEFAULT : _ref6$sizeProp;
+var getPropKeyNames = exports.getPropKeyNames = function getPropKeyNames(_ref7) {
+  var _ref7$positionProp = _ref7.positionProp,
+      positionProp = _ref7$positionProp === undefined ? _constants.POSITION_PROP_DEFAULT : _ref7$positionProp,
+      _ref7$sizeProp = _ref7.sizeProp,
+      sizeProp = _ref7$sizeProp === undefined ? _constants.SIZE_PROP_DEFAULT : _ref7$sizeProp;
 
   return {
     positionProp: positionProp,
@@ -719,9 +617,9 @@ var isSizeKey = exports.isSizeKey = createIsKeyType(_constants.ALL_SIZE_KEYS);
  * @param {string} sizeProp
  * @returns {string}
  */
-var getKeyType = exports.getKeyType = function getKeyType(key, _ref7) {
-  var positionProp = _ref7.positionProp,
-      sizeProp = _ref7.sizeProp;
+var getKeyType = exports.getKeyType = function getKeyType(key, _ref8) {
+  var positionProp = _ref8.positionProp,
+      sizeProp = _ref8.sizeProp;
 
   if (isPositionKey(key)) {
     return positionProp;
@@ -747,11 +645,11 @@ var getKeyType = exports.getKeyType = function getKeyType(key, _ref7) {
  * @param {string} [sizeProp=SIZE_PROP_DEFAULT] name of position property requested in options
  * @returns {Array<string>} keys to store in state
  */
-var getKeysFromStringKey = exports.getKeysFromStringKey = function getKeysFromStringKey(key, _ref8) {
-  var _ref8$positionProp = _ref8.positionProp,
-      positionProp = _ref8$positionProp === undefined ? _constants.POSITION_PROP_DEFAULT : _ref8$positionProp,
-      _ref8$sizeProp = _ref8.sizeProp,
-      sizeProp = _ref8$sizeProp === undefined ? _constants.SIZE_PROP_DEFAULT : _ref8$sizeProp;
+var getKeysFromStringKey = exports.getKeysFromStringKey = function getKeysFromStringKey(key, _ref9) {
+  var _ref9$positionProp = _ref9.positionProp,
+      positionProp = _ref9$positionProp === undefined ? _constants.POSITION_PROP_DEFAULT : _ref9$positionProp,
+      _ref9$sizeProp = _ref9.sizeProp,
+      sizeProp = _ref9$sizeProp === undefined ? _constants.SIZE_PROP_DEFAULT : _ref9$sizeProp;
 
   if (key === positionProp) {
     return _constants.ALL_POSITION_KEYS;
@@ -1183,12 +1081,15 @@ module.exports = exports['default'];
 
 
 exports.__esModule = true;
+exports.createUpdateValuesIfChanged = exports.createSetMeasurements = exports.createComponentWillUnmount = exports.createComponentDidUpdate = exports.createComponentDidMount = undefined;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _react = __webpack_require__(42);
 
 var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = __webpack_require__(43);
 
 var _constants = __webpack_require__(0);
 
@@ -1209,6 +1110,169 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 // utils
 
 
+/**
+ * @private
+ *
+ * @function createComponentDidMount
+ *
+ * @description
+ * create the componentDidMount method for the given instance
+ *
+ * @param {MeasuredComponent} instance component instance
+ * @param {Array<string>} selectedKeys keys to store in state
+ * @param {Object} [options={}] options passed to the instance
+ * @param {number} [options.debounceValue=DEBOUNCE_VALUE_DEFAULT] value to use for debounce of updates
+ * @param {boolean} [options.renderOnResize=RENDER_ON_RESIZE_DEFAULT] should the component rerender on resize
+ * @returns {function(): void} componentDidUpdate method
+ */
+var createComponentDidMount = exports.createComponentDidMount = function createComponentDidMount(instance, selectedKeys) {
+  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  var _options$debounce = options.debounce,
+      debounceValue = _options$debounce === undefined ? _constants.DEBOUNCE_VALUE_DEFAULT : _options$debounce,
+      _options$renderOnResi = options.renderOnResize,
+      renderOnResize = _options$renderOnResi === undefined ? _constants.RENDER_ON_RESIZE_DEFAULT : _options$renderOnResi;
+
+
+  return function () {
+    var element = (0, _reactDom.findDOMNode)(instance);
+
+    instance._isMounted = true;
+
+    (0, _utils.setElement)(instance, element, debounceValue, renderOnResize);
+
+    if (element) {
+      (0, _utils.updateValuesViaRaf)(instance);
+    }
+  };
+};
+
+/**
+ * @private
+ *
+ * @function createComponentDidUpdate
+ *
+ * @description
+ * create the componentDidUpdate method for the given instance
+ *
+ * @param {MeasuredComponent} instance component instance
+ * @param {Array<string>} selectedKeys keys to store in state
+ * @param {Object} [options={}] options passed to the instance
+ * @param {number} [options.debounceValue=DEBOUNCE_VALUE_DEFAULT] value to use for debounce of updates
+ * @param {boolean} [options.renderOnResize=RENDER_ON_RESIZE_DEFAULT] should the component rerender on resize
+ * @returns {function(): void} componentDidUpdate method
+ */
+var createComponentDidUpdate = exports.createComponentDidUpdate = function createComponentDidUpdate(instance, selectedKeys) {
+  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  var _options$debounce2 = options.debounce,
+      debounceValue = _options$debounce2 === undefined ? _constants.DEBOUNCE_VALUE_DEFAULT : _options$debounce2,
+      _options$renderOnResi2 = options.renderOnResize,
+      renderOnResize = _options$renderOnResi2 === undefined ? _constants.RENDER_ON_RESIZE_DEFAULT : _options$renderOnResi2;
+
+
+  return function () {
+    var element = (0, _reactDom.findDOMNode)(instance);
+
+    if (element !== instance.element) {
+      (0, _utils.setElement)(instance, element, debounceValue, renderOnResize);
+    }
+
+    if (element) {
+      (0, _utils.updateValuesViaRaf)(instance);
+    } else {
+      (0, _utils.clearValues)(instance, selectedKeys);
+    }
+  };
+};
+
+/**
+ * @private
+ *
+ * @function createComponentWillUnmount
+ *
+ * @description
+ * create the componentWillUmount method for the given instance
+ *
+ * @param {MeasuredComponent} instance component instance
+ * @param {Array<Object>} selectedKeys the keys to assign to state
+ * @returns {function(): void} function to reset the instance values to defaults
+ */
+var createComponentWillUnmount = exports.createComponentWillUnmount = function createComponentWillUnmount(instance, selectedKeys) {
+  return function () {
+    instance._isMounted = false;
+
+    instance.setMeasurements((0, _utils.reduceMeasurementsToMatchingKeys)(selectedKeys));
+
+    if (instance.element) {
+      (0, _utils.removeElementResize)(instance, instance.element);
+
+      instance.element = null;
+    }
+  };
+};
+
+/**
+ * @function createSetMeasurements
+ *
+ * @description
+ * create the method that will assign the measurements synchronously to the instance
+ * and then call forceUpdate (done because setState is async)
+ *
+ * @param {ReactComponent} instance the instance to assign to
+ * @returns {function(Object): void} the method that will assign the measurements to the instance
+ */
+var createSetMeasurements = exports.createSetMeasurements = function createSetMeasurements(instance) {
+  /**
+   * @function setMeasurements
+   *
+   * @description
+   * set the measurements synchronously to the instance value and then call forceUpdate if mounted
+   *
+   * @param {Object} measurements the measurements to assign to the instance
+   */
+  return function (measurements) {
+    instance.measurements = measurements;
+
+    if (instance._isMounted) {
+      instance.forceUpdate();
+    }
+  };
+};
+
+/**
+ * @private
+ *
+ * @function createUpdateValuesIfChanged
+ *
+ * @description
+ * create the function to get the new values and assign them to state if they have changed
+ *
+ * @param {MeasuredComponent} instance component instance
+ * @param {Array<string>} selectedKeys keys to store in state
+ * @returns {function(): void} function to update the instance state values if they have changed
+ */
+var createUpdateValuesIfChanged = exports.createUpdateValuesIfChanged = function createUpdateValuesIfChanged(instance, selectedKeys) {
+  return function () {
+    var element = instance.element;
+
+    if (element) {
+      var values = (0, _utils.getElementValues)(element, selectedKeys);
+
+      (0, _utils.setValuesIfChanged)(instance, selectedKeys, values);
+    }
+  };
+};
+
+/**
+ * @function getMeasuredComponent
+ *
+ * @description
+ * get the decorator to create a higher-order component that will measure the DOM node and pass the requested
+ * size / position attributes as props to the PassedComponent
+ *
+ * @param {Array<string>} keys the keys to get the size / position of
+ * @param {Object} options the additional options passed to the decorator
+ * @returns {function} decorator to create the higher-order component
+ */
 var getMeasuredComponent = function getMeasuredComponent(keys, options) {
   var selectedKeys = (0, _utils.getKeysWithSourceAndType)(keys, options);
 
@@ -1227,7 +1291,7 @@ var getMeasuredComponent = function getMeasuredComponent(keys, options) {
           args[_key] = arguments[_key];
         }
 
-        return _ret = (_temp = (_this = _possibleConstructorReturn(this, _Component.call.apply(_Component, [this].concat(args))), _this), _this.state = (0, _utils.reduceStateToMatchingKeys)(selectedKeys), _this.componentDidMount = (0, _utils.createSetInstanceElement)(_this, selectedKeys, options, true), _this.componentDidUpdate = (0, _utils.createSetInstanceElement)(_this, selectedKeys, options), _this.componentWillUmount = (0, _utils.createRemoveInstanceElement)(_this), _this.element = _constants.DEFAULT_INSTANCE_ELEMENT_VALUE, _this.hasResize = _constants.DEFAULT_INSTANCE_HAS_RESIZE_VALUE, _this.mounted = _constants.DEFAULT_INSTANCE_MOUNTED_VALUE, _this.updateValuesIfChanged = (0, _utils.createUpdateValuesIfChanged)(_this, selectedKeys), _temp), _possibleConstructorReturn(_this, _ret);
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, _Component.call.apply(_Component, [this].concat(args))), _this), _this.componentDidMount = createComponentDidMount(_this, selectedKeys, options), _this.componentDidUpdate = createComponentDidUpdate(_this, selectedKeys, options), _this.componentWillUnmount = createComponentWillUnmount(_this, selectedKeys), _this._isMounted = false, _this.element = null, _this.hasResize = null, _this.measurements = (0, _utils.reduceMeasurementsToMatchingKeys)(selectedKeys), _this.setMeasurements = createSetMeasurements(_this), _this.updateValuesIfChanged = createUpdateValuesIfChanged(_this, selectedKeys), _temp), _possibleConstructorReturn(_this, _ret);
       }
 
       // lifecycle methods
@@ -1240,7 +1304,7 @@ var getMeasuredComponent = function getMeasuredComponent(keys, options) {
 
 
       MeasuredComponent.prototype.render = function render() {
-        return _react2.default.createElement(PassedComponent, _extends({}, this.props, (0, _utils.getScopedValues)(this.state, selectedKeys, options)));
+        return _react2.default.createElement(PassedComponent, _extends({}, this.props, (0, _utils.getScopedValues)(this.measurements, selectedKeys, options)));
       };
 
       return MeasuredComponent;
@@ -1254,7 +1318,6 @@ var getMeasuredComponent = function getMeasuredComponent(keys, options) {
 };
 
 exports.default = getMeasuredComponent;
-module.exports = exports['default'];
 
 /***/ }),
 /* 12 */

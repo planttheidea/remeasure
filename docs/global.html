@@ -40,7 +40,7 @@
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="global.html#getShouldClear">getShouldClear</a></li><li><a href="global.html#removeElementResize">removeElementResize</a></li>
+					<li><a href="global.html#createSetMeasurements">createSetMeasurements</a></li><li><a href="global.html#getMeasuredComponent">getMeasuredComponent</a></li><li><a href="global.html#getShouldClear">getShouldClear</a></li><li><a href="global.html#removeElementResize">removeElementResize</a></li><li><a href="global.html#setMeasurements">setMeasurements</a></li>
 				</ul>
 			</li>
 			
@@ -153,7 +153,357 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="getShouldClear"><span class="type-signature"></span>getShouldClear(state, selectedKeys)</h4>
+    <h4 class="name" id="createSetMeasurements"><span class="type-signature"></span>createSetMeasurements(instance)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>create the method that will assign the measurements synchronously to the instance
+and then call forceUpdate (done because setState is async)</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>instance</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ReactComponent</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the instance to assign to</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="getMeasuredComponent.js.html">getMeasuredComponent.js</a>,
+				 <a href="getMeasuredComponent.js.html#sunlight-1-line-133">line 133</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>the method that will assign the measurements to the instance</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">function</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="getMeasuredComponent"><span class="type-signature"></span>getMeasuredComponent(keys, options)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>get the decorator to create a higher-order component that will measure the DOM node and pass the requested
+size / position attributes as props to the PassedComponent</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>keys</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the keys to get the size / position of</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the additional options passed to the decorator</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="getMeasuredComponent.js.html">getMeasuredComponent.js</a>,
+				 <a href="getMeasuredComponent.js.html#sunlight-1-line-185">line 185</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>decorator to create the higher-order component</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">function</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="getShouldClear"><span class="type-signature"></span>getShouldClear(measurements, selectedKeys)</h4>
     
     
 </dt>
@@ -196,7 +546,7 @@
 
         <tr>
             
-                <td class="name"><code>state</code></td>
+                <td class="name"><code>measurements</code></td>
             
 
             <td class="type">
@@ -213,7 +563,7 @@
 
             
 
-            <td class="description last"><p>the current state values</p></td>
+            <td class="description last"><p>the current measurement values</p></td>
         </tr>
 
     
@@ -282,7 +632,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="utils.js.html">utils.js</a>,
-				 <a href="utils.js.html#sunlight-1-line-131">line 131</a>
+				 <a href="utils.js.html#sunlight-1-line-129">line 129</a>
 			</li>
 		</ul>
 	</dd>
@@ -468,7 +818,145 @@
 		<ul class="dummy">
 			<li>
 				<a href="utils.js.html">utils.js</a>,
-				 <a href="utils.js.html#sunlight-1-line-248">line 248</a>
+				 <a href="utils.js.html#sunlight-1-line-232">line 232</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="setMeasurements"><span class="type-signature"></span>setMeasurements(measurements)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>set the measurements synchronously to the instance value and then call forceUpdate if mounted</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>measurements</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the measurements to assign to the instance</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="getMeasuredComponent.js.html">getMeasuredComponent.js</a>,
+				 <a href="getMeasuredComponent.js.html#sunlight-1-line-144">line 144</a>
 			</li>
 		</ul>
 	</dd>

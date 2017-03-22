@@ -40,7 +40,7 @@
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="global.html#getShouldClear">getShouldClear</a></li><li><a href="global.html#removeElementResize">removeElementResize</a></li>
+					<li><a href="global.html#createSetMeasurements">createSetMeasurements</a></li><li><a href="global.html#getMeasuredComponent">getMeasuredComponent</a></li><li><a href="global.html#getShouldClear">getShouldClear</a></li><li><a href="global.html#removeElementResize">removeElementResize</a></li><li><a href="global.html#setMeasurements">setMeasurements</a></li>
 				</ul>
 			</li>
 			
@@ -87,9 +87,6 @@ import isUndefined from 'lodash/isUndefined';
 import reduce from 'lodash/reduce';
 import some from 'lodash/some';
 import raf from 'raf';
-import {
-  findDOMNode
-} from 'react-dom';
 
 // constants
 import {
@@ -98,14 +95,10 @@ import {
   ALL_POSITION_KEYS,
   ALL_SIZE_KEYS,
   CLIENT_RECT_TYPE,
-  DEBOUNCE_VALUE_DEFAULT,
-  DEFAULT_INSTANCE_ELEMENT_VALUE,
-  DEFAULT_INSTANCE_RESIZE_LISTENER,
   ELEMENT_RESIZE_DETECTOR,
   ELEMENT_TYPE,
   NATURAL_REGEXP,
   POSITION_PROP_DEFAULT,
-  RENDER_ON_RESIZE_DEFAULT,
   SIZE_PROP_DEFAULT,
   VOID_ELEMENT_TAG_NAMES
 } from './constants';
@@ -159,23 +152,23 @@ export const haveValuesChanged = (keys, values, currentState) => {
  * @param {Object} values updated values to store in state
  */
 export const setValuesIfChanged = (instance, keys, values) => {
-  if (haveValuesChanged(keys, values, instance.state) &amp;&amp; instance.element) {
-    instance.setState(values);
+  if (haveValuesChanged(keys, values, instance.measurements)) {
+    instance.setMeasurements(values);
   }
 };
 
 /**
  * @private
  *
- * @function reduceStateToMatchingKeys
+ * @function reduceMeasurementsToMatchingKeys
  *
  * @description
- * based on desiredKeys, build the initialState object
+ * based on desiredKeys, build the initial measurements object
  *
  * @param {Array&lt;string>} keys the keys requested from the decorator
  * @returns {Array&lt;T>} the object of key: 0 default values
  */
-export const reduceStateToMatchingKeys = (keys) => {
+export const reduceMeasurementsToMatchingKeys = (keys) => {
   return reduce(keys, (accumulatedInitialState, {key}) => {
     accumulatedInitialState[key] = 0;
 
@@ -189,22 +182,14 @@ export const reduceStateToMatchingKeys = (keys) => {
  * @description
  * get whether the values should be cleared or not based on values in state
  *
- * @param {Object} state the current state values
+ * @param {Object} measurements the current measurement values
  * @param {Array&lt;Object>} selectedKeys the keys to iterate over
  * @returns {boolean} should the values be cleared or not
  */
-export const getShouldClear = (state, selectedKeys) => {
-  const length = selectedKeys.length;
-
-  let index = -1;
-
-  while (++index &lt; length) {
-    if (state[selectedKeys[index].key]) {
-      return true;
-    }
-  }
-
-  return false;
+export const getShouldClear = (measurements, selectedKeys) => {
+  return some(selectedKeys, ({key}) => {
+    return !!measurements[key];
+  });
 };
 
 /**
@@ -219,10 +204,8 @@ export const getShouldClear = (state, selectedKeys) => {
  * @param {Array&lt;string>} selectedKeys keys to store in state
  */
 export const clearValues = (instance, selectedKeys) => {
-  if (getShouldClear(instance.state, selectedKeys)) {
-    const emptyValues = reduceStateToMatchingKeys(selectedKeys);
-
-    instance.setState(emptyValues);
+  if (getShouldClear(instance.measurements, selectedKeys)) {
+    instance.setMeasurements(reduceMeasurementsToMatchingKeys(selectedKeys));
   }
 };
 
@@ -239,11 +222,7 @@ export const clearValues = (instance, selectedKeys) => {
  * @returns {function(): void} function to update the values after debounce timing has passed
  */
 export const createUpdateValuesViaDebounce = (instance, debounceValue) => {
-  return debounce(() => {
-    if (instance.element) {
-      instance.updateValuesIfChanged();
-    }
-  }, debounceValue);
+  return debounce(instance.updateValuesIfChanged, debounceValue);
 };
 
 /**
@@ -257,9 +236,7 @@ export const createUpdateValuesViaDebounce = (instance, debounceValue) => {
  * @param {MeasuredComponent} instance component instance
  */
 export const updateValuesViaRaf = (instance) => {
-  if (instance.element) {
-    raf(instance.updateValuesIfChanged);
-  }
+  raf(instance.updateValuesIfChanged);
 };
 
 /**
@@ -312,7 +289,7 @@ export const setElementResize = (instance, debounceValue) => {
  * @param {HTMLElement} element element to remove listeners from
  */
 export const removeElementResize = (instance, element) => {
-  instance.resizeListener = DEFAULT_INSTANCE_RESIZE_LISTENER;
+  instance.resizeListener = null;
 
   if (element) {
     ELEMENT_RESIZE_DETECTOR.uninstall(element);
@@ -344,63 +321,6 @@ export const setElement = (instance, element, debounceValue, renderOnResize) => 
   } else {
     removeElementResize(instance, currentElement);
   }
-};
-
-/**
- * @private
- *
- * @function createRemoveInstanceElement
- *
- * @description
- * reset instance values to their original state
- *
- * @param {MeasuredComponent} instance component instance
- * @returns {function(): void} function to reset the instance values to defaults
- */
-export const createRemoveInstanceElement = (instance) => {
-  return () => {
-    if (instance.element) {
-      removeElementResize(instance, instance.element);
-
-      instance.element = DEFAULT_INSTANCE_ELEMENT_VALUE;
-    }
-  };
-};
-
-/**
- * @private
- *
- * @function createSetInstanceElement
- *
- * @description
- * create the componentDidUpdate method for the given instance
- *
- * @param {MeasuredComponent} instance component instance
- * @param {Array&lt;string>} selectedKeys keys to store in state
- * @param {Object} [options={}] options passed to the instance
- * @param {number} [options.debounceValue=DEBOUNCE_VALUE_DEFAULT] value to use for debounce of updates
- * @param {boolean} [options.renderOnResize=RENDER_ON_RESIZE_DEFAULT] should the component rerender on resize
- * @returns {function(): void} componentDidUpdate method
- */
-export const createSetInstanceElement = (instance, selectedKeys, options = {}) => {
-  const {
-    debounce: debounceValue = DEBOUNCE_VALUE_DEFAULT,
-    renderOnResize = RENDER_ON_RESIZE_DEFAULT
-  } = options;
-
-  return () => {
-    const element = findDOMNode(instance);
-
-    if (element !== instance.element) {
-      setElement(instance, element, debounceValue, renderOnResize);
-    }
-
-    if (element) {
-      updateValuesViaRaf(instance);
-    } else {
-      clearValues(instance, selectedKeys);
-    }
-  };
 };
 
 /**
@@ -512,30 +432,6 @@ export const getElementValues = (element, keys) => {
 
     return values;
   }, {});
-};
-
-/**
- * @private
- *
- * @function createUpdateValuesIfChanged
- *
- * @description
- * create the function to get the new values and assign them to state if they have changed
- *
- * @param {MeasuredComponent} instance component instance
- * @param {Array&lt;string>} selectedKeys keys to store in state
- * @returns {function(): void} function to update the instance state values if they have changed
- */
-export const createUpdateValuesIfChanged = (instance, selectedKeys) => {
-  return () => {
-    const element = instance.element;
-
-    if (element) {
-      const values = getElementValues(element, selectedKeys);
-
-      setValuesIfChanged(instance, selectedKeys, values);
-    }
-  };
 };
 
 /**

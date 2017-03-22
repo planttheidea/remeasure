@@ -27,41 +27,24 @@ const sleep = (ms = 0) => {
   });
 };
 
-test('if clearValues calls setState with emptyValues based on selectedKeys', (t) => {
+test('if clearValues calls setMeasurements with emptyValues based on selectedKeys', (t) => {
   const key = 'width';
   const selectedKeys = [
     {key, source: CLIENT_RECT_TYPE}
   ];
   const instance = {
-    setState(state) {
-      t.deepEqual(state, {
+    measurements: {
+      [key]: 15
+    },
+    setMeasurements(measurements) {
+      t.deepEqual(measurements, {
         [key]: 0
       });
-    },
-    state: {
-      [key]: 15
     }
   };
 
   utils.clearValues(instance, selectedKeys);
 });
-
-test('if createRemoveInstanceElement will reset the instance values', (t) => {
-  const instance = {
-    element: 'foo'
-  };
-
-  const fn = utils.createRemoveInstanceElement(instance);
-
-  t.true(_.isFunction(fn));
-
-  fn();
-
-  t.is(instance.element, null);
-  t.is(instance.resizeListener, null);
-});
-
-test.todo('createSetInstanceElement');
 
 test('if createFlattenConvenienceFunction will return a decorator function', (t) => {
   const measure = () => {};
@@ -116,7 +99,7 @@ test('if createGetScopedValues returns a function which returns an object with s
     ...sizeKeys,
     ...positionKeys
   ];
-  const currentState = {
+  const currentMeasurements = {
     height: 100,
     left: 50,
     offsetHeight: 90,
@@ -139,15 +122,15 @@ test('if createGetScopedValues returns a function which returns an object with s
     ...positionResult
   };
 
-  const sizeValues = utils.getScopedValues(currentState, sizeKeys, false);
+  const sizeValues = utils.getScopedValues(currentMeasurements, sizeKeys, false);
 
   t.deepEqual(sizeValues, sizeResult);
 
-  const positionValues = utils.getScopedValues(currentState, positionKeys, false);
+  const positionValues = utils.getScopedValues(currentMeasurements, positionKeys, false);
 
   t.deepEqual(positionValues, positionResult);
 
-  const allValues = utils.getScopedValues(currentState, allKeys, false);
+  const allValues = utils.getScopedValues(currentMeasurements, allKeys, false);
 
   t.deepEqual(allValues, allResult);
 });
@@ -156,38 +139,6 @@ test('if createIsKeyType creates a function', (t) => {
   const result = utils.createIsKeyType(['foo']);
 
   t.true(_.isFunction(result));
-});
-
-test('if createUpdateValuesIfChanged will create a function that calls setUpdateValuesIfChanged if it exists', (t) => {
-  const instance = {
-    element: {
-      foo: 200,
-      getBoundingClientRect() {
-        return {
-          foo: 200
-        };
-      }
-    },
-    mounted: true,
-    setState(state) {
-      t.is(state.foo, instance.element.foo);
-    },
-    state: {
-      foo: 0
-    }
-  };
-  const selectedKeys = [
-    {
-      key: 'foo',
-      source: 'clientRect'
-    }
-  ];
-
-  const updateValuesIfChanged = utils.createUpdateValuesIfChanged(instance, selectedKeys);
-
-  t.true(_.isFunction(updateValuesIfChanged));
-
-  updateValuesIfChanged();
 });
 
 test('if createUpdateValuesViaDebounce creates a debounced function that fires updateValuesIfChanged', async (t) => {
@@ -447,7 +398,7 @@ test('if isSizeKey determines if the key is a size property', (t) => {
   });
 });
 
-test('if reduceStateToMatchingKeys will return the keys mapped to an object with values of 0', (t) => {
+test('if reduceMeasurementsToMatchingKeys will return the keys mapped to an object with values of 0', (t) => {
   const keys = [{key: 'foo'}, {key: 'bar'}, {key: 'baz'}];
 
   const expectedResult = {
@@ -455,7 +406,7 @@ test('if reduceStateToMatchingKeys will return the keys mapped to an object with
     bar: 0,
     baz: 0
   };
-  const result = utils.reduceStateToMatchingKeys(keys);
+  const result = utils.reduceMeasurementsToMatchingKeys(keys);
 
   t.deepEqual(result, expectedResult);
 });
@@ -532,7 +483,7 @@ test('if setElement will set resizeListener on instance passed when renderOnResi
 
 test.todo('setElementResize');
 
-test('if setValuesIfChanged will call setState with the values if they have changed', (t) => {
+test('if setValuesIfChanged will call setMeasurements with the values if they have changed', (t) => {
   const key = 'width';
   const keys = [
     {
@@ -546,19 +497,19 @@ test('if setValuesIfChanged will call setState with the values if they have chan
   };
 
   const instance = {
-    mounted: true,
-    setState(valuesPassed) {
-      t.is(values, valuesPassed);
+    _isMounted: true,
+    measurements: {
+      [key]: 0
     },
-    state: {
-      [key]: 0
+    setMeasurements(valuesPassed) {
+      t.is(values, valuesPassed);
     }
   };
 
   utils.setValuesIfChanged(instance, keys, values);
 });
 
-test('if setValuesIfChanged will not call setState if the values have not changed', (t) => {
+test('if setValuesIfChanged will not call setMeasurements if the values have not changed', (t) => {
   const key = 'width';
   const keys = [
     {
@@ -572,19 +523,19 @@ test('if setValuesIfChanged will not call setState if the values have not change
   };
 
   const instance = {
-    mounted: true,
-    setState: sinon.stub(),
-    state: {
+    _isMounted: true,
+    measurements: {
       [key]: 123
-    }
+    },
+    setMeasurements: sinon.stub()
   };
 
   utils.setValuesIfChanged(instance, keys, values);
 
-  t.false(instance.setState.calledOnce);
+  t.false(instance.setMeasurements.calledOnce);
 });
 
-test('if setValuesIfChanged will not call setState if the values have changed but mounted is false', (t) => {
+test('if setValuesIfChanged will not call setMeasurements if the values have changed but _isMounted is false', (t) => {
   const key = 'width';
   const keys = [
     {
@@ -598,16 +549,16 @@ test('if setValuesIfChanged will not call setState if the values have changed bu
   };
 
   const instance = {
-    mounted: false,
-    setState: sinon.stub(),
-    state: {
-      [key]: 0
-    }
+    _isMounted: false,
+    measurements: {
+      [key]: 123
+    },
+    setMeasurements: sinon.stub()
   };
 
   utils.setValuesIfChanged(instance, keys, values);
 
-  t.false(instance.setState.calledOnce);
+  t.false(instance.setMeasurements.calledOnce);
 });
 
 test('if updateValuesViaRaf will call updateValuesIfChanged on the instance after an animation frame tick', (t) => {
