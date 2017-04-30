@@ -280,6 +280,22 @@ test('if createSetMeasurements will create a function that sets the instance mea
   t.true(instance.forceUpdate.notCalled);
 });
 
+test('if createSetOriginalRef will create a function that assigns the param passed to it to the instance at originalComponent', (t) => {
+  const instance = {
+    originalComponent: null
+  };
+
+  const setOriginalRef = component.createSetOriginalRef(instance);
+
+  t.true(_.isFunction(setOriginalRef));
+
+  const originalComponent = {};
+
+  setOriginalRef(originalComponent);
+
+  t.is(instance.originalComponent, originalComponent);
+});
+
 test('if createUpdateValuesIfChanged will create a function that calls setUpdateValuesIfChanged if it exists', (t) => {
   const instance = {
     _isMounted: true,

@@ -40,7 +40,7 @@
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="global.html#createSetMeasurements">createSetMeasurements</a></li><li><a href="global.html#getMeasuredComponent">getMeasuredComponent</a></li><li><a href="global.html#getShouldClear">getShouldClear</a></li><li><a href="global.html#removeElementResize">removeElementResize</a></li><li><a href="global.html#setMeasurements">setMeasurements</a></li>
+					<li><a href="global.html#createSetMeasurements">createSetMeasurements</a></li><li><a href="global.html#createSetOriginalRef">createSetOriginalRef</a></li><li><a href="global.html#getMeasuredComponent">getMeasuredComponent</a></li><li><a href="global.html#getShouldClear">getShouldClear</a></li><li><a href="global.html#removeElementResize">removeElementResize</a></li><li><a href="global.html#setMeasurements">setMeasurements</a></li><li><a href="global.html#setOriginalRef">setOriginalRef</a></li>
 				</ul>
 			</li>
 			
@@ -316,6 +316,168 @@ and then call forceUpdate (done because setState is async)</p>
             
 <hr>
 <dt>
+    <h4 class="name" id="createSetOriginalRef"><span class="type-signature"></span>createSetOriginalRef(instance)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>create the method that will assign the original component instance to an instance value of the HOC</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>instance</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ReactComponent</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the instance to assign to</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="getMeasuredComponent.js.html">getMeasuredComponent.js</a>,
+				 <a href="getMeasuredComponent.js.html#sunlight-1-line-161">line 161</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>the method that will assign the original component</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">function</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
     <h4 class="name" id="getMeasuredComponent"><span class="type-signature"></span>getMeasuredComponent(keys, options)</h4>
     
     
@@ -446,7 +608,7 @@ size / position attributes as props to the PassedComponent</p>
 		<ul class="dummy">
 			<li>
 				<a href="getMeasuredComponent.js.html">getMeasuredComponent.js</a>,
-				 <a href="getMeasuredComponent.js.html#sunlight-1-line-185">line 185</a>
+				 <a href="getMeasuredComponent.js.html#sunlight-1-line-208">line 208</a>
 			</li>
 		</ul>
 	</dd>
@@ -957,6 +1119,147 @@ size / position attributes as props to the PassedComponent</p>
 			<li>
 				<a href="getMeasuredComponent.js.html">getMeasuredComponent.js</a>,
 				 <a href="getMeasuredComponent.js.html#sunlight-1-line-144">line 144</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="setOriginalRef"><span class="type-signature"></span>setOriginalRef(component)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>set the reference to the original component instance to the instance of the HOC</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>component</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+|
+
+<span class="param-type">ReactComponent</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the component instance to assign</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="getMeasuredComponent.js.html">getMeasuredComponent.js</a>,
+				 <a href="getMeasuredComponent.js.html#sunlight-1-line-171">line 171</a>
 			</li>
 		</ul>
 	</dd>

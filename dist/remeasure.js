@@ -16,9 +16,9 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	function __webpack_require__(moduleId) {
 /******/
 /******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId])
+/******/ 		if(installedModules[moduleId]) {
 /******/ 			return installedModules[moduleId].exports;
-/******/
+/******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			i: moduleId,
@@ -84,7 +84,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 exports.__esModule = true;
-exports.ELEMENT_TYPE = exports.CLIENT_RECT_TYPE = exports.ALL_KEYS = exports.ALL_SIZE_KEYS = exports.ALL_POSITION_KEYS = exports.ALL_DOM_ELEMENT_KEYS = exports.VOID_ELEMENT_TAG_NAMES = exports.NATURAL_REGEXP = exports.DOM_ELEMENT_SIZE_KEYS = exports.DOM_ELEMENT_POSITION_KEYS = exports.ALL_BOUNDING_CLIENT_RECT_KEYS = exports.BOUNDING_CLIENT_RECT_POSITION_KEYS = exports.BOUNDING_CLIENT_RECT_SIZE_KEYS = exports.SIZE_PROP_DEFAULT = exports.RENDER_ON_RESIZE_DEFAULT = exports.POSITION_PROP_DEFAULT = exports.FLATTEN_DEFAULT = exports.ELEMENT_RESIZE_DETECTOR = exports.DEBOUNCE_VALUE_DEFAULT = undefined;
+exports.ELEMENT_TYPE = exports.CLIENT_RECT_TYPE = exports.ALL_KEYS = exports.ALL_SIZE_KEYS = exports.ALL_POSITION_KEYS = exports.ALL_DOM_ELEMENT_KEYS = exports.VOID_ELEMENT_TAG_NAMES = exports.NATURAL_REGEXP = exports.DOM_ELEMENT_SIZE_KEYS = exports.DOM_ELEMENT_POSITION_KEYS = exports.ALL_BOUNDING_CLIENT_RECT_KEYS = exports.BOUNDING_CLIENT_RECT_POSITION_KEYS = exports.BOUNDING_CLIENT_RECT_SIZE_KEYS = exports.SIZE_PROP_DEFAULT = exports.RENDER_ON_RESIZE_DEFAULT = exports.POSITION_PROP_DEFAULT = exports.INHERITED_METHODS_DEFAULT = exports.FLATTEN_DEFAULT = exports.ELEMENT_RESIZE_DETECTOR = exports.DEBOUNCE_VALUE_DEFAULT = undefined;
 
 var _elementResizeDetector = __webpack_require__(16);
 
@@ -97,6 +97,7 @@ var ELEMENT_RESIZE_DETECTOR = exports.ELEMENT_RESIZE_DETECTOR = (0, _elementResi
   strategy: 'scroll'
 });
 var FLATTEN_DEFAULT = exports.FLATTEN_DEFAULT = false;
+var INHERITED_METHODS_DEFAULT = exports.INHERITED_METHODS_DEFAULT = [];
 var POSITION_PROP_DEFAULT = exports.POSITION_PROP_DEFAULT = 'position';
 var RENDER_ON_RESIZE_DEFAULT = exports.RENDER_ON_RESIZE_DEFAULT = true;
 var SIZE_PROP_DEFAULT = exports.SIZE_PROP_DEFAULT = 'size';
@@ -162,7 +163,7 @@ module.exports = objectToString;
 
 
 exports.__esModule = true;
-exports.getValidKeys = exports.getKeysWithSourceAndType = exports.getKeysSubsetWithType = exports.getKeysFromStringKey = exports.getKeyType = exports.isSizeKey = exports.isPositionKey = exports.getPropKeyNames = exports.getElementValues = exports.getNaturalDimensionValue = exports.getScopedValues = exports.createFlattenConvenienceFunction = exports.createIsKeyType = exports.setElement = exports.removeElementResize = exports.setElementResize = exports.isElementVoidTag = exports.updateValuesViaRaf = exports.createUpdateValuesViaDebounce = exports.clearValues = exports.getShouldClear = exports.reduceMeasurementsToMatchingKeys = exports.setValuesIfChanged = exports.haveValuesChanged = exports.getComponentName = undefined;
+exports.setInheritedMethods = exports.getValidKeys = exports.getKeysWithSourceAndType = exports.getKeysSubsetWithType = exports.getKeysFromStringKey = exports.getKeyType = exports.isSizeKey = exports.isPositionKey = exports.getPropKeyNames = exports.getElementValues = exports.getNaturalDimensionValue = exports.getScopedValues = exports.createFlattenConvenienceFunction = exports.createIsKeyType = exports.setElement = exports.removeElementResize = exports.setElementResize = exports.isElementVoidTag = exports.updateValuesViaRaf = exports.createUpdateValuesViaDebounce = exports.clearValues = exports.getShouldClear = exports.reduceMeasurementsToMatchingKeys = exports.setValuesIfChanged = exports.haveValuesChanged = exports.getComponentName = undefined;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; // external dependencies
 
@@ -729,6 +730,29 @@ var getValidKeys = exports.getValidKeys = function getValidKeys(keys, keysToTest
   });
 };
 
+/**
+ * @private
+ *
+ * @description
+ * set methods on this instance that will call the inherited instance method
+ *
+ * @param {ReactComponent} instance the instance to assign to
+ * @param {Array<string>} inheritedMethods the names of inherited methods
+ */
+var setInheritedMethods = exports.setInheritedMethods = function setInheritedMethods(instance, inheritedMethods) {
+  inheritedMethods.forEach(function (method) {
+    if (instance[method]) {
+      throw new ReferenceError('You cannot have the method ' + method + ' inherited, as it is already taken by the MeasuredComponent HOC.');
+    }
+
+    instance[method] = function () {
+      var _instance$originalCom;
+
+      return (_instance$originalCom = instance.originalComponent)[method].apply(_instance$originalCom, arguments);
+    };
+  });
+};
+
 /***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -1081,7 +1105,7 @@ module.exports = exports['default'];
 
 
 exports.__esModule = true;
-exports.createUpdateValuesIfChanged = exports.createSetMeasurements = exports.createComponentWillUnmount = exports.createComponentDidUpdate = exports.createComponentDidMount = undefined;
+exports.createUpdateValuesIfChanged = exports.createSetOriginalRef = exports.createSetMeasurements = exports.createComponentWillUnmount = exports.createComponentDidUpdate = exports.createComponentDidMount = undefined;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
@@ -1239,6 +1263,29 @@ var createSetMeasurements = exports.createSetMeasurements = function createSetMe
 };
 
 /**
+ * @function createSetOriginalRef
+ *
+ * @description
+ * create the method that will assign the original component instance to an instance value of the HOC
+ *
+ * @param {ReactComponent} instance the instance to assign to
+ * @returns {function(Object): void} the method that will assign the original component
+ */
+var createSetOriginalRef = exports.createSetOriginalRef = function createSetOriginalRef(instance) {
+  /**
+   * @function setOriginalRef
+   *
+   * @description
+   * set the reference to the original component instance to the instance of the HOC
+   *
+   * @param {HTMLElement|ReactComponent} component the component instance to assign
+   */
+  return function (component) {
+    instance.originalComponent = component;
+  };
+};
+
+/**
  * @private
  *
  * @function createUpdateValuesIfChanged
@@ -1275,6 +1322,9 @@ var createUpdateValuesIfChanged = exports.createUpdateValuesIfChanged = function
  */
 var getMeasuredComponent = function getMeasuredComponent(keys, options) {
   var selectedKeys = (0, _utils.getKeysWithSourceAndType)(keys, options);
+  var _options$inheritedMet = options.inheritedMethods,
+      inheritedMethods = _options$inheritedMet === undefined ? _constants.INHERITED_METHODS_DEFAULT : _options$inheritedMet;
+
 
   return function (PassedComponent) {
     var displayName = (0, _utils.getComponentName)(PassedComponent);
@@ -1282,16 +1332,28 @@ var getMeasuredComponent = function getMeasuredComponent(keys, options) {
     var MeasuredComponent = function (_Component) {
       _inherits(MeasuredComponent, _Component);
 
-      function MeasuredComponent() {
-        var _temp, _this, _ret;
-
+      function MeasuredComponent(props) {
         _classCallCheck(this, MeasuredComponent);
 
-        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-          args[_key] = arguments[_key];
-        }
+        var _this = _possibleConstructorReturn(this, _Component.call(this, props));
 
-        return _ret = (_temp = (_this = _possibleConstructorReturn(this, _Component.call.apply(_Component, [this].concat(args))), _this), _this.componentDidMount = createComponentDidMount(_this, selectedKeys, options), _this.componentDidUpdate = createComponentDidUpdate(_this, selectedKeys, options), _this.componentWillUnmount = createComponentWillUnmount(_this, selectedKeys), _this._isMounted = false, _this.element = null, _this.hasResize = null, _this.measurements = (0, _utils.reduceMeasurementsToMatchingKeys)(selectedKeys), _this.setMeasurements = createSetMeasurements(_this), _this.updateValuesIfChanged = createUpdateValuesIfChanged(_this, selectedKeys), _temp), _possibleConstructorReturn(_this, _ret);
+        _this.componentDidMount = createComponentDidMount(_this, selectedKeys, options);
+        _this.componentDidUpdate = createComponentDidUpdate(_this, selectedKeys, options);
+        _this.componentWillUnmount = createComponentWillUnmount(_this, selectedKeys);
+        _this.setOriginalRef = createSetOriginalRef(_this);
+        _this._isMounted = false;
+        _this.element = null;
+        _this.originalComponent = null;
+        _this.hasResize = null;
+        _this.measurements = (0, _utils.reduceMeasurementsToMatchingKeys)(selectedKeys);
+        _this.setMeasurements = createSetMeasurements(_this);
+        _this.updateValuesIfChanged = createUpdateValuesIfChanged(_this, selectedKeys);
+
+
+        if (inheritedMethods.length) {
+          (0, _utils.setInheritedMethods)(_this, inheritedMethods);
+        }
+        return _this;
       }
 
       // lifecycle methods
@@ -1304,7 +1366,9 @@ var getMeasuredComponent = function getMeasuredComponent(keys, options) {
 
 
       MeasuredComponent.prototype.render = function render() {
-        return _react2.default.createElement(PassedComponent, _extends({}, this.props, (0, _utils.getScopedValues)(this.measurements, selectedKeys, options)));
+        return _react2.default.createElement(PassedComponent, _extends({
+          ref: this.setOriginalRef
+        }, this.props, (0, _utils.getScopedValues)(this.measurements, selectedKeys, options)));
       };
 
       return MeasuredComponent;
@@ -1878,13 +1942,24 @@ module.exports = function(options) {
             function isInDocument(element) {
                 return element === element.ownerDocument.body || element.ownerDocument.body.contains(element);
             }
-            return !isInDocument(element);
+
+            if (!isInDocument(element)) {
+                return true;
+            }
+
+            // FireFox returns null style in hidden iframes. See https://github.com/wnr/element-resize-detector/issues/68 and https://bugzilla.mozilla.org/show_bug.cgi?id=795520
+            if (getComputedStyle(element) === null) {
+                return true;
+            }
+
+            return false;
         }
 
         function isUnrendered(element) {
             // Check the absolute positioned container since the top level container is display: inline.
             var container = getState(element).container.childNodes[0];
-            return getComputedStyle(container).width.indexOf("px") === -1; //Can only compute pixel value when rendered.
+            var style = getComputedStyle(container);
+            return !style.width || style.width.indexOf("px") === -1; //Can only compute pixel value when rendered.
         }
 
         function getStyle() {

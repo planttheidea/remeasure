@@ -120,6 +120,32 @@ class CustomCategories extends PureComponent {
   }
 }
 
+@measure({positionProp: 'foo', sizeProp: 'bar', inheritedMethods: ['getFoo']})
+class InheritedMethods extends PureComponent {
+  getFoo() {
+    return this.props.foo;
+  }
+
+  render() {
+    const {
+      bar,
+      children,
+      foo
+    } = this.props;
+
+    console.group('custom categories');
+    console.log('foo', foo);
+    console.log('bar', bar);
+    console.groupEnd();
+
+    return (
+      <div>
+        {children}
+      </div>
+    );
+  }
+}
+
 @measure(['height', 'width', 'top', 'left'], {positionProp: 'foo', sizeProp: 'bar'})
 class CustomCategoriesWithSpecificProperties extends PureComponent {
   render() {
@@ -177,6 +203,11 @@ class App extends Component {
     isConditionalElementShown: true
   };
 
+  componentDidMount() {
+    console.log('--------- GETTING FOO ------------');
+    console.log(this.inheritedRef.getFoo());
+  }
+
   onClickToggleConditionalElement = () => {
     const {
       isConditionalElementShown
@@ -185,6 +216,10 @@ class App extends Component {
     this.setState({
       isConditionalElementShown: !isConditionalElementShown
     });
+  };
+
+  setInheritedRef = (component) => {
+    this.inheritedRef = component;
   };
 
   render() {
@@ -217,6 +252,10 @@ class App extends Component {
         <CustomCategories>
           I have custom position property (foo) and size property (bar).
         </CustomCategories>
+
+        <InheritedMethods ref={this.setInheritedRef}>
+          I have an instance method (getFoo) that is inherited by the HOC.
+        </InheritedMethods>
 
         <CustomCategoriesWithSpecificProperties>
           I only have the height and width properties in size (under the prop bar), and top and left properties

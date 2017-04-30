@@ -8,7 +8,7 @@ const defaultConfig = require('./webpack.config');
 
 const PORT = 3000;
 
-module.exports = Object.assign({}, {
+module.exports = Object.assign({}, defaultConfig, {
   devServer: {
     contentBase: './dist',
     host: 'localhost',

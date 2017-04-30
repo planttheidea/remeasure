@@ -40,7 +40,7 @@
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="global.html#createSetMeasurements">createSetMeasurements</a></li><li><a href="global.html#getMeasuredComponent">getMeasuredComponent</a></li><li><a href="global.html#getShouldClear">getShouldClear</a></li><li><a href="global.html#removeElementResize">removeElementResize</a></li><li><a href="global.html#setMeasurements">setMeasurements</a></li>
+					<li><a href="global.html#createSetMeasurements">createSetMeasurements</a></li><li><a href="global.html#createSetOriginalRef">createSetOriginalRef</a></li><li><a href="global.html#getMeasuredComponent">getMeasuredComponent</a></li><li><a href="global.html#getShouldClear">getShouldClear</a></li><li><a href="global.html#removeElementResize">removeElementResize</a></li><li><a href="global.html#setMeasurements">setMeasurements</a></li><li><a href="global.html#setOriginalRef">setOriginalRef</a></li>
 				</ul>
 			</li>
 			
@@ -596,6 +596,27 @@ export const getKeysWithSourceAndType = (keys, options) => {
 export const getValidKeys = (keys, keysToTestAgainst) => {
   return filter(keys, (key) => {
     return includes(keysToTestAgainst, key);
+  });
+};
+
+/**
+ * @private
+ *
+ * @description
+ * set methods on this instance that will call the inherited instance method
+ *
+ * @param {ReactComponent} instance the instance to assign to
+ * @param {Array&lt;string>} inheritedMethods the names of inherited methods
+ */
+export const setInheritedMethods = (instance, inheritedMethods) => {
+  inheritedMethods.forEach((method) => {
+    if (instance[method]) {
+      throw new ReferenceError(`You cannot have the method ${method} inherited, as it is already taken by the MeasuredComponent HOC.`);
+    }
+
+    instance[method] = (...args) => {
+      return instance.originalComponent[method](...args);
+    };
   });
 };
 </pre>

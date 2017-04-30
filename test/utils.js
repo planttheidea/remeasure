@@ -483,6 +483,37 @@ test('if setElement will set resizeListener on instance passed when renderOnResi
 
 test.todo('setElementResize');
 
+test('if setInheritedMethods will set the inheritedMethods on the instance', (t) => {
+  const instance = {};
+  const inheritedMethods = [
+    'getFoo',
+    'getBar'
+  ];
+
+  utils.setInheritedMethods(instance, inheritedMethods);
+
+  const keys = Object.keys(instance);
+
+  t.is(keys.length, 2);
+
+  keys.forEach((key) => {
+    t.true(_.isFunction(instance[key]));
+  });
+});
+
+test('if setInheritedMethods will throw an error when a reserved method name is attempted to be inherited', (t) => {
+  const instance = {
+    setMeasurements() {}
+  };
+  const inheritedMethods = [
+    'setMeasurements'
+  ];
+
+  t.throws(() => {
+    utils.setInheritedMethods(instance, inheritedMethods);
+  }, ReferenceError);
+});
+
 test('if setValuesIfChanged will call setMeasurements with the values if they have changed', (t) => {
   const key = 'width';
   const keys = [

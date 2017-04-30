@@ -519,3 +519,24 @@ export const getValidKeys = (keys, keysToTestAgainst) => {
     return includes(keysToTestAgainst, key);
   });
 };
+
+/**
+ * @private
+ *
+ * @description
+ * set methods on this instance that will call the inherited instance method
+ *
+ * @param {ReactComponent} instance the instance to assign to
+ * @param {Array<string>} inheritedMethods the names of inherited methods
+ */
+export const setInheritedMethods = (instance, inheritedMethods) => {
+  inheritedMethods.forEach((method) => {
+    if (instance[method]) {
+      throw new ReferenceError(`You cannot have the method ${method} inherited, as it is already taken by the MeasuredComponent HOC.`);
+    }
+
+    instance[method] = (...args) => {
+      return instance.originalComponent[method](...args);
+    };
+  });
+};

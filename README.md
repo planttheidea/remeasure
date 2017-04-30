@@ -37,7 +37,7 @@ class MyComponent extends React.Component {
       position,
       size
     } = this.props;
-  
+
     return (
       <div>
         I have access to my size and position through props!
@@ -57,7 +57,7 @@ const StatelessComponent = measure(({position, size}) => {
 ```
 
 Any component that has `measure` applied to it will be wrapped in a [Higher-Order Component](https://medium.com/@dan_abramov/mixins-are-dead-long-live-higher-order-components-94a0d2f9e750#.k0th02ffm) that will pass in the props `position` and `size`, which contain a variety of measurements related to (you guessed it) the component's position and size. A complete list of properties:
-  
+
 ```javascript
 {
   position: {
@@ -86,7 +86,7 @@ Any component that has `measure` applied to it will be wrapped in a [Higher-Orde
   }
 }
 ```
-  
+
 The `bottom`, `left`, `right`, and `top` properties in `position` are what you would expect from the result of `element.getBoundingClientRect()`. `naturalHeight` and `naturalWidth` are properties that are native to `img` elements, and for all non-`img` elements they are coalesced with `scrollHeight` and `scrollWidth`, respectively.
 
 These properties are retrieved on mount, but will also automatically update if the element is resized thanks to [element-resize-event](https://github.com/KyleAMathews/element-resize-event). Please note that elements that do not support content (such as `img`) are not supported by this resize listener; in the case that you need to support those elements, simply create a higher-order component that wraps that element in a `div` and decorate that component.
@@ -108,7 +108,7 @@ const measureOnlyOffsetWidth = measure('offsetWidth');
 const MyStatelessComponent = measureOnlyOffsetWidth(({size}) => {
   return (
     <div>
-      Only size is injected (because no position values were requested), 
+      Only size is injected (because no position values were requested),
       with offsetWidth as the only property
     </div>
   );
@@ -122,7 +122,7 @@ class MyComponent extends Component {
       position,
       size
     } = this.props;
-  
+
     return (
       <div>
         Both the position and size props are injected (because values
@@ -138,7 +138,7 @@ class MyComponent extends Component {
 class MySizedComponent extends Component {
   render() {
     const size = this.props.size;
-  
+
     return (
       <div>
         I have the size prop injected with all properties, but not
@@ -150,21 +150,25 @@ class MySizedComponent extends Component {
 ```
 
 You can also pass an object with any of the following propeties (defaults shown):
-   
+
 ```javascript
 {
     // value in milliseconds to debounce rerenders
     debounce: Number,
-    
+
     // should the properties not be grouped under position / size
     flatten: Boolean = false,
-    
+
+    // names of methods that the instance should inherit
+    // this is used if you want to call an instance method via ref in a different component
+    inheritedMethods: Array<string>,
+
     // sets position property name
     positionProp: String = 'position',
-    
+
     // should element rerender when resized
     renderOnResize: Boolean = true,
-    
+
     // sets size property name
     sizeProp: String = 'size'
 }
@@ -181,7 +185,7 @@ class MyComponent extends Component {
             foo,
             bar
         } = this.props;
-    
+
         return (
             <div>
                 The foo and bar props now represent position and size, respectively.

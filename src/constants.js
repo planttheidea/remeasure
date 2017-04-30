@@ -5,6 +5,7 @@ export const ELEMENT_RESIZE_DETECTOR = elementResizeDetectorMaker({
   strategy: 'scroll'
 });
 export const FLATTEN_DEFAULT = false;
+export const INHERITED_METHODS_DEFAULT = [];
 export const POSITION_PROP_DEFAULT = 'position';
 export const RENDER_ON_RESIZE_DEFAULT = true;
 export const SIZE_PROP_DEFAULT = 'size';

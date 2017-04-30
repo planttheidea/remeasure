@@ -40,7 +40,7 @@
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="global.html#createSetMeasurements">createSetMeasurements</a></li><li><a href="global.html#getMeasuredComponent">getMeasuredComponent</a></li><li><a href="global.html#getShouldClear">getShouldClear</a></li><li><a href="global.html#removeElementResize">removeElementResize</a></li><li><a href="global.html#setMeasurements">setMeasurements</a></li>
+					<li><a href="global.html#createSetMeasurements">createSetMeasurements</a></li><li><a href="global.html#createSetOriginalRef">createSetOriginalRef</a></li><li><a href="global.html#getMeasuredComponent">getMeasuredComponent</a></li><li><a href="global.html#getShouldClear">getShouldClear</a></li><li><a href="global.html#removeElementResize">removeElementResize</a></li><li><a href="global.html#setMeasurements">setMeasurements</a></li><li><a href="global.html#setOriginalRef">setOriginalRef</a></li>
 				</ul>
 			</li>
 			
@@ -182,7 +182,7 @@ const measureOnlyOffsetWidth = measure('offsetWidth');
 const MyStatelessComponent = measureOnlyOffsetWidth(({size}) => {
   return (
     &lt;div>
-      Only size is injected (because no position values were requested), 
+      Only size is injected (because no position values were requested),
       with offsetWidth as the only property
     &lt;/div>
   );
@@ -227,6 +227,10 @@ class MySizedComponent extends Component {
 
     // should the properties not be grouped under position / size
     flatten: Boolean = false,
+
+    // names of methods that the instance should inherit
+    // this is used if you want to call an instance method via ref in a different component
+    inheritedMethods: Array&lt;string>,
 
     // sets position property name
     positionProp: String = 'position',

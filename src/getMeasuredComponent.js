@@ -9,6 +9,7 @@ import {
 // constants
 import {
   DEBOUNCE_VALUE_DEFAULT,
+  INHERITED_METHODS_DEFAULT,
   RENDER_ON_RESIZE_DEFAULT
 } from './constants';
 
@@ -22,6 +23,7 @@ import {
   reduceMeasurementsToMatchingKeys,
   removeElementResize,
   setElement,
+  setInheritedMethods,
   setValuesIfChanged,
   updateValuesViaRaf
 } from './utils';
@@ -151,6 +153,29 @@ export const createSetMeasurements = (instance) => {
 };
 
 /**
+ * @function createSetOriginalRef
+ *
+ * @description
+ * create the method that will assign the original component instance to an instance value of the HOC
+ *
+ * @param {ReactComponent} instance the instance to assign to
+ * @returns {function(Object): void} the method that will assign the original component
+ */
+export const createSetOriginalRef = (instance) => {
+  /**
+   * @function setOriginalRef
+   *
+   * @description
+   * set the reference to the original component instance to the instance of the HOC
+   *
+   * @param {HTMLElement|ReactComponent} component the component instance to assign
+   */
+  return (component) => {
+    instance.originalComponent = component;
+  };
+};
+
+/**
  * @private
  *
  * @function createUpdateValuesIfChanged
@@ -187,6 +212,9 @@ export const createUpdateValuesIfChanged = (instance, selectedKeys) => {
  */
 const getMeasuredComponent = (keys, options) => {
   const selectedKeys = getKeysWithSourceAndType(keys, options);
+  const {
+    inheritedMethods = INHERITED_METHODS_DEFAULT
+  } = options;
 
   return (PassedComponent) => {
     const displayName = getComponentName(PassedComponent);
@@ -194,14 +222,24 @@ const getMeasuredComponent = (keys, options) => {
     class MeasuredComponent extends Component {
       static displayName = `Measured(${displayName})`;
 
+      constructor(props) {
+        super(props);
+
+        if (inheritedMethods.length) {
+          setInheritedMethods(this, inheritedMethods);
+        }
+      }
+
       // lifecycle methods
       componentDidMount = createComponentDidMount(this, selectedKeys, options);
       componentDidUpdate = createComponentDidUpdate(this, selectedKeys, options);
       componentWillUnmount = createComponentWillUnmount(this, selectedKeys);
+      setOriginalRef = createSetOriginalRef(this);
 
       // instance variables
       _isMounted = false;
       element = null;
+      originalComponent = null;
       hasResize = null;
       measurements = reduceMeasurementsToMatchingKeys(selectedKeys);
 
@@ -212,6 +250,7 @@ const getMeasuredComponent = (keys, options) => {
       render() {
         return (
           <PassedComponent
+            ref={this.setOriginalRef}
             {...this.props}
             {...getScopedValues(this.measurements, selectedKeys, options)}
           />

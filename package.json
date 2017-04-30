@@ -23,10 +23,10 @@
     "url": "https://github.com/planttheidea/remeasure/issues"
   },
   "dependencies": {
-    "element-resize-detector": "~1.1.11",
+    "element-resize-detector": "^1.1.12",
     "lodash": "~4.17.4",
     "raf": "~3.3.0",
-    "react": ">=0.14.0"
+    "react": "^15.3.0"
   },
   "description": "Get position and size of the DOM element for any React Component",
   "devDependencies": {
