@@ -99,6 +99,8 @@ export const reduceMeasurementsToMatchingKeys = (keys) => {
 };
 
 /**
+ * @private
+ *
  * @function getShouldClear
  *
  * @description
@@ -202,6 +204,8 @@ export const setElementResize = (instance, debounceValue) => {
 };
 
 /**
+ * @private
+ *
  * @function removeElementResize
  *
  * @description

@@ -28,27 +28,20 @@ import {
   updateValuesViaRaf
 } from './utils';
 
-/**
- * @private
- *
- * @function createComponentDidMount
- *
- * @description
- * create the componentDidMount method for the given instance
- *
- * @param {MeasuredComponent} instance component instance
- * @param {Array<string>} selectedKeys keys to store in state
- * @param {Object} [options={}] options passed to the instance
- * @param {number} [options.debounceValue=DEBOUNCE_VALUE_DEFAULT] value to use for debounce of updates
- * @param {boolean} [options.renderOnResize=RENDER_ON_RESIZE_DEFAULT] should the component rerender on resize
- * @returns {function(): void} componentDidUpdate method
- */
 export const createComponentDidMount = (instance, selectedKeys, options = {}) => {
   const {
     debounce: debounceValue = DEBOUNCE_VALUE_DEFAULT,
     renderOnResize = RENDER_ON_RESIZE_DEFAULT
   } = options;
 
+  /**
+   * @private
+   *
+   * @function componentDidMount
+   *
+   * @description
+   * on mount, set the element and its values
+   */
   return () => {
     const element = findDOMNode(instance);
 
@@ -62,27 +55,20 @@ export const createComponentDidMount = (instance, selectedKeys, options = {}) =>
   };
 };
 
-/**
- * @private
- *
- * @function createComponentDidUpdate
- *
- * @description
- * create the componentDidUpdate method for the given instance
- *
- * @param {MeasuredComponent} instance component instance
- * @param {Array<string>} selectedKeys keys to store in state
- * @param {Object} [options={}] options passed to the instance
- * @param {number} [options.debounceValue=DEBOUNCE_VALUE_DEFAULT] value to use for debounce of updates
- * @param {boolean} [options.renderOnResize=RENDER_ON_RESIZE_DEFAULT] should the component rerender on resize
- * @returns {function(): void} componentDidUpdate method
- */
 export const createComponentDidUpdate = (instance, selectedKeys, options = {}) => {
   const {
     debounce: debounceValue = DEBOUNCE_VALUE_DEFAULT,
     renderOnResize = RENDER_ON_RESIZE_DEFAULT
   } = options;
 
+  /**
+   * @private
+   *
+   * @function componentDidUpdate
+   *
+   * @description
+   * on update, set the element if it has changed, and update or clear the values based on its existence
+   */
   return () => {
     const element = findDOMNode(instance);
 
@@ -98,19 +84,15 @@ export const createComponentDidUpdate = (instance, selectedKeys, options = {}) =
   };
 };
 
-/**
- * @private
- *
- * @function createComponentWillUnmount
- *
- * @description
- * create the componentWillUmount method for the given instance
- *
- * @param {MeasuredComponent} instance component instance
- * @param {Array<Object>} selectedKeys the keys to assign to state
- * @returns {function(): void} function to reset the instance values to defaults
- */
 export const createComponentWillUnmount = (instance, selectedKeys) => {
+  /**
+   * @private
+   *
+   * @function componentWillUnmount
+   *
+   * @description
+   * on unmount, reset all measurements to 0 and remove the resize listener
+   */
   return () => {
     instance._isMounted = false;
 
@@ -124,18 +106,10 @@ export const createComponentWillUnmount = (instance, selectedKeys) => {
   };
 };
 
-/**
- * @function createSetMeasurements
- *
- * @description
- * create the method that will assign the measurements synchronously to the instance
- * and then call forceUpdate (done because setState is async)
- *
- * @param {ReactComponent} instance the instance to assign to
- * @returns {function(Object): void} the method that will assign the measurements to the instance
- */
 export const createSetMeasurements = (instance) => {
   /**
+   * @private
+   *
    * @function setMeasurements
    *
    * @description
@@ -152,17 +126,10 @@ export const createSetMeasurements = (instance) => {
   };
 };
 
-/**
- * @function createSetOriginalRef
- *
- * @description
- * create the method that will assign the original component instance to an instance value of the HOC
- *
- * @param {ReactComponent} instance the instance to assign to
- * @returns {function(Object): void} the method that will assign the original component
- */
 export const createSetOriginalRef = (instance) => {
   /**
+   * @private
+   *
    * @function setOriginalRef
    *
    * @description
@@ -175,19 +142,15 @@ export const createSetOriginalRef = (instance) => {
   };
 };
 
-/**
- * @private
- *
- * @function createUpdateValuesIfChanged
- *
- * @description
- * create the function to get the new values and assign them to state if they have changed
- *
- * @param {MeasuredComponent} instance component instance
- * @param {Array<string>} selectedKeys keys to store in state
- * @returns {function(): void} function to update the instance state values if they have changed
- */
 export const createUpdateValuesIfChanged = (instance, selectedKeys) => {
+  /**
+   * @private
+   *
+   * @function updateValuesIfChanged
+   *
+   * @description
+   * get the new values and assign them to state if they have changed
+   */
   return () => {
     const element = instance.element;
 
@@ -200,6 +163,8 @@ export const createUpdateValuesIfChanged = (instance, selectedKeys) => {
 };
 
 /**
+ * @private
+ *
  * @function getMeasuredComponent
  *
  * @description
@@ -208,7 +173,7 @@ export const createUpdateValuesIfChanged = (instance, selectedKeys) => {
  *
  * @param {Array<string>} keys the keys to get the size / position of
  * @param {Object} options the additional options passed to the decorator
- * @returns {function} decorator to create the higher-order component
+ * @returns {function(ReactComponent): ReactComponent} decorator to create the higher-order component
  */
 const getMeasuredComponent = (keys, options) => {
   const selectedKeys = getKeysWithSourceAndType(keys, options);
