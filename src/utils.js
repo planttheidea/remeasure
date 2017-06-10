@@ -1,5 +1,6 @@
 // external dependencies
 import debounce from 'lodash/debounce';
+import forEach from 'lodash/forEach';
 import filter from 'lodash/filter';
 import includes from 'lodash/includes';
 import isFunction from 'lodash/isFunction';
@@ -530,7 +531,7 @@ export const getValidKeys = (keys, keysToTestAgainst) => {
  * @param {Array<string>} inheritedMethods the names of inherited methods
  */
 export const setInheritedMethods = (instance, inheritedMethods) => {
-  inheritedMethods.forEach((method) => {
+  forEach(inheritedMethods, (method) => {
     if (instance[method]) {
       throw new ReferenceError(`You cannot have the method ${method} inherited, as it is already taken by the MeasuredComponent HOC.`);
     }

@@ -1,8 +1,14 @@
 // test
 import test from 'ava';
 import _ from 'lodash';
-import sinon from 'sinon';
+import {
+  mount,
+  shallow
+} from 'enzyme';
+import toJson from 'enzyme-to-json';
+import React from 'react';
 import ReactDOM from 'react-dom';
+import sinon from 'sinon';
 
 // src
 import * as component from '../src/getMeasuredComponent';
@@ -326,4 +332,92 @@ test('if createUpdateValuesIfChanged will create a function that calls setUpdate
   t.true(_.isFunction(updateValuesIfChanged));
 
   updateValuesIfChanged();
+});
+
+test('if getMeasuredComponent will return a function that creates a higher-order component', (t) => {
+  const keys = ['width'];
+  const options = {};
+
+  const createHigherOrderComponent = component.default(keys, options);
+
+  t.true(_.isFunction(createHigherOrderComponent));
+
+  class Foo extends React.Component {}
+
+  const Result = createHigherOrderComponent(Foo);
+
+  t.true(_.isFunction(Result));
+  t.is(Result.name, 'MeasuredComponent');
+  t.is(Result.displayName, `Measured(${Foo.name})`);
+});
+
+test('if getMeasuredComponent will return the correct component type based on the component being wrapped', (t) => {
+  const keys = ['width'];
+  const options = {};
+
+  const createHigherOrderComponent = component.default(keys, options);
+
+  class Standard extends React.Component {}
+  class Pure extends React.PureComponent {}
+  const Functional = () => {};
+
+  const StandardResult = createHigherOrderComponent(Standard);
+  const PureResult = createHigherOrderComponent(Pure);
+  const FunctionalResult = createHigherOrderComponent(Functional);
+
+  t.is(Object.getPrototypeOf(StandardResult), React.Component);
+  t.is(Object.getPrototypeOf(PureResult), React.PureComponent);
+  t.is(Object.getPrototypeOf(FunctionalResult), React.Component);
+});
+
+test('if getMeasuredComponent will return a function that creates a component for rendering', (t) => {
+  const keys = ['width'];
+  const options = {};
+
+  const createHigherOrderComponent = component.default(keys, options);
+
+  const Foo = ({foo, width}) => {
+    return (
+      <div>
+        <div>
+          Foo: {foo}
+        </div>
+
+        <div>
+          Width: {width}
+        </div>
+      </div>
+    );
+  };
+
+  const MeasuredFoo = createHigherOrderComponent(Foo);
+
+  const wrapper = shallow(<MeasuredFoo foo="bar"/>);
+
+  t.snapshot(toJson(wrapper));
+});
+
+test('if getMeasuredComponent will call setInheritedMethods when constructed if inheritedMethods exist', (t) => {
+  const keys = ['width'];
+  const options = {
+    inheritedMethods: ['foo']
+  };
+
+  const createHigherOrderComponent = component.default(keys, options);
+
+  const foo = () => {};
+
+  class Foo extends React.Component {
+    foo = foo;
+
+    render() {
+      return <div/>;
+    }
+  }
+
+  const MeasuredFoo = createHigherOrderComponent(Foo);
+
+  const wrapper = shallow(<MeasuredFoo/>);
+
+  t.true(_.isFunction(wrapper.instance().foo));
 });

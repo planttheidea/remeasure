@@ -1,10 +1,15 @@
+// test
 import test from 'ava';
 import _ from 'lodash';
 import React, {
   Component
 } from 'react';
+import sinon from 'sinon';
 
+// src
 import measure from '../src/index';
+import * as component from '../src/getMeasuredComponent';
+import * as utils from '../src/utils';
 import {
   ALL_KEYS
 } from '../src/constants';
@@ -147,4 +152,63 @@ test('if each member of ALL_KEYS has a convenience method on measure', (t) => {
   keys.forEach((key) => {
     t.true(_.isFunction(measure[key]));
   });
+});
+
+test('if measure will accept a string value for keys', (t) => {
+  const getMeasuredComponentStub = sinon.stub(component, 'default');
+
+  const key = 'width';
+
+  measure(key);
+
+  t.true(getMeasuredComponentStub.calledOnce);
+
+  const args = getMeasuredComponentStub.firstCall.args;
+
+  t.deepEqual(args, [
+    [key],
+    {}
+  ]);
+
+  getMeasuredComponentStub.restore();
+});
+
+test('if measure will accept an array value for keys', (t) => {
+  const getMeasuredComponentStub = sinon.stub(component, 'default');
+
+  const keys = ['height', 'width'];
+
+  const getValidKeysStub = sinon.stub(utils, 'getValidKeys').returns(keys);
+
+  measure(keys);
+
+  t.true(getMeasuredComponentStub.calledOnce);
+  t.true(getValidKeysStub.calledOnce);
+
+  const args = getMeasuredComponentStub.firstCall.args;
+
+  t.deepEqual(args, [
+    keys,
+    {}
+  ]);
+
+  getMeasuredComponentStub.restore();
+  getValidKeysStub.restore();
+});
+
+test('if measure will default to ALL_KEYS', (t) => {
+  const getMeasuredComponentStub = sinon.stub(component, 'default');
+
+  measure();
+
+  t.true(getMeasuredComponentStub.calledOnce);
+
+  const args = getMeasuredComponentStub.firstCall.args;
+
+  t.deepEqual(args, [
+    ALL_KEYS,
+    {}
+  ]);
+
+  getMeasuredComponentStub.restore();
 });

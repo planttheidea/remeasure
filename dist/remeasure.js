@@ -7,7 +7,7 @@
 		exports["Remeasure"] = factory(require("react"), require("react-dom"));
 	else
 		root["Remeasure"] = factory(root["React"], root["ReactDOM"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_42__, __WEBPACK_EXTERNAL_MODULE_43__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_43__, __WEBPACK_EXTERNAL_MODULE_44__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 44);
+/******/ 	return __webpack_require__(__webpack_require__.s = 45);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -175,11 +175,15 @@ var _debounce = __webpack_require__(28);
 
 var _debounce2 = _interopRequireDefault(_debounce);
 
+var _forEach = __webpack_require__(30);
+
+var _forEach2 = _interopRequireDefault(_forEach);
+
 var _filter = __webpack_require__(29);
 
 var _filter2 = _interopRequireDefault(_filter);
 
-var _includes = __webpack_require__(30);
+var _includes = __webpack_require__(31);
 
 var _includes2 = _interopRequireDefault(_includes);
 
@@ -187,23 +191,23 @@ var _isFunction = __webpack_require__(6);
 
 var _isFunction2 = _interopRequireDefault(_isFunction);
 
-var _isNull = __webpack_require__(31);
+var _isNull = __webpack_require__(32);
 
 var _isNull2 = _interopRequireDefault(_isNull);
 
-var _isUndefined = __webpack_require__(34);
+var _isUndefined = __webpack_require__(35);
 
 var _isUndefined2 = _interopRequireDefault(_isUndefined);
 
-var _reduce = __webpack_require__(36);
+var _reduce = __webpack_require__(37);
 
 var _reduce2 = _interopRequireDefault(_reduce);
 
-var _some = __webpack_require__(37);
+var _some = __webpack_require__(38);
 
 var _some2 = _interopRequireDefault(_some);
 
-var _raf = __webpack_require__(41);
+var _raf = __webpack_require__(42);
 
 var _raf2 = _interopRequireDefault(_raf);
 
@@ -740,7 +744,7 @@ var getValidKeys = exports.getValidKeys = function getValidKeys(keys, keysToTest
  * @param {Array<string>} inheritedMethods the names of inherited methods
  */
 var setInheritedMethods = exports.setInheritedMethods = function setInheritedMethods(instance, inheritedMethods) {
-  inheritedMethods.forEach(function (method) {
+  (0, _forEach2.default)(inheritedMethods, function (method) {
     if (instance[method]) {
       throw new ReferenceError('You cannot have the method ' + method + ' inherited, as it is already taken by the MeasuredComponent HOC.');
     }
@@ -1028,11 +1032,11 @@ var _isFunction = __webpack_require__(6);
 
 var _isFunction2 = _interopRequireDefault(_isFunction);
 
-var _isPlainObject = __webpack_require__(32);
+var _isPlainObject = __webpack_require__(33);
 
 var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 
-var _isString = __webpack_require__(33);
+var _isString = __webpack_require__(34);
 
 var _isString2 = _interopRequireDefault(_isString);
 
@@ -1109,11 +1113,11 @@ exports.createUpdateValuesIfChanged = exports.createSetOriginalRef = exports.cre
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _react = __webpack_require__(42);
+var _react = __webpack_require__(43);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactDom = __webpack_require__(43);
+var _reactDom = __webpack_require__(44);
 
 var _constants = __webpack_require__(0);
 
@@ -1323,19 +1327,20 @@ var createUpdateValuesIfChanged = exports.createUpdateValuesIfChanged = function
 var getMeasuredComponent = function getMeasuredComponent(keys, options) {
   var selectedKeys = (0, _utils.getKeysWithSourceAndType)(keys, options);
   var _options$inheritedMet = options.inheritedMethods,
-      inheritedMethods = _options$inheritedMet === undefined ? _constants.INHERITED_METHODS_DEFAULT : _options$inheritedMet;
+      inheritedMethods = _options$inheritedMet === undefined ? [] : _options$inheritedMet;
 
 
   return function (PassedComponent) {
+    var ComponentToExtend = Object.getPrototypeOf(PassedComponent) === _react.PureComponent ? _react.PureComponent : _react.Component;
     var displayName = (0, _utils.getComponentName)(PassedComponent);
 
-    var MeasuredComponent = function (_Component) {
-      _inherits(MeasuredComponent, _Component);
+    var MeasuredComponent = function (_ComponentToExtend) {
+      _inherits(MeasuredComponent, _ComponentToExtend);
 
       function MeasuredComponent(props) {
         _classCallCheck(this, MeasuredComponent);
 
-        var _this = _possibleConstructorReturn(this, _Component.call(this, props));
+        var _this = _possibleConstructorReturn(this, _ComponentToExtend.call(this, props));
 
         _this.componentDidMount = createComponentDidMount(_this, selectedKeys, options);
         _this.componentDidUpdate = createComponentDidUpdate(_this, selectedKeys, options);
@@ -1372,7 +1377,7 @@ var getMeasuredComponent = function getMeasuredComponent(keys, options) {
       };
 
       return MeasuredComponent;
-    }(_react.Component);
+    }(ComponentToExtend);
 
     MeasuredComponent.displayName = 'Measured(' + displayName + ')';
 
@@ -3129,8 +3134,8 @@ module.exports = root;
 /***/ (function(module, exports, __webpack_require__) {
 
 var isObject = __webpack_require__(7),
-    now = __webpack_require__(35),
-    toNumber = __webpack_require__(38);
+    now = __webpack_require__(36),
+    toNumber = __webpack_require__(39);
 
 /** Error message constants. */
 var FUNC_ERROR_TEXT = 'Expected a function';
@@ -3351,6 +3356,34 @@ module.exports = arrayFilter;
 
 /***/ }),
 /* 30 */
+/***/ (function(module, exports) {
+
+/**
+ * A specialized version of `_.forEach` for arrays without support for
+ * iteratee shorthands.
+ *
+ * @private
+ * @param {Array} [array] The array to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns `array`.
+ */
+function arrayEach(array, iteratee) {
+  var index = -1,
+      length = array == null ? 0 : array.length;
+
+  while (++index < length) {
+    if (iteratee(array[index], index, array) === false) {
+      break;
+    }
+  }
+  return array;
+}
+
+module.exports = arrayEach;
+
+
+/***/ }),
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var baseIndexOf = __webpack_require__(23);
@@ -3373,7 +3406,7 @@ module.exports = arrayIncludes;
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports) {
 
 /**
@@ -3401,7 +3434,7 @@ module.exports = isNull;
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var baseGetTag = __webpack_require__(1),
@@ -3469,7 +3502,7 @@ module.exports = isPlainObject;
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var baseGetTag = __webpack_require__(1),
@@ -3505,7 +3538,7 @@ module.exports = isString;
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports) {
 
 /**
@@ -3533,7 +3566,7 @@ module.exports = isUndefined;
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var root = __webpack_require__(27);
@@ -3562,7 +3595,7 @@ module.exports = now;
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports) {
 
 /**
@@ -3594,7 +3627,7 @@ module.exports = arrayReduce;
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports) {
 
 /**
@@ -3623,7 +3656,7 @@ module.exports = arraySome;
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports) {
 
 /**
@@ -3650,12 +3683,12 @@ module.exports = identity;
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(process) {// Generated by CoffeeScript 1.7.1
+/* WEBPACK VAR INJECTION */(function(process) {// Generated by CoffeeScript 1.12.2
 (function() {
-  var getNanoSeconds, hrtime, loadTime;
+  var getNanoSeconds, hrtime, loadTime, moduleLoadTime, nodeLoadTime, upTime;
 
   if ((typeof performance !== "undefined" && performance !== null) && performance.now) {
     module.exports = function() {
@@ -3663,7 +3696,7 @@ module.exports = identity;
     };
   } else if ((typeof process !== "undefined" && process !== null) && process.hrtime) {
     module.exports = function() {
-      return (getNanoSeconds() - loadTime) / 1e6;
+      return (getNanoSeconds() - nodeLoadTime) / 1e6;
     };
     hrtime = process.hrtime;
     getNanoSeconds = function() {
@@ -3671,7 +3704,9 @@ module.exports = identity;
       hr = hrtime();
       return hr[0] * 1e9 + hr[1];
     };
-    loadTime = getNanoSeconds();
+    moduleLoadTime = getNanoSeconds();
+    upTime = process.uptime() * 1e9;
+    nodeLoadTime = moduleLoadTime - upTime;
   } else if (Date.now) {
     module.exports = function() {
       return Date.now() - loadTime;
@@ -3686,10 +3721,12 @@ module.exports = identity;
 
 }).call(this);
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40)))
+//# sourceMappingURL=performance-now.js.map
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(41)))
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -3875,10 +3912,10 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(global) {var now = __webpack_require__(39)
+/* WEBPACK VAR INJECTION */(function(global) {var now = __webpack_require__(40)
   , root = typeof window === 'undefined' ? global : window
   , vendors = ['moz', 'webkit']
   , suffix = 'AnimationFrame'
@@ -3954,12 +3991,6 @@ module.exports.polyfill = function() {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
 
 /***/ }),
-/* 42 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_42__;
-
-/***/ }),
 /* 43 */
 /***/ (function(module, exports) {
 
@@ -3967,6 +3998,12 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_43__;
 
 /***/ }),
 /* 44 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_44__;
+
+/***/ }),
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(10);

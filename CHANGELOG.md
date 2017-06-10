@@ -1,5 +1,11 @@
 # remeasure CHANGELOG
 
+#### 2.3.1
+* Higher-order component will extend `PureComponent` if the component being wrapped is also a `PureComponent` (extends `Component` in all other scenarios)
+
+#### 2.3.0
+* Add `inheritedMethods` as an option for accessing instance methods in `refs`
+
 #### 2.2.1
 * Replace `setState` with custom method that assigns to instance value and calls `forceUpdate` synchronously if mounted
 * Remove a lot of unnecessary `if (instance.element)` checks

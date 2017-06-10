@@ -1,6 +1,7 @@
 // external dependencies
 import React, {
-  Component
+  Component,
+  PureComponent
 } from 'react';
 import {
   findDOMNode
@@ -9,7 +10,6 @@ import {
 // constants
 import {
   DEBOUNCE_VALUE_DEFAULT,
-  INHERITED_METHODS_DEFAULT,
   RENDER_ON_RESIZE_DEFAULT
 } from './constants';
 
@@ -213,13 +213,14 @@ export const createUpdateValuesIfChanged = (instance, selectedKeys) => {
 const getMeasuredComponent = (keys, options) => {
   const selectedKeys = getKeysWithSourceAndType(keys, options);
   const {
-    inheritedMethods = INHERITED_METHODS_DEFAULT
+    inheritedMethods = []
   } = options;
 
   return (PassedComponent) => {
+    const ComponentToExtend = Object.getPrototypeOf(PassedComponent) === PureComponent ? PureComponent : Component;
     const displayName = getComponentName(PassedComponent);
 
-    class MeasuredComponent extends Component {
+    class MeasuredComponent extends ComponentToExtend {
       static displayName = `Measured(${displayName})`;
 
       constructor(props) {
