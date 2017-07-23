@@ -49,6 +49,18 @@ module.exports = {
           path.resolve(__dirname, 'src')
         ],
         loader: 'babel-loader',
+        options: {
+          babelrc: false,
+          cacheDirectory: true,
+          presets: [
+            ['env', {
+              loose: true,
+              modules: false
+            }],
+            'react',
+            'stage-2'
+          ]
+        },
         test: /\.js$/
       }
     ]

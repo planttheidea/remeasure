@@ -1,14 +1,50 @@
 {
-  "plugins": [
-    "add-module-exports"
-  ],
-  "presets": [
-    ["latest", {
-      "es2015": {
-        "loose": true
-      }
-    }],
-    "react",
-    "stage-2"
-  ]
+  "env": {
+    "development": {
+      "plugins": [
+        "add-module-exports"
+      ],
+      "presets": [
+        ["env", {
+          "loose": true
+        }],
+        "react",
+        "stage-2"
+      ]
+    },
+    "es": {
+      "presets": [
+        ["env", {
+          "loose": true,
+          "modules": false
+        }],
+        "react",
+        "stage-2"
+      ]
+    },
+    "production": {
+      "plugins": [
+        "add-module-exports"
+      ],
+      "presets": [
+        ["env", {
+          "loose": true
+        }],
+        "react",
+        "stage-2"
+      ]
+    },
+    "test": {
+      "plugins": [
+        "add-module-exports"
+      ],
+      "presets": [
+        ["env", {
+          "loose": true
+        }],
+        "react",
+        "stage-2"
+      ]
+    }
+  }
 }

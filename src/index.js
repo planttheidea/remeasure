@@ -34,6 +34,7 @@ import {
  * measured, else either single key or array of keys to watch for measurement, or an object of options
  * @param {Object} [passedOptions={}] an object of options to apply for measuring
  * @returns {ReactComponent} the higher-order component that will measure the child and pass down size and
+ *
  * position values as props
  */
 const measure = (passedKeys, passedOptions = {}) => {

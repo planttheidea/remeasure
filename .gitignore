@@ -1,5 +1,7 @@
-.idea/
+.idea
 .nyc_output
 coverage
-node_modules/
-lib/
+dist
+es
+node_modules
+lib

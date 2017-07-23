@@ -2,6 +2,7 @@
 .nyc_output
 coverage
 DEV_ONLY
+docs
 node_modules
 src
 test

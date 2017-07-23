@@ -1,5 +1,8 @@
 # remeasure CHANGELOG
 
+#### 2.4.0
+* Add `es` transpilation in publish, for [`pkg.module`](https://github.com/rollup/rollup/wiki/pkg.module) 
+
 #### 2.3.1
 * Higher-order component will extend `PureComponent` if the component being wrapped is also a `PureComponent` (extends `Component` in all other scenarios)
 
