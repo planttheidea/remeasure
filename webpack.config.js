@@ -10,9 +10,7 @@ module.exports = {
 
   devtool: '#source-map',
 
-  entry: [
-    path.resolve(__dirname, 'src', 'index.js')
-  ],
+  entry: [path.resolve(__dirname, 'src', 'index.js')],
 
   externals: {
     react: {
@@ -33,9 +31,7 @@ module.exports = {
     rules: [
       {
         enforce: 'pre',
-        include: [
-          path.resolve(__dirname, 'src')
-        ],
+        include: [path.resolve(__dirname, 'src')],
         loader: 'eslint-loader',
         options: {
           configFile: '.eslintrc',
@@ -44,19 +40,21 @@ module.exports = {
           formatter: require('eslint-friendly-formatter')
         },
         test: /\.js$/
-      }, {
-        include: [
-          path.resolve(__dirname, 'src')
-        ],
+      },
+      {
+        include: [path.resolve(__dirname, 'src')],
         loader: 'babel-loader',
         options: {
           babelrc: false,
           cacheDirectory: true,
           presets: [
-            ['env', {
-              loose: true,
-              modules: false
-            }],
+            [
+              'env',
+              {
+                loose: true,
+                modules: false
+              }
+            ],
             'react',
             'stage-2'
           ]
@@ -74,16 +72,9 @@ module.exports = {
     umdNamedDefine: true
   },
 
-  plugins: [
-    new webpack.EnvironmentPlugin([
-      'NODE_ENV'
-    ]),
-    new LodashModuleReplacementPlugin()
-  ],
+  plugins: [new webpack.EnvironmentPlugin(['NODE_ENV']), new LodashModuleReplacementPlugin()],
 
   resolve: {
-    extensions: [
-      '.js'
-    ]
+    extensions: ['.js']
   }
 };

@@ -1,17 +1,9 @@
 // external dependencies
-import React, {
-  Component,
-  PureComponent
-} from 'react';
-import {
-  findDOMNode
-} from 'react-dom';
+import React, {Component, PureComponent} from 'react';
+import {findDOMNode} from 'react-dom';
 
 // constants
-import {
-  DEBOUNCE_VALUE_DEFAULT,
-  RENDER_ON_RESIZE_DEFAULT
-} from './constants';
+import {DEBOUNCE_VALUE_DEFAULT, RENDER_ON_RESIZE_DEFAULT} from './constants';
 
 // utils
 import {
@@ -29,10 +21,7 @@ import {
 } from './utils';
 
 export const createComponentDidMount = (instance, selectedKeys, options = {}) => {
-  const {
-    debounce: debounceValue = DEBOUNCE_VALUE_DEFAULT,
-    renderOnResize = RENDER_ON_RESIZE_DEFAULT
-  } = options;
+  const {debounce: debounceValue = DEBOUNCE_VALUE_DEFAULT, renderOnResize = RENDER_ON_RESIZE_DEFAULT} = options;
 
   /**
    * @private
@@ -56,10 +45,7 @@ export const createComponentDidMount = (instance, selectedKeys, options = {}) =>
 };
 
 export const createComponentDidUpdate = (instance, selectedKeys, options = {}) => {
-  const {
-    debounce: debounceValue = DEBOUNCE_VALUE_DEFAULT,
-    renderOnResize = RENDER_ON_RESIZE_DEFAULT
-  } = options;
+  const {debounce: debounceValue = DEBOUNCE_VALUE_DEFAULT, renderOnResize = RENDER_ON_RESIZE_DEFAULT} = options;
 
   /**
    * @private
@@ -177,9 +163,7 @@ export const createUpdateValuesIfChanged = (instance, selectedKeys) => {
  */
 const getMeasuredComponent = (keys, options) => {
   const selectedKeys = getKeysWithSourceAndType(keys, options);
-  const {
-    inheritedMethods = []
-  } = options;
+  const {inheritedMethods = []} = options;
 
   return (PassedComponent) => {
     const ComponentToExtend = Object.getPrototypeOf(PassedComponent) === PureComponent ? PureComponent : Component;

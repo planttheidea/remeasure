@@ -1,10 +1,7 @@
 // test
 import test from 'ava';
 import _ from 'lodash';
-import {
-  mount,
-  shallow
-} from 'enzyme';
+import {mount, shallow} from 'enzyme';
 import toJson from 'enzyme-to-json';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -13,24 +10,19 @@ import sinon from 'sinon';
 // src
 import * as component from '../src/getMeasuredComponent';
 import * as utils from '../src/utils';
-import {
-  CLIENT_RECT_TYPE,
-  ELEMENT_RESIZE_DETECTOR
-} from '../src/constants';
+import {CLIENT_RECT_TYPE} from '../src/constants';
 
 test('if createComponentDidMount will assign the element to the instance and call updateValuesViaRaf', (t) => {
   const element = {
     tagName: 'DIV'
   };
 
+  const setElementStub = sinon.stub(utils, 'setElement');
   const updateValuesStub = sinon.stub(utils, 'updateValuesViaRaf');
   const findNodeStub = sinon.stub(ReactDOM, 'findDOMNode').returns(element);
-  const resizeStub = sinon.stub(ELEMENT_RESIZE_DETECTOR, 'listenTo');
 
   const key = 'width';
-  const selectedKeys = [
-    {key, source: CLIENT_RECT_TYPE}
-  ];
+  const selectedKeys = [{key, source: CLIENT_RECT_TYPE}];
   const instance = {
     _isMounted: false,
     element: null,
@@ -48,10 +40,10 @@ test('if createComponentDidMount will assign the element to the instance and cal
   fn();
 
   t.true(findNodeStub.calledOnce);
+  t.true(setElementStub.calledOnce);
   t.true(updateValuesStub.calledOnce);
-  t.true(resizeStub.calledOnce);
 
-  resizeStub.restore();
+  setElementStub.restore();
   findNodeStub.restore();
   updateValuesStub.restore();
 });
@@ -59,14 +51,12 @@ test('if createComponentDidMount will assign the element to the instance and cal
 test('if createComponentDidMount will assign the element to the instance and not call updateValuesViaRaf if element is null', (t) => {
   const element = null;
 
+  const setElementStub = sinon.stub(utils, 'setElement');
   const updateValuesStub = sinon.stub(utils, 'updateValuesViaRaf');
   const findNodeStub = sinon.stub(ReactDOM, 'findDOMNode').returns(element);
-  const resizeStub = sinon.stub(ELEMENT_RESIZE_DETECTOR, 'listenTo');
 
   const key = 'width';
-  const selectedKeys = [
-    {key, source: CLIENT_RECT_TYPE}
-  ];
+  const selectedKeys = [{key, source: CLIENT_RECT_TYPE}];
   const instance = {
     _isMounted: false,
     element: null,
@@ -84,10 +74,10 @@ test('if createComponentDidMount will assign the element to the instance and not
   fn();
 
   t.true(findNodeStub.calledOnce);
+  t.true(setElementStub.calledOnce);
   t.true(updateValuesStub.notCalled);
-  t.true(resizeStub.notCalled);
 
-  resizeStub.restore();
+  setElementStub.restore();
   findNodeStub.restore();
   updateValuesStub.restore();
 });
@@ -100,15 +90,13 @@ test('if createComponentDidUpdate will assign the element if it has changed to t
     tagName: 'DIV'
   };
 
+  const setElementStub = sinon.stub(utils, 'setElement');
   const updateValuesStub = sinon.stub(utils, 'updateValuesViaRaf');
   const clearValuesStub = sinon.stub(utils, 'clearValues');
   const findNodeStub = sinon.stub(ReactDOM, 'findDOMNode').returns(newElement);
-  const resizeStub = sinon.stub(ELEMENT_RESIZE_DETECTOR, 'listenTo');
 
   const key = 'width';
-  const selectedKeys = [
-    {key, source: CLIENT_RECT_TYPE}
-  ];
+  const selectedKeys = [{key, source: CLIENT_RECT_TYPE}];
   const instance = {
     _isMounted: false,
     element,
@@ -126,11 +114,11 @@ test('if createComponentDidUpdate will assign the element if it has changed to t
   fn();
 
   t.true(findNodeStub.calledOnce);
+  t.true(setElementStub.calledOnce);
   t.true(updateValuesStub.calledOnce);
   t.true(clearValuesStub.notCalled);
-  t.true(resizeStub.calledOnce);
 
-  resizeStub.restore();
+  setElementStub.restore();
   findNodeStub.restore();
   clearValuesStub.restore();
   updateValuesStub.restore();
@@ -141,16 +129,13 @@ test('if createComponentDidUpdate will not assign the element if it has not chan
     tagName: 'DIV'
   };
 
+  const setElementStub = sinon.stub(utils, 'setElement');
   const updateValuesStub = sinon.stub(utils, 'updateValuesViaRaf');
   const clearValuesStub = sinon.stub(utils, 'clearValues');
   const findNodeStub = sinon.stub(ReactDOM, 'findDOMNode').returns(element);
-  const resizeStub = sinon.stub(ELEMENT_RESIZE_DETECTOR, 'listenTo');
-  const setElementSpy = sinon.spy(utils, 'setElement');
 
   const key = 'width';
-  const selectedKeys = [
-    {key, source: CLIENT_RECT_TYPE}
-  ];
+  const selectedKeys = [{key, source: CLIENT_RECT_TYPE}];
   const instance = {
     _isMounted: false,
     element,
@@ -167,14 +152,12 @@ test('if createComponentDidUpdate will not assign the element if it has not chan
 
   fn();
 
-  t.true(setElementSpy.notCalled);
   t.true(findNodeStub.calledOnce);
+  t.true(setElementStub.notCalled);
   t.true(updateValuesStub.calledOnce);
   t.true(clearValuesStub.notCalled);
-  t.true(resizeStub.notCalled);
 
-  setElementSpy.restore();
-  resizeStub.restore();
+  setElementStub.restore();
   findNodeStub.restore();
   clearValuesStub.restore();
   updateValuesStub.restore();
@@ -183,16 +166,13 @@ test('if createComponentDidUpdate will not assign the element if it has not chan
 test('if createComponentDidUpdate will call clearValues instead of updateValuesViaRaf if there is no element', (t) => {
   const element = null;
 
+  const setElementStub = sinon.stub(utils, 'setElement');
   const updateValuesStub = sinon.stub(utils, 'updateValuesViaRaf');
   const clearValuesStub = sinon.stub(utils, 'clearValues');
   const findNodeStub = sinon.stub(ReactDOM, 'findDOMNode').returns(element);
-  const resizeStub = sinon.stub(ELEMENT_RESIZE_DETECTOR, 'listenTo');
-  const setElementSpy = sinon.spy(utils, 'setElement');
 
   const key = 'width';
-  const selectedKeys = [
-    {key, source: CLIENT_RECT_TYPE}
-  ];
+  const selectedKeys = [{key, source: CLIENT_RECT_TYPE}];
   const instance = {
     _isMounted: false,
     element,
@@ -209,14 +189,12 @@ test('if createComponentDidUpdate will call clearValues instead of updateValuesV
 
   fn();
 
-  t.true(setElementSpy.notCalled);
   t.true(findNodeStub.calledOnce);
+  t.true(setElementStub.notCalled);
   t.true(updateValuesStub.notCalled);
   t.true(clearValuesStub.calledOnce);
-  t.true(resizeStub.notCalled);
 
-  setElementSpy.restore();
-  resizeStub.restore();
+  setElementStub.restore();
   findNodeStub.restore();
   clearValuesStub.restore();
   updateValuesStub.restore();
@@ -224,9 +202,7 @@ test('if createComponentDidUpdate will call clearValues instead of updateValuesV
 
 test('if createComponentWillUnmount will reset the instance values', (t) => {
   const key = 'width';
-  const selectedKeys = [
-    {key, source: CLIENT_RECT_TYPE}
-  ];
+  const selectedKeys = [{key, source: CLIENT_RECT_TYPE}];
   const instance = {
     element: 'foo',
     setMeasurements(measurements) {
@@ -236,14 +212,17 @@ test('if createComponentWillUnmount will reset the instance values', (t) => {
     }
   };
 
+  const removeElementResizeStub = sinon.stub(utils, 'removeElementResize');
+
   const fn = component.createComponentWillUnmount(instance, selectedKeys);
 
   t.true(_.isFunction(fn));
 
   fn();
 
-  t.is(instance.element, null);
-  t.is(instance.resizeListener, null);
+  t.true(removeElementResizeStub.calledOnce);
+
+  removeElementResizeStub.restore();
 });
 
 test('if createSetMeasurements will create a function that sets the instance measurements and calls forceUpdate if mounted', (t) => {
@@ -392,7 +371,7 @@ test('if getMeasuredComponent will return a function that creates a component fo
 
   const MeasuredFoo = createHigherOrderComponent(Foo);
 
-  const wrapper = shallow(<MeasuredFoo foo="bar"/>);
+  const wrapper = shallow(<MeasuredFoo foo="bar" />);
 
   t.snapshot(toJson(wrapper));
 });
@@ -411,13 +390,13 @@ test('if getMeasuredComponent will call setInheritedMethods when constructed if 
     foo = foo;
 
     render() {
-      return <div/>;
+      return <div />;
     }
   }
 
   const MeasuredFoo = createHigherOrderComponent(Foo);
 
-  const wrapper = shallow(<MeasuredFoo/>);
+  const wrapper = shallow(<MeasuredFoo />);
 
   t.true(_.isFunction(wrapper.instance().foo));
 });

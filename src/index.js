@@ -5,19 +5,13 @@ import isPlainObject from 'lodash/isPlainObject';
 import isString from 'lodash/isString';
 
 // constants
-import {
-  ALL_KEYS
-} from './constants';
+import {ALL_KEYS} from './constants';
 
 // component
 import getMeasuredComponent from './getMeasuredComponent';
 
 // utils
-import {
-  createFlattenConvenienceFunction,
-  getKeysFromStringKey,
-  getValidKeys
-} from './utils';
+import {createFlattenConvenienceFunction, getKeysFromStringKey, getValidKeys} from './utils';
 
 /**
  * @module remeasure

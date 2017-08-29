@@ -1,38 +1,26 @@
 // test
 import test from 'ava';
 import _ from 'lodash';
-import React, {
-  Component
-} from 'react';
+import React, {Component} from 'react';
 import sinon from 'sinon';
 
 // src
 import measure from '../src/index';
 import * as component from '../src/getMeasuredComponent';
 import * as utils from '../src/utils';
-import {
-  ALL_KEYS
-} from '../src/constants';
+import {ALL_KEYS} from '../src/constants';
 
 const REACT_ELEMENT_TYPE = (typeof Symbol === 'function' && Symbol.for && Symbol.for('react.element')) || 0xeac7;
 
 @measure
 class TestStateful extends Component {
   render() {
-    return (
-      <div>
-        Test
-      </div>
-    );
+    return <div>Test</div>;
   }
 }
 
 const TestStateless = measure(() => {
-  return (
-    <div>
-      Test
-    </div>
-  );
+  return <div>Test</div>;
 });
 
 const options = {
@@ -42,74 +30,47 @@ const options = {
 @measure(options)
 class TestStatefulWithOptions extends Component {
   render() {
-    return (
-      <div>
-        Test
-      </div>
-    );
+    return <div>Test</div>;
   }
 }
 
 const TestStatelessWithOptions = measure(options)(() => {
-  return (
-    <div>
-      Test
-    </div>
-  );
+  return <div>Test</div>;
 });
 
-const keys = [
-  'height',
-  'width'
-];
+const keys = ['height', 'width'];
 
 @measure(keys)
 class TestStatefulWithKeys extends Component {
   render() {
-    return (
-      <div>
-        Test
-      </div>
-    );
+    return <div>Test</div>;
   }
 }
 
 const TestStatelessWithKeys = measure(keys)(() => {
-  return (
-    <div>
-      Test
-    </div>
-  );
+  return <div>Test</div>;
 });
 
 @measure(keys, options)
 class TestStatefulWithKeysAndOptions extends Component {
   render() {
-    return (
-      <div>
-        Test
-      </div>
-    );
+    return <div>Test</div>;
   }
 }
 
 const TestStatelessWithKeysAndOptions = measure(keys, options)(() => {
-  return (
-    <div>
-      Test
-    </div>
-  );
+  return <div>Test</div>;
 });
 
 test('if measure returns a higher-order component', (t) => {
-  const testStateful = <TestStateful/>;
-  const testStateless = <TestStateless/>;
-  const testStatefulWithOptions = <TestStatefulWithOptions/>;
-  const testStatelessWithOptions = <TestStatelessWithOptions/>;
-  const testStatefulWithKeys = <TestStatefulWithKeys/>;
-  const testStatelessWithKeys = <TestStatelessWithKeys/>;
-  const testStatefulWithKeysAndOptions = <TestStatefulWithKeysAndOptions/>;
-  const testStatelessWithKeysAndOptions = <TestStatelessWithKeysAndOptions/>;
+  const testStateful = <TestStateful />;
+  const testStateless = <TestStateless />;
+  const testStatefulWithOptions = <TestStatefulWithOptions />;
+  const testStatelessWithOptions = <TestStatelessWithOptions />;
+  const testStatefulWithKeys = <TestStatefulWithKeys />;
+  const testStatelessWithKeys = <TestStatelessWithKeys />;
+  const testStatefulWithKeysAndOptions = <TestStatefulWithKeysAndOptions />;
+  const testStatelessWithKeysAndOptions = <TestStatelessWithKeysAndOptions />;
 
   t.is(typeof TestStateful, 'function');
   t.is(TestStateful.name, 'MeasuredComponent');
@@ -165,10 +126,7 @@ test('if measure will accept a string value for keys', (t) => {
 
   const args = getMeasuredComponentStub.firstCall.args;
 
-  t.deepEqual(args, [
-    [key],
-    {}
-  ]);
+  t.deepEqual(args, [[key], {}]);
 
   getMeasuredComponentStub.restore();
 });
@@ -187,10 +145,7 @@ test('if measure will accept an array value for keys', (t) => {
 
   const args = getMeasuredComponentStub.firstCall.args;
 
-  t.deepEqual(args, [
-    keys,
-    {}
-  ]);
+  t.deepEqual(args, [keys, {}]);
 
   getMeasuredComponentStub.restore();
   getValidKeysStub.restore();
@@ -205,10 +160,7 @@ test('if measure will default to ALL_KEYS', (t) => {
 
   const args = getMeasuredComponentStub.firstCall.args;
 
-  t.deepEqual(args, [
-    ALL_KEYS,
-    {}
-  ]);
+  t.deepEqual(args, [ALL_KEYS, {}]);
 
   getMeasuredComponentStub.restore();
 });

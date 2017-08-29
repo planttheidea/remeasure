@@ -1,21 +1,12 @@
-import React, {
-  Component,
-  PureComponent
-} from 'react';
-import {
-  render
-} from 'react-dom';
+import React, {Component, PureComponent} from 'react';
+import {render} from 'react-dom';
 
 import measure from '../src/index';
 
 @measure
 class NoParams extends PureComponent {
   render() {
-    const {
-      children,
-      position,
-      size
-    } = this.props;
+    const {children, position, size} = this.props;
 
     console.group('no params');
     console.log('position', position);
@@ -33,12 +24,7 @@ class NoParams extends PureComponent {
 @measure.width({debounce: 150})
 class WidthOnly extends PureComponent {
   render() {
-    const {
-      children,
-      position,
-      size,
-      width
-    } = this.props;
+    const {children, position, size, width} = this.props;
 
     console.group('width only');
     console.log('position', position);
@@ -57,11 +43,7 @@ class WidthOnly extends PureComponent {
 @measure('position')
 class PositionOnly extends PureComponent {
   render() {
-    const {
-      children,
-      position,
-      size
-    } = this.props;
+    const {children, position, size} = this.props;
 
     console.group('position only');
     console.log('position', position);
@@ -79,11 +61,7 @@ class PositionOnly extends PureComponent {
 @measure(['height', 'width', 'top', 'left'])
 class SpecificProperties extends PureComponent {
   render() {
-    const {
-      children,
-      position,
-      size
-    } = this.props;
+    const {children, position, size} = this.props;
 
     console.group('specific properties');
     console.log('position', position);
@@ -101,11 +79,7 @@ class SpecificProperties extends PureComponent {
 @measure({positionProp: 'foo', sizeProp: 'bar'})
 class CustomCategories extends PureComponent {
   render() {
-    const {
-      bar,
-      children,
-      foo
-    } = this.props;
+    const {bar, children, foo} = this.props;
 
     console.group('custom categories');
     console.log('foo', foo);
@@ -127,11 +101,7 @@ class InheritedMethods extends PureComponent {
   }
 
   render() {
-    const {
-      bar,
-      children,
-      foo
-    } = this.props;
+    const {bar, children, foo} = this.props;
 
     console.group('custom categories');
     console.log('foo', foo);
@@ -149,11 +119,7 @@ class InheritedMethods extends PureComponent {
 @measure(['height', 'width', 'top', 'left'], {positionProp: 'foo', sizeProp: 'bar'})
 class CustomCategoriesWithSpecificProperties extends PureComponent {
   render() {
-    const {
-      bar,
-      children,
-      foo
-    } = this.props;
+    const {bar, children, foo} = this.props;
 
     console.group('custom categories with specific properties');
     console.log('foo', foo);
@@ -209,9 +175,7 @@ class App extends Component {
   }
 
   onClickToggleConditionalElement = () => {
-    const {
-      isConditionalElementShown
-    } = this.state;
+    const {isConditionalElementShown} = this.state;
 
     this.setState({
       isConditionalElementShown: !isConditionalElementShown
@@ -223,48 +187,34 @@ class App extends Component {
   };
 
   render() {
-    const {
-      isConditionalElementShown
-    } = this.state;
+    const {isConditionalElementShown} = this.state;
 
     return (
       <div>
-        <h1>
-          App
-        </h1>
+        <h1>App</h1>
 
-        <NoParams>
-          I don't have any parameters passed to the decorators.
-        </NoParams>
+        <NoParams>I don't have any parameters passed to the decorators.</NoParams>
 
-        <PositionOnly>
-          I only have the position property.
-        </PositionOnly>
+        <PositionOnly>I only have the position property.</PositionOnly>
 
-        <WidthOnly>
-          I only have the width property, and will not rerender on resize.
-        </WidthOnly>
+        <WidthOnly>I only have the width property, and will not rerender on resize.</WidthOnly>
 
         <SpecificProperties>
           I only have the height and width properties in size, and top and left properties in position.
         </SpecificProperties>
 
-        <CustomCategories>
-          I have custom position property (foo) and size property (bar).
-        </CustomCategories>
+        <CustomCategories>I have custom position property (foo) and size property (bar).</CustomCategories>
 
         <InheritedMethods ref={this.setInheritedRef}>
           I have an instance method (getFoo) that is inherited by the HOC.
         </InheritedMethods>
 
         <CustomCategoriesWithSpecificProperties>
-          I only have the height and width properties in size (under the prop bar), and top and left properties
-          in position (under the prop foo).
+          I only have the height and width properties in size (under the prop bar), and top and left properties in
+          position (under the prop foo).
         </CustomCategoriesWithSpecificProperties>
 
-        <StatelessComponent>
-          I am a stateless component with the same props available.
-        </StatelessComponent>
+        <StatelessComponent>I am a stateless component with the same props available.</StatelessComponent>
 
         <div>
           <button
@@ -279,22 +229,17 @@ class App extends Component {
           I am a measured element that is shown conditionally.
         </ConditionalComponent>
 
-        {isConditionalElementShown && (
-          <StatelessComponent>
-            I am a stateless component that will be mounted and unmounted.
-          </StatelessComponent>
-        )}
+        {isConditionalElementShown &&
+          <StatelessComponent>I am a stateless component that will be mounted and unmounted.</StatelessComponent>}
       </div>
     );
   }
-};
+}
 
 const div = document.createElement('div');
 
 div.id = 'app-container';
 
-render((
-  <App/>
-), div);
+render(<App />, div);
 
 document.body.appendChild(div);

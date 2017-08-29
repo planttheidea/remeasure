@@ -1,19 +1,18 @@
 // test
 import test from 'ava';
 import _ from 'lodash';
+import mockery from 'mockery';
 import sinon from 'sinon';
 import raf from 'raf';
 import ReactDOM from 'react-dom';
 
 // src
-import * as utils from '../src/utils';
 import {
   ALL_BOUNDING_CLIENT_RECT_KEYS,
   ALL_DOM_ELEMENT_KEYS,
   ALL_POSITION_KEYS,
   ALL_SIZE_KEYS,
   CLIENT_RECT_TYPE,
-  ELEMENT_RESIZE_DETECTOR,
   ELEMENT_TYPE,
   POSITION_PROP_DEFAULT,
   SIZE_PROP_DEFAULT
@@ -27,11 +26,30 @@ const sleep = (ms = 0) => {
   });
 };
 
+const disconnect = sinon.spy();
+const observe = sinon.spy();
+
+mockery.enable({
+  warnOnReplace: false,
+  warnOnUnregistered: false
+});
+mockery.registerMock('resize-observer-polyfill', function ResizeObserverMock() {
+  return {
+    disconnect,
+    observe
+  };
+});
+
+test.after('cleanup', () => {
+  mockery.deregisterMock('resize-observer-polyfill');
+  mockery.disable();
+});
+
+const utils = require('../src/utils');
+
 test('if clearValues calls setMeasurements with emptyValues based on selectedKeys', (t) => {
   const key = 'width';
-  const selectedKeys = [
-    {key, source: CLIENT_RECT_TYPE}
-  ];
+  const selectedKeys = [{key, source: CLIENT_RECT_TYPE}];
   const instance = {
     measurements: {
       [key]: 15
@@ -79,7 +97,8 @@ test('if createGetScopedValues returns a function which returns an object with s
       key: 'height',
       source: 'clientRect',
       type: 'size'
-    }, {
+    },
+    {
       key: 'offsetHeight',
       source: 'element',
       type: 'size'
@@ -90,15 +109,14 @@ test('if createGetScopedValues returns a function which returns an object with s
       key: 'left',
       source: 'clientRect',
       type: 'position'
-    }, {
+    },
+    {
       key: 'offsetLeft',
       source: 'clientRect',
       type: 'position'
-    }];
-  const allKeys = [
-    ...sizeKeys,
-    ...positionKeys
+    }
   ];
+  const allKeys = [...sizeKeys, ...positionKeys];
   const currentMeasurements = {
     height: 100,
     left: 50,
@@ -190,10 +208,7 @@ test('if getElementValues will return an object of key => value pairs representi
     },
     [normalKey]: 15
   };
-  const keys = [
-    {key: normalKey, source: ELEMENT_TYPE},
-    {key: rectKey, source: CLIENT_RECT_TYPE}
-  ];
+  const keys = [{key: normalKey, source: ELEMENT_TYPE}, {key: rectKey, source: CLIENT_RECT_TYPE}];
 
   const values = utils.getElementValues(element, keys);
   const expectedResult = {
@@ -263,7 +278,8 @@ test('if getKeysSubsetWithType returns an array of object with source and type',
       key: rectKeys[0],
       source: CLIENT_RECT_TYPE,
       type: propTypes.positionProp
-    }, {
+    },
+    {
       key: rectKeys[1],
       source: CLIENT_RECT_TYPE,
       type: propTypes.sizeProp
@@ -278,7 +294,8 @@ test('if getKeysSubsetWithType returns an array of object with source and type',
       key: elKeys[0],
       source: ELEMENT_TYPE,
       type: propTypes.positionProp
-    }, {
+    },
+    {
       key: elKeys[1],
       source: ELEMENT_TYPE,
       type: propTypes.sizeProp
@@ -349,9 +366,11 @@ test('if getValidKeys correctly limits the keys returned', (t) => {
 });
 
 test('if haveValuesChanged checks for changes between the two objects', (t) => {
-  const keys = [{
-    key: 'foo'
-  }];
+  const keys = [
+    {
+      key: 'foo'
+    }
+  ];
   const values = {
     foo: 'bar'
   };
@@ -412,20 +431,20 @@ test('if reduceMeasurementsToMatchingKeys will return the keys mapped to an obje
 });
 
 test('if removeElementResize will call uninstall on the ERD and set the listener to null', (t) => {
+  const disconnect = sinon.spy();
   const instance = {
-    element: 'foo'
+    resizeObserver: {
+      disconnect
+    }
   };
+  const element = {};
 
-  const stub = sinon.stub(ELEMENT_RESIZE_DETECTOR, 'uninstall');
-
-  utils.removeElementResize(instance, instance.element);
+  utils.removeElementResize(instance, element);
 
   t.is(instance.resizeListener, null);
 
-  t.true(stub.calledOnce);
-  t.true(stub.calledWith(instance.element));
-
-  stub.restore();
+  t.true(disconnect.calledOnce);
+  t.true(disconnect.calledWith(element));
 });
 
 test('if setElement will set element to instance passed', (t) => {
@@ -452,43 +471,30 @@ test('if setElement will remove resizeListener from instance passed when element
 
 test('if setElement will set resizeListener on instance passed when renderOnResize is true', (t) => {
   const instance = {};
-  const element = {
-    appendChild() {},
-    tagName: 'DIV'
-  };
+  const element = document.createElement('div');
   const debounceValue = 0;
   const renderOnResize = true;
 
-  const original = global.getComputedStyle;
-
-  global.getComputedStyle = sinon.stub();
-
-  global.getComputedStyle.returns({
+  const getComputedStyleStub = sinon.stub(window, 'getComputedStyle').returns({
     position: 'relative'
   });
-
-  const stub = sinon.stub(ELEMENT_RESIZE_DETECTOR, 'listenTo');
 
   utils.setElement(instance, element, debounceValue, renderOnResize);
 
   t.is(typeof instance.resizeListener, 'function');
 
-  t.true(stub.calledOnce);
-  t.true(stub.calledWith(element, instance.resizeListener));
+  t.true(observe.calledOnce);
 
-  global.getComputedStyle = original;
+  observe.reset();
 
-  stub.restore();
+  getComputedStyleStub.restore();
 });
 
 test.todo('setElementResize');
 
 test('if setInheritedMethods will set the inheritedMethods on the instance', (t) => {
   const instance = {};
-  const inheritedMethods = [
-    'getFoo',
-    'getBar'
-  ];
+  const inheritedMethods = ['getFoo', 'getBar'];
 
   utils.setInheritedMethods(instance, inheritedMethods);
 
@@ -505,9 +511,7 @@ test('if setInheritedMethods will throw an error when a reserved method name is 
   const instance = {
     setMeasurements() {}
   };
-  const inheritedMethods = [
-    'setMeasurements'
-  ];
+  const inheritedMethods = ['setMeasurements'];
 
   t.throws(() => {
     utils.setInheritedMethods(instance, inheritedMethods);

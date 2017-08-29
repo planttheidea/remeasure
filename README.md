@@ -89,7 +89,7 @@ Any component that has `measure` applied to it will be wrapped in a [Higher-Orde
 
 The `bottom`, `left`, `right`, and `top` properties in `position` are what you would expect from the result of `element.getBoundingClientRect()`. `naturalHeight` and `naturalWidth` are properties that are native to `img` elements, and for all non-`img` elements they are coalesced with `scrollHeight` and `scrollWidth`, respectively.
 
-These properties are retrieved on mount, but will also automatically update if the element is resized thanks to [element-resize-event](https://github.com/KyleAMathews/element-resize-event). Please note that elements that do not support content (such as `img`) are not supported by this resize listener; in the case that you need to support those elements, simply create a higher-order component that wraps that element in a `div` and decorate that component.
+These properties are retrieved on mount, but will also automatically update if the element is resized thanks to [ResizeObserver](https://github.com/que-etc/resize-observer-polyfill). Please note that elements that do not support content (such as `img`) are not supported by this resize listener because there is no content box to observe. If you need to support those elements, simply create a higher-order component that wraps that element in a `div` and decorate that component.
 
 ### Advanced usage
 

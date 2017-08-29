@@ -2,7 +2,6 @@
 
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const WebpackDashboard = require('webpack-dashboard/plugin');
 
 const defaultConfig = require('./webpack.config');
 
@@ -23,9 +22,7 @@ module.exports = Object.assign({}, defaultConfig, {
     }
   },
 
-  entry: [
-    path.resolve(__dirname, 'DEV_ONLY', 'App.js')
-  ],
+  entry: [path.resolve(__dirname, 'DEV_ONLY', 'App.js')],
 
   externals: undefined,
 
@@ -36,23 +33,14 @@ module.exports = Object.assign({}, defaultConfig, {
       }
 
       return Object.assign({}, rule, {
-        include: rule.include.concat([
-          path.resolve(__dirname, 'DEV_ONLY')
-        ]),
+        include: rule.include.concat([path.resolve(__dirname, 'DEV_ONLY')]),
         options: Object.assign({}, rule.options, {
           cacheDirectory: true,
-          plugins: [
-            'transform-decorators-legacy'
-          ]
+          plugins: ['transform-decorators-legacy']
         })
       });
     })
   }),
 
-  plugins: defaultConfig.plugins.concat([
-    new HtmlWebpackPlugin(),
-    new WebpackDashboard({
-      port: 3210
-    })
-  ])
+  plugins: defaultConfig.plugins.concat([new HtmlWebpackPlugin()])
 });

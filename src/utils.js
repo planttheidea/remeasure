@@ -9,6 +9,7 @@ import isUndefined from 'lodash/isUndefined';
 import reduce from 'lodash/reduce';
 import some from 'lodash/some';
 import raf from 'raf';
+import ResizeObserver from 'resize-observer-polyfill';
 
 // constants
 import {
@@ -17,7 +18,6 @@ import {
   ALL_POSITION_KEYS,
   ALL_SIZE_KEYS,
   CLIENT_RECT_TYPE,
-  ELEMENT_RESIZE_DETECTOR,
   ELEMENT_TYPE,
   NATURAL_REGEXP,
   POSITION_PROP_DEFAULT,
@@ -91,11 +91,15 @@ export const setValuesIfChanged = (instance, keys, values) => {
  * @returns {Array<T>} the object of key: 0 default values
  */
 export const reduceMeasurementsToMatchingKeys = (keys) => {
-  return reduce(keys, (accumulatedInitialState, {key}) => {
-    accumulatedInitialState[key] = 0;
+  return reduce(
+    keys,
+    (accumulatedInitialState, {key}) => {
+      accumulatedInitialState[key] = 0;
 
-    return accumulatedInitialState;
-  }, {});
+      return accumulatedInitialState;
+    },
+    {}
+  );
 };
 
 /**
@@ -193,13 +197,14 @@ export const setElementResize = (instance, debounceValue) => {
   const element = instance.element;
 
   if (element && !isElementVoidTag(element)) {
-    const resizeFn = debounceValue ?
-      createUpdateValuesViaDebounce(instance, debounceValue) :
-      updateValuesViaRaf.bind(null, instance);
-
-    ELEMENT_RESIZE_DETECTOR.listenTo(element, resizeFn);
+    const resizeFn = debounceValue
+      ? createUpdateValuesViaDebounce(instance, debounceValue)
+      : updateValuesViaRaf.bind(null, instance);
 
     instance.resizeListener = resizeFn;
+    instance.resizeObserver = new ResizeObserver(resizeFn);
+
+    instance.resizeObserver.observe(element);
   }
 };
 
@@ -215,11 +220,12 @@ export const setElementResize = (instance, debounceValue) => {
  * @param {HTMLElement} element element to remove listeners from
  */
 export const removeElementResize = (instance, element) => {
-  instance.resizeListener = null;
-
   if (element) {
-    ELEMENT_RESIZE_DETECTOR.uninstall(element);
+    instance.resizeObserver.disconnect(element);
   }
+
+  instance.resizeListener = null;
+  instance.resizeObserver = null;
 };
 
 /**
@@ -307,15 +313,21 @@ export const createFlattenConvenienceFunction = (measure, property) => {
  * @returns {Object} reduced scoped values
  */
 export const getScopedValues = (values, keys, {flatten}) => {
-  return flatten ? values : reduce(keys, (scopedValues, {key, type}) => {
-    if (!scopedValues[type]) {
-      scopedValues[type] = {};
-    }
+  return flatten
+    ? values
+    : reduce(
+      keys,
+      (scopedValues, {key, type}) => {
+        if (!scopedValues[type]) {
+          scopedValues[type] = {};
+        }
 
-    scopedValues[type][key] = values[key];
+        scopedValues[type][key] = values[key];
 
-    return scopedValues;
-  }, {});
+        return scopedValues;
+      },
+      {}
+    );
 };
 
 /**
@@ -353,11 +365,15 @@ export const getNaturalDimensionValue = (source, key) => {
 export const getElementValues = (element, keys) => {
   const boundingClientRect = element.getBoundingClientRect();
 
-  return reduce(keys, (values, {key, source}) => {
-    values[key] = source === CLIENT_RECT_TYPE ? boundingClientRect[key] : getNaturalDimensionValue(element, key);
+  return reduce(
+    keys,
+    (values, {key, source}) => {
+      values[key] = source === CLIENT_RECT_TYPE ? boundingClientRect[key] : getNaturalDimensionValue(element, key);
 
-    return values;
-  }, {});
+      return values;
+    },
+    {}
+  );
 };
 
 /**
@@ -470,21 +486,25 @@ export const getKeysFromStringKey = (key, {positionProp = POSITION_PROP_DEFAULT,
  * @returns {Array<T>} the resulting array of matching values from array1 and array2
  */
 export const getKeysSubsetWithType = (sourceArray, valuesToExtract, source, propTypes) => {
-  return reduce(sourceArray, (valuesWithTypes, key) => {
-    if (includes(valuesToExtract, key)) {
-      const type = getKeyType(key, propTypes);
+  return reduce(
+    sourceArray,
+    (valuesWithTypes, key) => {
+      if (includes(valuesToExtract, key)) {
+        const type = getKeyType(key, propTypes);
 
-      if (!isNull(type)) {
-        valuesWithTypes.push({
-          key,
-          source,
-          type
-        });
+        if (!isNull(type)) {
+          valuesWithTypes.push({
+            key,
+            source,
+            type
+          });
+        }
       }
-    }
 
-    return valuesWithTypes;
-  }, []);
+      return valuesWithTypes;
+    },
+    []
+  );
 };
 
 /**
@@ -537,7 +557,9 @@ export const getValidKeys = (keys, keysToTestAgainst) => {
 export const setInheritedMethods = (instance, inheritedMethods) => {
   forEach(inheritedMethods, (method) => {
     if (instance[method]) {
-      throw new ReferenceError(`You cannot have the method ${method} inherited, as it is already taken by the MeasuredComponent HOC.`);
+      throw new ReferenceError(
+        `You cannot have the method ${method} inherited, as it is already taken by the MeasuredComponent HOC.`
+      );
     }
 
     instance[method] = (...args) => {
