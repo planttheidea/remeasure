@@ -1,47 +1,53 @@
 {
   "env": {
     "development": {
-      "plugins": [
-        "add-module-exports"
-      ],
+      "plugins": ["add-module-exports"],
       "presets": [
-        ["env", {
-          "loose": true
-        }],
+        [
+          "env",
+          {
+            "loose": true
+          }
+        ],
         "react",
         "stage-2"
       ]
     },
     "es": {
       "presets": [
-        ["env", {
-          "loose": true,
-          "modules": false
-        }],
+        [
+          "env",
+          {
+            "loose": true,
+            "modules": false
+          }
+        ],
         "react",
         "stage-2"
       ]
     },
     "production": {
-      "plugins": [
-        "add-module-exports"
-      ],
+      "plugins": ["add-module-exports", "transform-react-remove-prop-types"],
       "presets": [
-        ["env", {
-          "loose": true
-        }],
+        [
+          "env",
+          {
+            "loose": true
+          }
+        ],
         "react",
         "stage-2"
       ]
     },
     "test": {
-      "plugins": [
-        "add-module-exports"
-      ],
+      "plugins": ["add-module-exports"],
       "presets": [
-        ["env", {
-          "loose": true
-        }],
+        [
+          "env",
+          {
+            "loose": true
+          }
+        ],
         "react",
         "stage-2"
       ]

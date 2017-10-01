@@ -358,22 +358,24 @@ test('if getMeasuredComponent will return a function that creates a component fo
   const Foo = ({foo, width}) => {
     return (
       <div>
-        <div>
-          Foo: {foo}
-        </div>
+        <div>Foo: {foo}</div>
 
-        <div>
-          Width: {width}
-        </div>
+        <div>Width: {width}</div>
       </div>
     );
   };
 
   const MeasuredFoo = createHigherOrderComponent(Foo);
 
+  const stub = sinon.stub(ReactDOM, 'findDOMNode');
+
   const wrapper = shallow(<MeasuredFoo foo="bar" />);
 
   t.snapshot(toJson(wrapper));
+
+  t.true(stub.calledOnce);
+
+  stub.restore();
 });
 
 test('if getMeasuredComponent will call setInheritedMethods when constructed if inheritedMethods exist', (t) => {
@@ -394,9 +396,15 @@ test('if getMeasuredComponent will call setInheritedMethods when constructed if 
     }
   }
 
+  const stub = sinon.stub(ReactDOM, 'findDOMNode');
+
   const MeasuredFoo = createHigherOrderComponent(Foo);
 
   const wrapper = shallow(<MeasuredFoo />);
+
+  t.true(stub.calledOnce);
+
+  stub.restore();
 
   t.true(_.isFunction(wrapper.instance().foo));
 });

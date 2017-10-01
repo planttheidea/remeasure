@@ -3,9 +3,10 @@ import isArray from 'lodash/isArray';
 import isFunction from 'lodash/isFunction';
 import isPlainObject from 'lodash/isPlainObject';
 import isString from 'lodash/isString';
+import PropTypes from 'prop-types';
 
 // constants
-import {ALL_KEYS} from './constants';
+import {ALL_KEYS, OPTIONS_SHAPE} from './constants';
 
 // component
 import getMeasuredComponent from './getMeasuredComponent';
@@ -37,13 +38,9 @@ const measure = (passedKeys, passedOptions = {}) => {
   }
 
   const isKeysObject = isPlainObject(passedKeys);
-  const options = {
-    ...(isKeysObject ? passedKeys : passedOptions)
-  };
+  const options = {...(isKeysObject ? passedKeys : passedOptions)};
 
-  if (isKeysObject) {
-    return getMeasuredComponent(ALL_KEYS, passedKeys);
-  }
+  PropTypes.checkPropTypes(OPTIONS_SHAPE, options, 'property', 'options');
 
   let keys;
 

@@ -163,6 +163,9 @@ You can also pass an object with any of the following propeties (defaults shown)
     // this is used if you want to call an instance method via ref in a different component
     inheritedMethods: Array<string>,
 
+    // should the higher-order component be a pure component,
+    isPure: Boolean = false,
+
     // sets position property name
     positionProp: String = 'position',
 
