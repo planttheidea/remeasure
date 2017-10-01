@@ -13,15 +13,11 @@ class NoParams extends PureComponent {
     console.log('size', size);
     console.groupEnd();
 
-    return (
-      <div>
-        {children}
-      </div>
-    );
+    return <div>{children}</div>;
   }
 }
 
-@measure.width({debounce: 150})
+@measure.width({debounce: false})
 class WidthOnly extends PureComponent {
   render() {
     const {children, position, size, width} = this.props;
@@ -32,11 +28,7 @@ class WidthOnly extends PureComponent {
     console.log('width', width);
     console.groupEnd();
 
-    return (
-      <div>
-        {children}
-      </div>
-    );
+    return <div>{children}</div>;
   }
 }
 
@@ -50,11 +42,7 @@ class PositionOnly extends PureComponent {
     console.log('size', size);
     console.groupEnd();
 
-    return (
-      <div>
-        {children}
-      </div>
-    );
+    return <div>{children}</div>;
   }
 }
 
@@ -68,11 +56,7 @@ class SpecificProperties extends PureComponent {
     console.log('size', size);
     console.groupEnd();
 
-    return (
-      <div>
-        {children}
-      </div>
-    );
+    return <div>{children}</div>;
   }
 }
 
@@ -86,11 +70,7 @@ class CustomCategories extends PureComponent {
     console.log('bar', bar);
     console.groupEnd();
 
-    return (
-      <div>
-        {children}
-      </div>
-    );
+    return <div>{children}</div>;
   }
 }
 
@@ -108,11 +88,7 @@ class InheritedMethods extends PureComponent {
     console.log('bar', bar);
     console.groupEnd();
 
-    return (
-      <div>
-        {children}
-      </div>
-    );
+    return <div>{children}</div>;
   }
 }
 
@@ -126,25 +102,17 @@ class CustomCategoriesWithSpecificProperties extends PureComponent {
     console.log('bar', bar);
     console.groupEnd();
 
-    return (
-      <div>
-        {children}
-      </div>
-    );
+    return <div>{children}</div>;
   }
 }
 
-const StatelessComponent = measure(({children, position, size}) => {
+const StatelessComponent = measure({isPure: true})(({children, position, size}) => {
   console.group('stateless component');
   console.log('position', position);
   console.log('size', size);
   console.groupEnd();
 
-  return (
-    <div>
-      {children}
-    </div>
-  );
+  return <div>{children}</div>;
 });
 
 const ConditionalComponent = measure(({children, isShown, position, size}) => {
@@ -157,11 +125,7 @@ const ConditionalComponent = measure(({children, isShown, position, size}) => {
     return null;
   }
 
-  return (
-    <div>
-      {children}
-    </div>
-  );
+  return <div>{children}</div>;
 });
 
 class App extends Component {
@@ -229,8 +193,9 @@ class App extends Component {
           I am a measured element that is shown conditionally.
         </ConditionalComponent>
 
-        {isConditionalElementShown &&
-          <StatelessComponent>I am a stateless component that will be mounted and unmounted.</StatelessComponent>}
+        {isConditionalElementShown && (
+          <StatelessComponent>I am a stateless component that will be mounted and unmounted.</StatelessComponent>
+        )}
       </div>
     );
   }

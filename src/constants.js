@@ -1,3 +1,6 @@
+// external dependencies
+import PropTypes from 'prop-types';
+
 export const DEBOUNCE_VALUE_DEFAULT = 0;
 
 export const FLATTEN_DEFAULT = false;
@@ -62,3 +65,13 @@ export const ALL_KEYS = [...ALL_POSITION_KEYS, ...ALL_SIZE_KEYS];
 
 export const CLIENT_RECT_TYPE = 'clientRect';
 export const ELEMENT_TYPE = 'element';
+
+export const OPTIONS_SHAPE = {
+  debounce: PropTypes.number,
+  flatten: PropTypes.bool,
+  inheritedMethods: PropTypes.arrayOf(PropTypes.string),
+  isPure: PropTypes.bool,
+  positionProp: PropTypes.string,
+  renderOnResize: PropTypes.bool,
+  sizeProp: PropTypes.string
+};

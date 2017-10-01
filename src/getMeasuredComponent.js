@@ -163,10 +163,14 @@ export const createUpdateValuesIfChanged = (instance, selectedKeys) => {
  */
 const getMeasuredComponent = (keys, options) => {
   const selectedKeys = getKeysWithSourceAndType(keys, options);
-  const {inheritedMethods = []} = options;
+  const {inheritedMethods = [], isPure = false} = options;
 
   return (PassedComponent) => {
-    const ComponentToExtend = Object.getPrototypeOf(PassedComponent) === PureComponent ? PureComponent : Component;
+    const passedComponentPrototype = Object.getPrototypeOf(PassedComponent);
+    const isPureComponent = passedComponentPrototype === PureComponent;
+    const isComponent = !isPureComponent && passedComponentPrototype === Component;
+
+    const ComponentToExtend = isPure || isPureComponent ? PureComponent : Component;
     const displayName = getComponentName(PassedComponent);
 
     class MeasuredComponent extends ComponentToExtend {
@@ -200,7 +204,7 @@ const getMeasuredComponent = (keys, options) => {
       render() {
         return (
           <PassedComponent
-            ref={this.setOriginalRef}
+            ref={isPureComponent || isComponent ? this.setOriginalRef : null}
             {...this.props}
             {...getScopedValues(this.measurements, selectedKeys, options)}
           />

@@ -1,5 +1,10 @@
 # remeasure CHANGELOG
 
+#### 2.5.0
+* Add `isPure` option, which will ensure `PureComponent` is used for the higher-order component
+* Validate `options` have correct types
+* Prevent `ref` from being assigned when a stateless functional component is passed
+
 #### 2.4.1
 * Replace `element-resize-detector` with use of `ResizeObserver` ponyfill
 
