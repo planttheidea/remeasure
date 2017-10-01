@@ -3,14 +3,29 @@
   "ava": {
     "babel": {
       "babelrc": true,
-      "plugins": ["transform-decorators-legacy"]
+      "plugins": [
+        "transform-decorators-legacy"
+      ]
     },
     "failFast": true,
-    "files": ["test/*.js"],
-    "require": ["babel-register", "babel-polyfill", "./test/helpers/setup-browser-env.js"],
+    "files": [
+      "test/*.js"
+    ],
+    "require": [
+      "babel-register",
+      "babel-polyfill",
+      "./test/helpers/setup-browser-env.js"
+    ],
     "verbose": true
   },
-  "browserslist": ["defaults", "Explorer >= 9", "Safari >= 6", "Opera >= 15", "iOS >= 8", "Android >= 4"],
+  "browserslist": [
+    "defaults",
+    "Explorer >= 9",
+    "Safari >= 6",
+    "Opera >= 15",
+    "iOS >= 8",
+    "Android >= 4"
+  ],
   "bugs": {
     "url": "https://github.com/planttheidea/remeasure/issues"
   },
@@ -98,8 +113,7 @@
     "lint": "NODE_ENV=test eslint src",
     "lint:fix": "npm run lint -- --fix",
     "prepublish": "if in-publish; then npm run prepublish:compile; fi",
-    "prepublish:compile":
-      "npm run lint && npm run test:coverage && npm run transpile:lib && npm run transpile:es && npm run dist && npm run docs",
+    "prepublish:compile": "npm run lint && npm run test:coverage && npm run transpile:lib && npm run transpile:es && npm run dist && npm run docs",
     "start": "npm run dev",
     "test": "NODE_ENV=test ava",
     "test:coverage": "nyc npm test",
@@ -108,5 +122,5 @@
     "transpile:es": "npm run clean:es && BABEL_ENV=es babel src --out-dir es",
     "transpile:lib": "npm run clean:lib && babel src --out-dir lib"
   },
-  "version": "2.4.1"
+  "version": "2.5.0"
 }
