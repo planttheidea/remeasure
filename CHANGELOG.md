@@ -1,5 +1,8 @@
 # remeasure CHANGELOG
 
+#### 2.5.1
+* Move `react` and `react-dom` to `peerDependencies`
+
 #### 2.5.0
 * Add `isPure` option, which will ensure `PureComponent` is used for the higher-order component
 * Validate `options` have correct types
