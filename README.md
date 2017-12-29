@@ -3,6 +3,7 @@
 Get position and size of the DOM element for any React Component
 
 ### Table of contents
+
 * [Installation](#installation)
 * [Usage](#usage)
 * [Advanced usage](#advanced-usage)
@@ -33,26 +34,15 @@ var measure = window.Remeasure;
 @measure
 class MyComponent extends React.Component {
   render() {
-    const {
-      position,
-      size
-    } = this.props;
+    const {position, size} = this.props;
 
-    return (
-      <div>
-        I have access to my size and position through props!
-      </div>
-    );
+    return <div>I have access to my size and position through props!</div>;
   }
 }
 
 // or as a function wrapper
 const StatelessComponent = measure(({position, size}) => {
-  return (
-    <div>
-      In here too!
-    </div>
-  );
+  return <div>In here too!</div>;
 });
 ```
 
@@ -95,7 +85,7 @@ These properties are retrieved on mount, but will also automatically update if t
 
 If you want to limit the items that are injected into the component, you can pass either a key or array of keys to the decorator before wrapping the component.
 
-**measure(`String|Array<String>|Object[, Object]`)** *returns `Function`*
+**measure(`String|Array<String>|Object[, Object]`)** _returns `Function`_
 
 Examples:
 
@@ -107,10 +97,7 @@ const measureOnlyOffsetWidth = measure('offsetWidth');
 
 const MyStatelessComponent = measureOnlyOffsetWidth(({size}) => {
   return (
-    <div>
-      Only size is injected (because no position values were requested),
-      with offsetWidth as the only property
-    </div>
+    <div>Only size is injected (because no position values were requested), with offsetWidth as the only property</div>
   );
 });
 
@@ -118,16 +105,12 @@ const MyStatelessComponent = measureOnlyOffsetWidth(({size}) => {
 @measure(['top', 'height'])
 class MyComponent extends Component {
   render() {
-    const {
-      position,
-      size
-    } = this.props;
+    const {position, size} = this.props;
 
     return (
       <div>
-        Both the position and size props are injected (because values
-        from both position and size were requested), and each will have
-        a single property on them (top on position, height on size).
+        Both the position and size props are injected (because values from both position and size were requested), and
+        each will have a single property on them (top on position, height on size).
       </div>
     );
   }
@@ -139,12 +122,7 @@ class MySizedComponent extends Component {
   render() {
     const size = this.props.size;
 
-    return (
-      <div>
-        I have the size prop injected with all properties, but not
-        position.
-      </div>
-    );
+    return <div>I have the size prop injected with all properties, but not position.</div>;
   }
 }
 ```
@@ -231,16 +209,31 @@ For each key that is measured, a convenience function exists on the main `measur
 @measure.width
 class MyMeasuredComponent extends Component {
   render() {
-    return (
-      <div>
-        I have access to width at this.props.width.
-      </div>
-    );
+    const {width} = this.props;
+
+    return <div>I have width of {width}.</div>;
   }
 }
 ```
 
 These accept options as a parameter just like the standard `measure`, they are just merged with the `flatten: true` value.
+
+You can also use the `measure.flatten` method if you want to use multiple keys with the `flatten` attribute.
+
+```javascript
+@measure.flatten(['height', 'width'])
+class MyMeasuredComponent extends Component {
+  render() {
+    const {height, width} = this.props;
+
+    return (
+      <div>
+        I have width of {width} and height of {height}.
+      </div>
+    );
+  }
+}
+```
 
 ### Caveats
 
@@ -255,7 +248,9 @@ If children on a tag are considered invalid HTML (such as for `<input/>`, `<img/
 If you perform an update to the component `props` or `state` that also happens to change its dimensions, the component will update twice, once for the changes to `props` / `state`, and again for the changes to its dimensions. This is because the component needs to render in the DOM before updated values can be calculated.
 
 ### Support
+
 `remeasure` has been tested and confirmed to work on the following browsers:
+
 * Chrome
 * Firefox
 * Opera
@@ -267,6 +262,7 @@ If you perform an update to the component `props` or `state` that also happens t
 ### Development
 
 Standard stuff, clone the repo and `npm i` to get the dependencies. npm scripts available:
+
 * `build` => builds the distributed JS with `NODE_ENV=development` and with sourcemaps
 * `build-minified` => builds the distributed JS with `NODE_ENV=production` and minified
 * `compile-for-publish` => runs the `lint`, `test`, `transpile`, `dist` scripts
