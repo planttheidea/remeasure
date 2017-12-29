@@ -3,6 +3,11 @@ import {render} from 'react-dom';
 
 import measure from '../src/index';
 
+document.body.style.backgroundColor = '#1d1d1d';
+document.body.style.color = '#d5d5d5';
+document.body.style.margin = 0;
+document.body.style.padding = 0;
+
 @measure
 class NoParams extends PureComponent {
   render() {
@@ -17,7 +22,7 @@ class NoParams extends PureComponent {
   }
 }
 
-@measure.width({debounce: false})
+@measure.width({debounce: true})
 class WidthOnly extends PureComponent {
   render() {
     const {children, position, size, width} = this.props;
@@ -128,6 +133,14 @@ const ConditionalComponent = measure(({children, isShown, position, size}) => {
   return <div>{children}</div>;
 });
 
+const FlatComponent = measure.flatten(['height', 'width'])((props) => {
+  console.group('flattened');
+  console.log(props);
+  console.groupEnd();
+
+  return <div>{props.width}</div>;
+});
+
 class App extends Component {
   state = {
     isConditionalElementShown: true
@@ -196,6 +209,8 @@ class App extends Component {
         {isConditionalElementShown && (
           <StatelessComponent>I am a stateless component that will be mounted and unmounted.</StatelessComponent>
         )}
+
+        <FlatComponent />
       </div>
     );
   }

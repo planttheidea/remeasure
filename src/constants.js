@@ -1,20 +1,36 @@
 // external dependencies
 import PropTypes from 'prop-types';
 
-export const DEBOUNCE_VALUE_DEFAULT = 0;
+/**
+ * @constant {Object} DEFAULT_OPTIONS
+ */
+export const DEFAULT_OPTIONS = {
+  debounce: 0,
+  flatten: false,
+  inheritedMethods: [],
+  positionProp: 'position',
+  renderOnResize: true,
+  sizeProp: 'size'
+};
 
-export const FLATTEN_DEFAULT = false;
-export const INHERITED_METHODS_DEFAULT = [];
-export const POSITION_PROP_DEFAULT = 'position';
-export const RENDER_ON_RESIZE_DEFAULT = true;
-export const SIZE_PROP_DEFAULT = 'size';
-
+/**
+ * @constant {Array<string>} BOUNDING_CLIENT_RECT_SIZE_KEYS
+ */
 export const BOUNDING_CLIENT_RECT_SIZE_KEYS = ['height', 'width'];
 
+/**
+ * @constant {Array<string>} BOUNDING_CLIENT_RECT_POSITION_KEYS
+ */
 export const BOUNDING_CLIENT_RECT_POSITION_KEYS = ['bottom', 'left', 'right', 'top'];
 
+/**
+ * @constant {Array<string>} ALL_BOUNDING_CLIENT_RECT_KEYS
+ */
 export const ALL_BOUNDING_CLIENT_RECT_KEYS = [...BOUNDING_CLIENT_RECT_POSITION_KEYS, ...BOUNDING_CLIENT_RECT_SIZE_KEYS];
 
+/**
+ * @constant {Array<string>} DOM_ELEMENT_POSITION_KEYS
+ */
 export const DOM_ELEMENT_POSITION_KEYS = [
   'clientLeft',
   'clientTop',
@@ -24,6 +40,9 @@ export const DOM_ELEMENT_POSITION_KEYS = [
   'scrollTop'
 ];
 
+/**
+ * @constant {Array<string>} DOM_ELEMENT_SIZE_KEYS
+ */
 export const DOM_ELEMENT_SIZE_KEYS = [
   'clientHeight',
   'clientWidth',
@@ -35,8 +54,19 @@ export const DOM_ELEMENT_SIZE_KEYS = [
   'scrollWidth'
 ];
 
+/**
+ * @constant {RegExp} FUNCTION_NAME_REGEXP
+ */
+export const FUNCTION_NAME_REGEXP = /^\s*function\s*([^\(]*)/i;
+
+/**
+ * @constant {RegExp} NATURAL_REGEXP
+ */
 export const NATURAL_REGEXP = /natural/;
 
+/**
+ * @constant {Array<string>} VOID_ELEMENT_TAG_NAMES
+ */
 export const VOID_ELEMENT_TAG_NAMES = [
   'AREA',
   'BASE',
@@ -55,17 +85,39 @@ export const VOID_ELEMENT_TAG_NAMES = [
   'WBR'
 ];
 
+/**
+ * @constant {Array<string>} ALL_DOM_ELEMENT_KEYS
+ */
 export const ALL_DOM_ELEMENT_KEYS = [...DOM_ELEMENT_POSITION_KEYS, ...DOM_ELEMENT_SIZE_KEYS];
 
+/**
+ * @constant {Array<string>} ALL_POSITION_KEYS
+ */
 export const ALL_POSITION_KEYS = [...DOM_ELEMENT_POSITION_KEYS, ...BOUNDING_CLIENT_RECT_POSITION_KEYS];
 
+/**
+ * @constant {Array<string>} ALL_SIZE_KEYS
+ */
 export const ALL_SIZE_KEYS = [...DOM_ELEMENT_SIZE_KEYS, ...BOUNDING_CLIENT_RECT_SIZE_KEYS];
 
+/**
+ * @constant {Array<string>} ALL_KEYS
+ */
 export const ALL_KEYS = [...ALL_POSITION_KEYS, ...ALL_SIZE_KEYS];
 
+/**
+ * @constant {string} CLIENT_RECT_TYPE
+ */
 export const CLIENT_RECT_TYPE = 'clientRect';
+
+/**
+ * @constant {string} ELEMENT_TYPE
+ */
 export const ELEMENT_TYPE = 'element';
 
+/**
+ * @constant {Object} OPTIONS_SHAPE
+ */
 export const OPTIONS_SHAPE = {
   debounce: PropTypes.number,
   flatten: PropTypes.bool,

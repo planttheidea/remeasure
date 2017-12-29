@@ -3,8 +3,6 @@
 const path = require('path');
 const webpack = require('webpack');
 
-const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
-
 module.exports = {
   cache: true,
 
@@ -44,21 +42,6 @@ module.exports = {
       {
         include: [path.resolve(__dirname, 'src')],
         loader: 'babel-loader',
-        options: {
-          babelrc: false,
-          cacheDirectory: true,
-          presets: [
-            [
-              'env',
-              {
-                loose: true,
-                modules: false
-              }
-            ],
-            'react',
-            'stage-2'
-          ]
-        },
         test: /\.js$/
       }
     ]
@@ -72,7 +55,7 @@ module.exports = {
     umdNamedDefine: true
   },
 
-  plugins: [new webpack.EnvironmentPlugin(['NODE_ENV']), new LodashModuleReplacementPlugin()],
+  plugins: [new webpack.EnvironmentPlugin(['NODE_ENV'])],
 
   resolve: {
     extensions: ['.js']

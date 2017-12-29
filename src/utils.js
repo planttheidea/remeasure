@@ -1,13 +1,5 @@
 // external dependencies
-import debounce from 'lodash/debounce';
-import forEach from 'lodash/forEach';
-import filter from 'lodash/filter';
-import includes from 'lodash/includes';
-import isFunction from 'lodash/isFunction';
-import isNull from 'lodash/isNull';
-import isUndefined from 'lodash/isUndefined';
-import reduce from 'lodash/reduce';
-import some from 'lodash/some';
+import debounce from 'debounce';
 import raf from 'raf';
 import ResizeObserver from 'resize-observer-polyfill';
 
@@ -15,15 +7,38 @@ import ResizeObserver from 'resize-observer-polyfill';
 import {
   ALL_BOUNDING_CLIENT_RECT_KEYS,
   ALL_DOM_ELEMENT_KEYS,
+  ALL_KEYS,
   ALL_POSITION_KEYS,
   ALL_SIZE_KEYS,
   CLIENT_RECT_TYPE,
+  DEFAULT_OPTIONS,
   ELEMENT_TYPE,
+  FUNCTION_NAME_REGEXP,
   NATURAL_REGEXP,
-  POSITION_PROP_DEFAULT,
-  SIZE_PROP_DEFAULT,
   VOID_ELEMENT_TAG_NAMES
 } from './constants';
+
+/**
+ * @private
+ *
+ * @function some
+ *
+ * @description
+ * does any item in the array create a truthy result of calling fn
+ *
+ * @param {Array<*>} array the array to test
+ * @param {function} fn the function to perform the test with
+ * @returns {boolean} does any item in the array match
+ */
+export const some = (array, fn) => {
+  for (let index = 0; index < array.length; index++) {
+    if (fn(array[index])) {
+      return true;
+    }
+  }
+
+  return false;
+};
 
 /**
  * @private
@@ -37,7 +52,17 @@ import {
  * @returns {string} Component name
  */
 export const getComponentName = (Component) => {
-  return Component.displayName || Component.name || 'Component';
+  if (Component.displayName) {
+    return Component.displayName;
+  }
+
+  if (Component.name) {
+    return Component.name;
+  }
+
+  const match = Component.toString().match(FUNCTION_NAME_REGEXP);
+
+  return (match && match[1]) || 'Component';
 };
 
 /**
@@ -91,15 +116,11 @@ export const setValuesIfChanged = (instance, keys, values) => {
  * @returns {Array<T>} the object of key: 0 default values
  */
 export const reduceMeasurementsToMatchingKeys = (keys) => {
-  return reduce(
-    keys,
-    (accumulatedInitialState, {key}) => {
-      accumulatedInitialState[key] = 0;
+  return keys.reduce((accumulatedInitialState, {key}) => {
+    accumulatedInitialState[key] = 0;
 
-      return accumulatedInitialState;
-    },
-    {}
-  );
+    return accumulatedInitialState;
+  }, {});
 };
 
 /**
@@ -179,7 +200,7 @@ export const updateValuesViaRaf = (instance) => {
  * @returns {boolean}
  */
 export const isElementVoidTag = (element) => {
-  return includes(VOID_ELEMENT_TAG_NAMES, element.tagName.toUpperCase());
+  return !!~VOID_ELEMENT_TAG_NAMES.indexOf(element.tagName.toUpperCase());
 };
 
 /**
@@ -240,18 +261,19 @@ export const removeElementResize = (instance, element) => {
  * @param {HTMLElement|null} element element to assign to instance
  * @param {number} debounceValue debounce value for the instance provided
  * @param {boolean} renderOnResize should the component rerender on resize
+ * @returns {void}
  */
 export const setElement = (instance, element, debounceValue, renderOnResize) => {
   const currentElement = instance.element;
 
   instance.element = element;
 
-  if (instance.element) {
-    if (renderOnResize && !instance.resizeListener) {
-      setElementResize(instance, debounceValue);
-    }
-  } else {
-    removeElementResize(instance, currentElement);
+  if (!element) {
+    return removeElementResize(instance, currentElement);
+  }
+
+  if (renderOnResize && !instance.resizeListener) {
+    setElementResize(instance, debounceValue);
   }
 };
 
@@ -268,7 +290,7 @@ export const setElement = (instance, element, debounceValue, renderOnResize) => 
  */
 export const createIsKeyType = (typeArray) => {
   return (key) => {
-    return includes(typeArray, key);
+    return !!~typeArray.indexOf(key);
   };
 };
 
@@ -286,7 +308,7 @@ export const createIsKeyType = (typeArray) => {
  */
 export const createFlattenConvenienceFunction = (measure, property) => {
   return (component, options = {}) => {
-    const isComponentFunction = isFunction(component);
+    const isComponentFunction = typeof component === 'function';
     const decoratorOptions = isComponentFunction ? options : component;
     const decorator = measure(property, {
       ...decoratorOptions,
@@ -315,19 +337,15 @@ export const createFlattenConvenienceFunction = (measure, property) => {
 export const getScopedValues = (values, keys, {flatten}) => {
   return flatten
     ? values
-    : reduce(
-      keys,
-      (scopedValues, {key, type}) => {
-        if (!scopedValues[type]) {
-          scopedValues[type] = {};
-        }
+    : keys.reduce((scopedValues, value) => {
+      if (!scopedValues[value.type]) {
+        scopedValues[value.type] = {};
+      }
 
-        scopedValues[type][key] = values[key];
+      scopedValues[value.type][value.key] = values[value.key];
 
-        return scopedValues;
-      },
-      {}
-    );
+      return scopedValues;
+    }, {});
 };
 
 /**
@@ -345,9 +363,7 @@ export const getScopedValues = (values, keys, {flatten}) => {
  * @returns {number}
  */
 export const getNaturalDimensionValue = (source, key) => {
-  const value = source[key];
-
-  return isUndefined(value) ? source[key.replace(NATURAL_REGEXP, 'scroll')] : value;
+  return source.hasOwnProperty(key) ? source[key] : source[key.replace(NATURAL_REGEXP, 'scroll')];
 };
 
 /**
@@ -365,15 +381,12 @@ export const getNaturalDimensionValue = (source, key) => {
 export const getElementValues = (element, keys) => {
   const boundingClientRect = element.getBoundingClientRect();
 
-  return reduce(
-    keys,
-    (values, {key, source}) => {
-      values[key] = source === CLIENT_RECT_TYPE ? boundingClientRect[key] : getNaturalDimensionValue(element, key);
+  return keys.reduce((values, value) => {
+    values[value.key] =
+      value.source === CLIENT_RECT_TYPE ? boundingClientRect[value.key] : getNaturalDimensionValue(element, value.key);
 
-      return values;
-    },
-    {}
-  );
+    return values;
+  }, {});
 };
 
 /**
@@ -384,11 +397,11 @@ export const getElementValues = (element, keys) => {
  * @description
  * get the positionProp and sizeProp properties from options with defaults applied
  *
- * @param {string} [positionProp=POSITION_PROP_DEFAULT] position property name
- * @param {string} [sizeProp=SIZE_PROP_DEFAULT] size property name
+ * @param {string} [positionProp=DEFAULT_OPTIONS.positionProp] position property name
+ * @param {string} [sizeProp=DEFAULT_OPTIONS.sizeProp] size property name
  * @returns {{positionProp, sizeProp}} object of positionProp and sizeProp
  */
-export const getPropKeyNames = ({positionProp = POSITION_PROP_DEFAULT, sizeProp = SIZE_PROP_DEFAULT}) => {
+export const getPropKeyNames = ({positionProp = DEFAULT_OPTIONS.positionProp, sizeProp = DEFAULT_OPTIONS.sizeProp}) => {
   return {
     positionProp,
     sizeProp
@@ -455,11 +468,14 @@ export const getKeyType = (key, {positionProp, sizeProp}) => {
  * get the keys to store in state based on the key and options passed
  *
  * @param {string} key string key passed to decorator
- * @param {string} [positionProp=POSITION_PROP_DEFAULT] name of position property requested in options
- * @param {string} [sizeProp=SIZE_PROP_DEFAULT] name of position property requested in options
+ * @param {string} [positionProp=DEFAULT_OPTIONS.positionProp] name of position property requested in options
+ * @param {string} [sizeProp=DEFAULT_OPTIONS.sizeProp] name of position property requested in options
  * @returns {Array<string>} keys to store in state
  */
-export const getKeysFromStringKey = (key, {positionProp = POSITION_PROP_DEFAULT, sizeProp = SIZE_PROP_DEFAULT}) => {
+export const getKeysFromStringKey = (
+  key,
+  {positionProp = DEFAULT_OPTIONS.positionProp, sizeProp = DEFAULT_OPTIONS.sizeProp}
+) => {
   if (key === positionProp) {
     return ALL_POSITION_KEYS;
   }
@@ -486,25 +502,21 @@ export const getKeysFromStringKey = (key, {positionProp = POSITION_PROP_DEFAULT,
  * @returns {Array<T>} the resulting array of matching values from array1 and array2
  */
 export const getKeysSubsetWithType = (sourceArray, valuesToExtract, source, propTypes) => {
-  return reduce(
-    sourceArray,
-    (valuesWithTypes, key) => {
-      if (includes(valuesToExtract, key)) {
-        const type = getKeyType(key, propTypes);
+  return sourceArray.reduce((valuesWithTypes, key) => {
+    if (~valuesToExtract.indexOf(key)) {
+      const type = getKeyType(key, propTypes);
 
-        if (!isNull(type)) {
-          valuesWithTypes.push({
-            key,
-            source,
-            type
-          });
-        }
+      if (type !== null) {
+        valuesWithTypes.push({
+          key,
+          source,
+          type
+        });
       }
+    }
 
-      return valuesWithTypes;
-    },
-    []
-  );
+    return valuesWithTypes;
+  }, []);
 };
 
 /**
@@ -540,9 +552,33 @@ export const getKeysWithSourceAndType = (keys, options) => {
  * @returns {Array<string>} the resulting matching key set
  */
 export const getValidKeys = (keys, keysToTestAgainst) => {
-  return filter(keys, (key) => {
-    return includes(keysToTestAgainst, key);
+  return keys.filter((key) => {
+    return ~keysToTestAgainst.indexOf(key);
   });
+};
+
+/**
+ * @private
+ *
+ * @function getMeasuredKeys
+ *
+ * @description
+ * based on the passed keys and options, get the keys that will be measured
+ *
+ * @param {Array<string>|string} passedKeys the keys passed to the decorator
+ * @param {Object} options the options passed to the decorator
+ * @returns {Array<string>} the keys to measure
+ */
+export const getMeasuredKeys = (passedKeys, options) => {
+  if (Array.isArray(passedKeys)) {
+    return getValidKeys(passedKeys, ALL_KEYS);
+  }
+
+  if (typeof passedKeys === 'string') {
+    return getKeysFromStringKey(passedKeys, options);
+  }
+
+  return ALL_KEYS;
 };
 
 /**
@@ -555,7 +591,7 @@ export const getValidKeys = (keys, keysToTestAgainst) => {
  * @param {Array<string>} inheritedMethods the names of inherited methods
  */
 export const setInheritedMethods = (instance, inheritedMethods) => {
-  forEach(inheritedMethods, (method) => {
+  inheritedMethods.forEach((method) => {
     if (instance[method]) {
       throw new ReferenceError(
         `You cannot have the method ${method} inherited, as it is already taken by the MeasuredComponent HOC.`

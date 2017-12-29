@@ -10,12 +10,12 @@ import ReactDOM from 'react-dom';
 import {
   ALL_BOUNDING_CLIENT_RECT_KEYS,
   ALL_DOM_ELEMENT_KEYS,
+  ALL_KEYS,
   ALL_POSITION_KEYS,
   ALL_SIZE_KEYS,
   CLIENT_RECT_TYPE,
-  ELEMENT_TYPE,
-  POSITION_PROP_DEFAULT,
-  SIZE_PROP_DEFAULT
+  DEFAULT_OPTIONS,
+  ELEMENT_TYPE
 } from '../src/constants';
 
 const sleep = (ms = 0) => {
@@ -317,7 +317,7 @@ test('if getKeysWithSourceAndType returns an array of objects representing the k
     return {
       key,
       source: !~lowercaseKey.indexOf('offset') ? CLIENT_RECT_TYPE : ELEMENT_TYPE,
-      type: !~lowercaseKey.indexOf('left') ? SIZE_PROP_DEFAULT : POSITION_PROP_DEFAULT
+      type: !~lowercaseKey.indexOf('left') ? DEFAULT_OPTIONS.sizeProp : DEFAULT_OPTIONS.positionProp
     };
   });
 
@@ -341,8 +341,8 @@ test('if getPropKeyNames returns an object with positionProp and sizeProp popula
   const defaultValue = utils.getPropKeyNames({});
 
   t.deepEqual(defaultValue, {
-    positionProp: POSITION_PROP_DEFAULT,
-    sizeProp: SIZE_PROP_DEFAULT
+    positionProp: DEFAULT_OPTIONS.positionProp,
+    sizeProp: DEFAULT_OPTIONS.sizeProp
   });
 
   const customOptions = {
@@ -356,6 +356,34 @@ test('if getPropKeyNames returns an object with positionProp and sizeProp popula
 });
 
 test.todo('getShouldClear');
+
+test('if getMeasuredKeys will get the correct keys when passed keys are an array', (t) => {
+  const passedKeys = ['width', 'height'];
+  const options = {};
+
+  const result = utils.getMeasuredKeys(passedKeys, options);
+
+  t.not(result, passedKeys);
+  t.deepEqual(result, passedKeys);
+});
+
+test('if getMeasuredKeys will return the correct keys when passed keys is a string', (t) => {
+  const passedKeys = 'size';
+  const options = {};
+
+  const result = utils.getMeasuredKeys(passedKeys, options);
+
+  t.is(result, ALL_SIZE_KEYS);
+});
+
+test('if getMeasuredKeys will return the correct keys when passed keys are neight an array nor a string', (t) => {
+  const passedKeys = 123;
+  const options = {};
+
+  const result = utils.getMeasuredKeys(passedKeys, options);
+
+  t.is(result, ALL_KEYS);
+});
 
 test('if getValidKeys correctly limits the keys returned', (t) => {
   const keys = ['foo', 'bar', 'baz'];
@@ -524,7 +552,7 @@ test('if setValuesIfChanged will call setMeasurements with the values if they ha
     {
       key,
       source: CLIENT_RECT_TYPE,
-      type: POSITION_PROP_DEFAULT
+      type: DEFAULT_OPTIONS.positionProp
     }
   ];
   const values = {
@@ -550,7 +578,7 @@ test('if setValuesIfChanged will not call setMeasurements if the values have not
     {
       key,
       source: CLIENT_RECT_TYPE,
-      type: POSITION_PROP_DEFAULT
+      type: DEFAULT_OPTIONS.positionProp
     }
   ];
   const values = {
@@ -576,7 +604,7 @@ test('if setValuesIfChanged will not call setMeasurements if the values have cha
     {
       key,
       source: CLIENT_RECT_TYPE,
-      type: POSITION_PROP_DEFAULT
+      type: DEFAULT_OPTIONS.positionProp
     }
   ];
   const values = {

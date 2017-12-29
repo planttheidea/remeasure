@@ -3,7 +3,7 @@ import React, {Component, PureComponent} from 'react';
 import {findDOMNode} from 'react-dom';
 
 // constants
-import {DEBOUNCE_VALUE_DEFAULT, RENDER_ON_RESIZE_DEFAULT} from './constants';
+import {DEFAULT_OPTIONS} from './constants';
 
 // utils
 import {
@@ -21,7 +21,7 @@ import {
 } from './utils';
 
 export const createComponentDidMount = (instance, selectedKeys, options = {}) => {
-  const {debounce: debounceValue = DEBOUNCE_VALUE_DEFAULT, renderOnResize = RENDER_ON_RESIZE_DEFAULT} = options;
+  const {debounce: debounceValue = DEFAULT_OPTIONS.debounce, renderOnResize = DEFAULT_OPTIONS.renderOnResize} = options;
 
   /**
    * @private
@@ -45,7 +45,7 @@ export const createComponentDidMount = (instance, selectedKeys, options = {}) =>
 };
 
 export const createComponentDidUpdate = (instance, selectedKeys, options = {}) => {
-  const {debounce: debounceValue = DEBOUNCE_VALUE_DEFAULT, renderOnResize = RENDER_ON_RESIZE_DEFAULT} = options;
+  const {debounce: debounceValue = DEFAULT_OPTIONS.debounce, renderOnResize = DEFAULT_OPTIONS.renderOnResize} = options;
 
   /**
    * @private
@@ -54,6 +54,8 @@ export const createComponentDidUpdate = (instance, selectedKeys, options = {}) =
    *
    * @description
    * on update, set the element if it has changed, and update or clear the values based on its existence
+   *
+   * @returns {void}
    */
   return () => {
     const element = findDOMNode(instance);
@@ -63,10 +65,10 @@ export const createComponentDidUpdate = (instance, selectedKeys, options = {}) =
     }
 
     if (element) {
-      updateValuesViaRaf(instance);
-    } else {
-      clearValues(instance, selectedKeys);
+      return updateValuesViaRaf(instance);
     }
+
+    clearValues(instance, selectedKeys);
   };
 };
 
@@ -138,12 +140,8 @@ export const createUpdateValuesIfChanged = (instance, selectedKeys) => {
    * get the new values and assign them to state if they have changed
    */
   return () => {
-    const element = instance.element;
-
-    if (element) {
-      const values = getElementValues(element, selectedKeys);
-
-      setValuesIfChanged(instance, selectedKeys, values);
+    if (instance.element) {
+      setValuesIfChanged(instance, selectedKeys, getElementValues(instance.element, selectedKeys));
     }
   };
 };
@@ -168,7 +166,7 @@ const getMeasuredComponent = (keys, options) => {
   return (PassedComponent) => {
     const passedComponentPrototype = Object.getPrototypeOf(PassedComponent);
     const isPureComponent = passedComponentPrototype === PureComponent;
-    const isComponent = !isPureComponent && passedComponentPrototype === Component;
+    const shouldApplyRef = isPureComponent || passedComponentPrototype === Component;
 
     const ComponentToExtend = isPure || isPureComponent ? PureComponent : Component;
     const displayName = getComponentName(PassedComponent);
@@ -204,7 +202,7 @@ const getMeasuredComponent = (keys, options) => {
       render() {
         return (
           <PassedComponent
-            ref={isPureComponent || isComponent ? this.setOriginalRef : null}
+            ref={shouldApplyRef ? this.setOriginalRef : null}
             {...this.props}
             {...getScopedValues(this.measurements, selectedKeys, options)}
           />

@@ -106,11 +106,7 @@ test('if measure returns a higher-order component', (t) => {
 });
 
 test('if each member of ALL_KEYS has a convenience method on measure', (t) => {
-  const keys = Object.keys(measure);
-
-  t.deepEqual(keys, ALL_KEYS);
-
-  keys.forEach((key) => {
+  ALL_KEYS.forEach((key) => {
     t.true(_.isFunction(measure[key]));
   });
 });
@@ -136,19 +132,19 @@ test('if measure will accept an array value for keys', (t) => {
 
   const keys = ['height', 'width'];
 
-  const getValidKeysStub = sinon.stub(utils, 'getValidKeys').returns(keys);
+  const getMeasuredKeysStub = sinon.stub(utils, 'getMeasuredKeys').returns(keys);
 
   measure(keys);
 
   t.true(getMeasuredComponentStub.calledOnce);
-  t.true(getValidKeysStub.calledOnce);
+  t.true(getMeasuredKeysStub.calledOnce);
 
   const args = getMeasuredComponentStub.firstCall.args;
 
   t.deepEqual(args, [keys, {}]);
 
   getMeasuredComponentStub.restore();
-  getValidKeysStub.restore();
+  getMeasuredKeysStub.restore();
 });
 
 test('if measure will default to ALL_KEYS', (t) => {
@@ -161,6 +157,20 @@ test('if measure will default to ALL_KEYS', (t) => {
   const args = getMeasuredComponentStub.firstCall.args;
 
   t.deepEqual(args, [ALL_KEYS, {}]);
+
+  getMeasuredComponentStub.restore();
+});
+
+test('if measure.flatten will set the flatten option to true', (t) => {
+  const getMeasuredComponentStub = sinon.stub(component, 'default');
+
+  measure.flatten();
+
+  t.true(getMeasuredComponentStub.calledOnce);
+
+  const args = getMeasuredComponentStub.firstCall.args;
+
+  t.deepEqual(args, [ALL_KEYS, {flatten: true}]);
 
   getMeasuredComponentStub.restore();
 });
