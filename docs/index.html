@@ -77,7 +77,7 @@
 
 
 
-    <h3>remeasure 2.5.1</h3>
+    <h3>remeasure 2.6.0</h3>
 
 
 
@@ -122,26 +122,15 @@ var measure = window.Remeasure;
 @measure
 class MyComponent extends React.Component {
   render() {
-    const {
-      position,
-      size
-    } = this.props;
+    const {position, size} = this.props;
 
-    return (
-      &lt;div>
-        I have access to my size and position through props!
-      &lt;/div>
-    );
+    return &lt;div>I have access to my size and position through props!&lt;/div>;
   }
 }
 
 // or as a function wrapper
 const StatelessComponent = measure(({position, size}) => {
-  return (
-    &lt;div>
-      In here too!
-    &lt;/div>
-  );
+  return &lt;div>In here too!&lt;/div>;
 });</code></pre><p>Any component that has <code>measure</code> applied to it will be wrapped in a <a href="https://medium.com/@dan_abramov/mixins-are-dead-long-live-higher-order-components-94a0d2f9e750#.k0th02ffm">Higher-Order Component</a> that will pass in the props <code>position</code> and <code>size</code>, which contain a variety of measurements related to (you guessed it) the component's position and size. A complete list of properties:</p>
 <pre class="prettyprint source lang-javascript"><code>{
   position: {
@@ -181,10 +170,7 @@ const measureOnlyOffsetWidth = measure('offsetWidth');
 
 const MyStatelessComponent = measureOnlyOffsetWidth(({size}) => {
   return (
-    &lt;div>
-      Only size is injected (because no position values were requested),
-      with offsetWidth as the only property
-    &lt;/div>
+    &lt;div>Only size is injected (because no position values were requested), with offsetWidth as the only property&lt;/div>
   );
 });
 
@@ -192,16 +178,12 @@ const MyStatelessComponent = measureOnlyOffsetWidth(({size}) => {
 @measure(['top', 'height'])
 class MyComponent extends Component {
   render() {
-    const {
-      position,
-      size
-    } = this.props;
+    const {position, size} = this.props;
 
     return (
       &lt;div>
-        Both the position and size props are injected (because values
-        from both position and size were requested), and each will have
-        a single property on them (top on position, height on size).
+        Both the position and size props are injected (because values from both position and size were requested), and
+        each will have a single property on them (top on position, height on size).
       &lt;/div>
     );
   }
@@ -213,12 +195,7 @@ class MySizedComponent extends Component {
   render() {
     const size = this.props.size;
 
-    return (
-      &lt;div>
-        I have the size prop injected with all properties, but not
-        position.
-      &lt;/div>
-    );
+    return &lt;div>I have the size prop injected with all properties, but not position.&lt;/div>;
   }
 }</code></pre><p>You can also pass an object with any of the following propeties (defaults shown):</p>
 <pre class="prettyprint source lang-javascript"><code>{
@@ -289,14 +266,24 @@ class MySizedComponent extends Component {
 <pre class="prettyprint source lang-javascript"><code>@measure.width
 class MyMeasuredComponent extends Component {
   render() {
+    const {width} = this.props;
+
+    return &lt;div>I have width of {width}.&lt;/div>;
+  }
+}</code></pre><p>These accept options as a parameter just like the standard <code>measure</code>, they are just merged with the <code>flatten: true</code> value.</p>
+<p>You can also use the <code>measure.flatten</code> method if you want to use multiple keys with the <code>flatten</code> attribute.</p>
+<pre class="prettyprint source lang-javascript"><code>@measure.flatten(['height', 'width'])
+class MyMeasuredComponent extends Component {
+  render() {
+    const {height, width} = this.props;
+
     return (
       &lt;div>
-        I have access to width at this.props.width.
+        I have width of {width} and height of {height}.
       &lt;/div>
     );
   }
-}</code></pre><p>These accept options as a parameter just like the standard <code>measure</code>, they are just merged with the <code>flatten: true</code> value.</p>
-<h3 id="caveats">Caveats</h3>
+}</code></pre><h3 id="caveats">Caveats</h3>
 <p>A couple things to keep in mind when using <code>remeasure</code>:</p>
 <p><strong>Void tags cannot detect element resize</strong></p>
 <p>If children on a tag are considered invalid HTML (such as for <code>&lt;input/&gt;</code>, <code>&lt;img/&gt;</code>, etc), then the internal element resize detector cannot not work. The easy solution to this is to update the component via props (on update a recalculation of values is triggered).</p>
