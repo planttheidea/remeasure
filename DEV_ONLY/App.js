@@ -1,129 +1,113 @@
 import React, {Component, PureComponent} from 'react';
-import {render} from 'react-dom';
 
-import measure from '../src/index';
-
-document.body.style.backgroundColor = '#1d1d1d';
-document.body.style.color = '#d5d5d5';
-document.body.style.margin = 0;
-document.body.style.padding = 0;
+import {measure, Measured} from '../src';
 
 @measure
 class NoParams extends PureComponent {
   render() {
-    const {children, position, size} = this.props;
+    const {children, ...measurements} = this.props;
 
     console.group('no params');
-    console.log('position', position);
-    console.log('size', size);
+    console.log('measurements in props', measurements);
     console.groupEnd();
 
     return <div>{children}</div>;
   }
 }
 
-@measure.width({debounce: true})
+@measure.width({debounce: 200})
 class WidthOnly extends PureComponent {
   render() {
-    const {children, position, size, width} = this.props;
+    const {children, ...measurements} = this.props;
 
     console.group('width only');
-    console.log('position', position);
-    console.log('size', size);
-    console.log('width', width);
+    console.log('measurements in props', measurements);
     console.groupEnd();
 
     return <div>{children}</div>;
   }
 }
 
-@measure('position')
+@measure(['bottom', 'left', 'right', 'top'], {namespace: 'position'})
 class PositionOnly extends PureComponent {
   render() {
-    const {children, position, size} = this.props;
+    const {children, position} = this.props;
 
     console.group('position only');
     console.log('position', position);
-    console.log('size', size);
     console.groupEnd();
 
     return <div>{children}</div>;
   }
 }
 
-@measure(['height', 'width', 'top', 'left'])
+@measure(['height', 'width', 'top', 'left'], {namespace: 'measurements'})
 class SpecificProperties extends PureComponent {
   render() {
-    const {children, position, size} = this.props;
+    const {children, measurements} = this.props;
 
-    console.group('specific properties');
-    console.log('position', position);
-    console.log('size', size);
+    console.group('specific properties with namespace');
+    console.log('measurements', measurements);
     console.groupEnd();
 
     return <div>{children}</div>;
   }
 }
 
-@measure({positionProp: 'foo', sizeProp: 'bar'})
+@measure({namespace: 'foo'})
 class CustomCategories extends PureComponent {
   render() {
-    const {bar, children, foo} = this.props;
+    const {children, foo} = this.props;
 
-    console.group('custom categories');
+    console.group('custom namespace');
     console.log('foo', foo);
-    console.log('bar', bar);
     console.groupEnd();
 
     return <div>{children}</div>;
   }
 }
 
-@measure({positionProp: 'foo', sizeProp: 'bar', inheritedMethods: ['getFoo']})
-class InheritedMethods extends PureComponent {
+@measure({namespace: 'foo'})
+class AccessRef extends PureComponent {
   getFoo() {
-    return this.props.foo;
+    return console.log('local method', this.props.foo);
   }
 
   render() {
-    const {bar, children, foo} = this.props;
+    const {children, foo} = this.props;
 
-    console.group('custom categories');
+    console.group('custom namespace with inherited methods');
     console.log('foo', foo);
-    console.log('bar', bar);
     console.groupEnd();
 
     return <div>{children}</div>;
   }
 }
 
-@measure(['height', 'width', 'top', 'left'], {positionProp: 'foo', sizeProp: 'bar'})
+@measure(['height', 'width', 'top', 'left'], {namespace: 'foo'})
 class CustomCategoriesWithSpecificProperties extends PureComponent {
   render() {
     const {bar, children, foo} = this.props;
 
-    console.group('custom categories with specific properties');
+    console.group('custom namespace with specific properties');
     console.log('foo', foo);
-    console.log('bar', bar);
     console.groupEnd();
 
     return <div>{children}</div>;
   }
 }
 
-const StatelessComponent = measure({isPure: true})(({children, position, size}) => {
+const StatelessComponent = measure({namespace: 'measurements'})(({children, measurements}) => {
   console.group('stateless component');
-  console.log('position', position);
-  console.log('size', size);
+  console.log('measurements', measurements);
   console.groupEnd();
 
   return <div>{children}</div>;
 });
 
-const ConditionalComponent = measure(({children, isShown, position, size}) => {
+const ConditionalComponent = measure({namespace: 'measurements'})(({children, isShown, measurements}) => {
   console.group('conditional component');
-  console.log('position', position);
-  console.log('size', size);
+  console.log('measurements', measurements);
   console.groupEnd();
 
   if (!isShown) {
@@ -133,23 +117,39 @@ const ConditionalComponent = measure(({children, isShown, position, size}) => {
   return <div>{children}</div>;
 });
 
-const FlatComponent = measure.flatten(['height', 'width'])((props) => {
-  console.group('flattened');
+const FlatComponent = measure(['height', 'width'])((props) => {
+  console.group('height and width');
   console.log(props);
   console.groupEnd();
 
-  return <div>{props.width}</div>;
+  return <div>width: {props.width}</div>;
 });
 
 class App extends Component {
   state = {
-    isConditionalElementShown: true
+    activeProp: 'width',
+    debounce: 500,
+    isConditionalElementShown: true,
+    isVisible: false
   };
 
   componentDidMount() {
-    console.log('--------- GETTING FOO ------------');
-    console.log(this.inheritedRef.getFoo());
+    console.group('--------- GETTING FOO ------------');
+    console.log('actual ref', this.accessRef);
+    console.log('ref originalComponent', this.accessRef.originalComponent);
+    console.log('calling originalComponent method', this.accessRef.originalComponent.getFoo());
+    console.groupEnd();
   }
+
+  componentDidUpdate(previousProps, {debounce: previousDebounce}) {
+    const {debounce} = this.state;
+
+    if (debounce !== previousDebounce) {
+      console.log(`debounce changed to ${debounce}`);
+    }
+  }
+
+  accessRef = null;
 
   onClickToggleConditionalElement = () => {
     const {isConditionalElementShown} = this.state;
@@ -159,12 +159,39 @@ class App extends Component {
     });
   };
 
-  setInheritedRef = (component) => {
-    this.inheritedRef = component;
+  setAccessRef = (component) => {
+    this.accessRef = component;
+  };
+
+  toggleActiveProp = () => {
+    this.setState(({activeProp: currentProp}) => {
+      return {
+        activeProp: currentProp === 'width' ? 'height' : 'width'
+      };
+    });
+  };
+
+  toggleDebounce = () => {
+    const min = 50;
+    const max = 1000;
+
+    this.setState(() => {
+      return {
+        debounce: ~~(Math.random() * (max - min) + min)
+      };
+    });
+  };
+
+  toggleVisibility = () => {
+    this.setState(({isVisible}) => {
+      return {
+        isVisible: !isVisible
+      };
+    });
   };
 
   render() {
-    const {isConditionalElementShown} = this.state;
+    const {activeProp, debounce, isConditionalElementShown, isVisible} = this.state;
 
     return (
       <div>
@@ -182,9 +209,7 @@ class App extends Component {
 
         <CustomCategories>I have custom position property (foo) and size property (bar).</CustomCategories>
 
-        <InheritedMethods ref={this.setInheritedRef}>
-          I have an instance method (getFoo) that is inherited by the HOC.
-        </InheritedMethods>
+        <AccessRef ref={this.setAccessRef}>I have an instance method (getFoo) that is inherited by the HOC.</AccessRef>
 
         <CustomCategoriesWithSpecificProperties>
           I only have the height and width properties in size (under the prop bar), and top and left properties in
@@ -211,15 +236,44 @@ class App extends Component {
         )}
 
         <FlatComponent />
+
+        <button onClick={this.toggleActiveProp}>Toggle first component prop watched</button>
+        <button onClick={this.toggleVisibility}>Toggle second component visibility</button>
+        <button onClick={this.toggleDebounce}>Toggle third component debounce</button>
+
+        <Measured
+          height={activeProp === 'height'}
+          width={activeProp === 'width'}
+        >
+          {({height, width}) => {
+            console.log('dynamic props', {height, width});
+
+            return <div>Some contained element with dynamic prop: {JSON.stringify({height, width})}</div>;
+          }}
+        </Measured>
+
+        <Measured
+          component={({height, width}) => {
+            console.log('toggled', {height, width});
+
+            return isVisible ? <div>Some other contained element</div> : null;
+          }}
+          height
+          width
+        />
+
+        <Measured
+          debounce={debounce}
+          offsetWidth
+          render={({offsetWidth}) => {
+            console.log('debounced', {offsetWidth});
+
+            return <div>Some other debounced element</div>;
+          }}
+        />
       </div>
     );
   }
 }
 
-const div = document.createElement('div');
-
-div.id = 'app-container';
-
-render(<App />, div);
-
-document.body.appendChild(div);
+export default App;

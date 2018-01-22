@@ -1,79 +1,155 @@
 # remeasure
 
+<img src="https://img.shields.io/badge/build-passing-brightgreen.svg"/>
+<img src="https://img.shields.io/badge/coverage-100%25-brightgreen.svg"/>
+<img src="https://img.shields.io/badge/license-MIT-blue.svg"/>
+
 Get position and size of the DOM element for any React Component
 
-### Table of contents
+## Table of contents
 
-* [Installation](#installation)
 * [Usage](#usage)
+  * [As a decorator](#as-a-decorator)
+  * [As a component](#as-a-component)
+  * [Measurements](#measurements)
 * [Advanced usage](#advanced-usage)
+  * [keys](#keys)
+  * [options](#options)
+  * [ref](#ref)
 * [Convenience methods](#convenience-methods)
 * [Caveats](#caveats)
 * [Support](#support)
 * [Development](#development)
 
-### Installation
-
-```
-$ npm i remeasure --save
-```
-
-### Usage
+## Usage
 
 ```javascript
 // ES2015
-import measure from 'remeasure';
+import {measure, Measured} from 'remeasure';
 
 // CommonJS
-const measure = require('remeasure');
+const {measure, Measured} = require('remeasure').default;
 
-// script
-var measure = window.Remeasure;
+// old school script
+var measure = window.Remeasure.measure;
+var Measured = window.Remeasure.Measured;
+```
 
-// apply it as a decorator
+#### As a decorator
+
+```javascript
 @measure
 class MyComponent extends React.Component {
   render() {
-    const {position, size} = this.props;
+    const {height, width} = this.props;
 
-    return <div>I have access to my size and position through props!</div>;
+    return <div>I have access to my height and width through props!</div>;
   }
 }
 
-// or as a function wrapper
-const StatelessComponent = measure(({position, size}) => {
+const StatelessComponent = measure(({height, width}) => {
   return <div>In here too!</div>;
 });
 ```
 
-Any component that has `measure` applied to it will be wrapped in a [Higher-Order Component](https://medium.com/@dan_abramov/mixins-are-dead-long-live-higher-order-components-94a0d2f9e750#.k0th02ffm) that will pass in the props `position` and `size`, which contain a variety of measurements related to (you guessed it) the component's position and size. A complete list of properties:
+#### As a component
+
+You can use the component with function-rendering components one of three ways:
+
+```javascript
+// using a children method
+const MyMeasuredComponent = () => {
+  return (
+    <Measured height width>
+      {({height, width}) => {
+        return (
+          <div>
+            My height is {height} and my width is {width}
+          </div>
+        );
+      }}
+    </Measured>
+  );
+};
+
+// using a component method
+const MyMeasuredComponent = () => {
+  return (
+    <Measured
+      height
+      width
+      component={({height, width}) => {
+        return (
+          <div>
+            My height is {height} and my width is {width}
+          </div>
+        );
+      }}
+    />
+  );
+};
+
+// using a render method
+const MyMeasuredComponent = () => {
+  return (
+    <Measured
+      height
+      width
+      render={({height, width}) => {
+        return (
+          <div>
+            My height is {height} and my width is {width}
+          </div>
+        );
+      }}
+    />
+  );
+};
+```
+
+For performance reasons, it is recommended that you store the component as a separate method rather than create a method inline:
+
+```javascript
+// using a render method
+const Render = ({height, width}) => {
+  return (
+    <div>
+      My height is {height} and my width is {width}
+    </div>
+  );
+};
+
+const MyMeasuredComponent = () => {
+  return <Measured height width render={Render} />;
+};
+```
+
+#### Measurements
+
+The following properties are available for measurement:
 
 ```javascript
 {
-  position: {
-    bottom: Number,
-    clientLeft: Number,
-    clientTop: Number,
-    offsetLeft: Number,
-    offsetTop: Number,
-    left: Number,
-    right: Number,
-    scrollLeft: Number,
-    scrollTop: Number,
-    top: Number
-  },
-  size: {
-    clientHeight: Number,
-    clientWidth: Number,
-    height: Number,
-    naturalHeight: Number,
-    naturalWidth: Number,
-    offsetHeight: Number,
-    offsetWidth: Number,
-    scrollHeight: Number,
-    scrollWidth: Number,
-    width: Number
-  }
+  bottom: Number,
+  clientLeft: Number,
+  clientHeight: Number,
+  clientWidth: Number,
+  clientTop: Number,
+  height: Number,
+  left: Number,
+  naturalHeight: Number,
+  naturalWidth: Number,
+  offsetHeight: Number,
+  offsetLeft: Number,
+  offsetTop: Number,
+  offsetWidth: Number,
+  scrollHeight: Number,
+  scrollLeft: Number,
+  scrollTop: Number,
+  scrollWidth: Number,
+  right: Number,
+  top: Number
+  width: Number
 }
 ```
 
@@ -81,11 +157,13 @@ The `bottom`, `left`, `right`, and `top` properties in `position` are what you w
 
 These properties are retrieved on mount, but will also automatically update if the element is resized thanks to [ResizeObserver](https://github.com/que-etc/resize-observer-polyfill). Please note that elements that do not support content (such as `img`) are not supported by this resize listener because there is no content box to observe. If you need to support those elements, simply create a higher-order component that wraps that element in a `div` and decorate that component.
 
-### Advanced usage
+## Advanced usage
 
-If you want to limit the items that are injected into the component, you can pass either a key or array of keys to the decorator before wrapping the component.
+#### keys
 
-**measure(`String|Array<String>|Object[, Object]`)** _returns `Function`_
+`(Array<string>|string)`
+
+The keys to listen for changes to. If not specified, all possible keys will be measured.
 
 Examples:
 
@@ -110,100 +188,124 @@ class MyComponent extends Component {
     return (
       <div>
         Both the position and size props are injected (because values from both position and size were requested), and
-        each will have a single property on them (top on position, height on size).
+        each will have a single property on them (top on position, height on size).``
       </div>
     );
   }
 }
-
-// or quickly select the complete list of either size or position
-@measure('size')
-class MySizedComponent extends Component {
-  render() {
-    const size = this.props.size;
-
-    return <div>I have the size prop injected with all properties, but not position.</div>;
-  }
-}
 ```
 
-You can also pass an object with any of the following propeties (defaults shown):
+You can apply the keys one of two ways on the `Measure` component:
+
+```javascript
+// either as individual boolean properties
+<Measured height>
+  {({height}) => {
+    return (
+      <div>I am {height} pixels in height.</div>
+    );
+  }}
+</Measured>
+
+// or as the "keys" prop
+<Measured keys={['height']}>
+  {({height}) => {
+    return (
+      <div>I am {height} pixels in height.</div>
+    );
+  }}
+</Measured>
+```
+
+Note that the properties will only be applied if they are set to `true` (yes, you can actually toggle what properties are measured!).
+
+#### options
+
+`Object`
+
+Allows customization of the measurements. Available options:
 
 ```javascript
 {
     // value in milliseconds to debounce rerenders
     debounce: Number,
 
-    // should the properties not be grouped under position / size
-    flatten: Boolean = false,
-
-    // names of methods that the instance should inherit
-    // this is used if you want to call an instance method via ref in a different component
-    inheritedMethods: Array<string>,
-
-    // should the higher-order component be a pure component,
-    isPure: Boolean = false,
-
-    // sets position property name
-    positionProp: String = 'position',
+    // sets namespace for values to be passed into props on
+    namespace: String,
 
     // should element rerender when resized
-    renderOnResize: Boolean = true,
-
-    // sets size property name
-    sizeProp: String = 'size'
+    renderOnResize: Boolean = true
 }
 ```
 
-These will serve as options for the instance `remeasure` is applied to. For example, if you want all position-related properties to be injected under the prop `foo` and the size-related properties to be injected under the prop `bar`, you can do this:
+Example usage with the decorator:
 
 ```javascript
-// use the options by themselves
-@measure({positionProp: 'foo', sizeProp: 'bar'})
+// use them alone
+@measure({renderOnResize: false})
 class MyComponent extends Component {
-    render() {
-        const {
-            foo,
-            bar
-        } = this.props;
+  render() {
+    const {height, width} = this.props;
 
-        return (
-            <div>
-                The foo and bar props now represent position and size, respectively.
-            </div>
-        );
-    }
+    return <div>The height and width props will not update with resizes.</div>;
+  }
 }
 
 // or you can use them with keys
-const measureWithKeysAndOptions = measure(['height', 'width'], {debounce: 50, flatten: true});
+const MyStatelessComponent = measure(['height', 'width'], {debounce: 50, namespace: 'measurements'})(
+  ({measurements}) => {
+    return <div>You can still pass options when you want to specify keys, as the second parameter.</div>;
+  }
+);
+```
 
-const MyStatelessComponent = measureWithKeysAndOptions(({height, width}) => {
-    return (
-        <div>
-            You can still pass options when you want to specify keys, as the
-            second parameter.
-        </div>
-    );
-};
+Example usage with the `Measured` component:
 
-// you can even use the custom props with the shorthand notation
-@measure('bar', {sizeProp: 'bar'})
-class MySizedComponent extends Component {
-    render() {
-        return (
-            <div>
-                I will have access to all the size properties under the prop
-                bar, but foo will not be injected.
-            </div>
-        );
-    }
+```javascript
+<Measured debounce={500} namespace="measurements">
+  {({measurements}) => {
+    return <div>My measurements: {JSON.stringify(measurements)}</div>;
+  }}
+</Measured>
+```
+
+#### ref
+
+Like any other component, you can access the `Measured` component instance via the `ref`, but when using the `measure` decorator you will be accessing the `Measured` HOC and not the original component. If you want to access the original component, it is available as the `originalComponent` property on that `ref`.
+
+```javascript
+@measure.width
+class Foo extends Component {
+  getProps() {
+    return this.props;
+  }
+
+  render() {
+    return <div>Use getProps to get my props!</div>;
+  }
+}
+...
+class FooConsumer extends Component {
+  componentDidMount() {
+    console.log(this.foo); // Measured component
+    console.log(this.foo.originalComponent); // Foo component
+    console.log(this.foo.originalComponent.getProps()); // {bar: 'bar'}
+  }
+
+  render() {
+    <Foo
+      ref={(component) => {
+        this.foo = component;
+      }}
+      bar="bar"
+    />
+  }
 }
 ```
 
-### Convenience methods
+## Convenience methods
 
-For each key that is measured, a convenience function exists on the main `measure` function which is a shorthand for `measure(property, {flatten: true})`. Example:
+For each key that is measured, a convenience function exists on the `measure` decorator. Example:
 
 ```javascript
 @measure.width
@@ -216,26 +318,7 @@ class MyMeasuredComponent extends Component {
 }
 ```
 
-These accept options as a parameter just like the standard `measure`, they are just merged with the `flatten: true` value.
-
-You can also use the `measure.flatten` method if you want to use multiple keys with the `flatten` attribute.
-
-```javascript
-@measure.flatten(['height', 'width'])
-class MyMeasuredComponent extends Component {
-  render() {
-    const {height, width} = this.props;
-
-    return (
-      <div>
-        I have width of {width} and height of {height}.
-      </div>
-    );
-  }
-}
-```
-
-### Caveats
+## Caveats
 
 A couple things to keep in mind when using `remeasure`:
 
@@ -247,7 +330,7 @@ If children on a tag are considered invalid HTML (such as for `<input/>`, `<img/
 
 If you perform an update to the component `props` or `state` that also happens to change its dimensions, the component will update twice, once for the changes to `props` / `state`, and again for the changes to its dimensions. This is because the component needs to render in the DOM before updated values can be calculated.
 
-### Support
+## Support
 
 `remeasure` has been tested and confirmed to work on the following browsers:
 
@@ -259,7 +342,7 @@ If you perform an update to the component `props` or `state` that also happens t
 
 `remeasure` also works with universal / isomorphic applications.
 
-### Development
+## Development
 
 Standard stuff, clone the repo and `npm i` to get the dependencies. npm scripts available:
 

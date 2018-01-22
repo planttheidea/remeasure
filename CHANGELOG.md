@@ -1,5 +1,24 @@
 # remeasure CHANGELOG
 
+## 3.0.0
+
+* Add `Measured` component with render function support
+
+#### BREAKING CHANGES
+
+* `measure` (as well as the new `Measured` component) are named imports (no default export is provided)
+* All properties are now flattened by default (no `position` or `size` objects)
+  * If you want to have the properties in a separate object, apply the `namespace` option
+  * `measure.flatten` no longer exists
+* `inheritedMethods` is no longer an option
+  * if you want to access methods of the original component, use the `originalComponent` property from the `ref`
+* `isPure` is no longer an option
+* `positionProp` and `sizeProp` options have been replaced by the `namespace` option
+* The CommonJS `require` now requires `.default`
+
+  * `require('remeasure').default`
+  * You can also use the named imports, e.g. `require('remeasure').measure`
+
 ## 2.6.0
 
 * Add `flatten` method (convenience method for flat multi-key mapping)

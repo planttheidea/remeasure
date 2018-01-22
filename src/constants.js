@@ -1,58 +1,51 @@
-// external dependencies
-import PropTypes from 'prop-types';
+/**
+ * @constant {boolean} IS_PRODUCTION
+ */
+export const IS_PRODUCTION = !!(process && process.env && process.env.NODE_ENV === 'production');
 
 /**
- * @constant {Object} DEFAULT_OPTIONS
+ * @constant {Object} SOURCES
  */
-export const DEFAULT_OPTIONS = {
-  debounce: 0,
-  flatten: false,
-  inheritedMethods: [],
-  positionProp: 'position',
-  renderOnResize: true,
-  sizeProp: 'size'
+export const SOURCES = {
+  CLIENT_RECT: 'CLIENT_RECT',
+  ELEMENT: 'ELEMENT'
 };
 
 /**
- * @constant {Array<string>} BOUNDING_CLIENT_RECT_SIZE_KEYS
+ * @constant {Array<Object>} KEYS
  */
-export const BOUNDING_CLIENT_RECT_SIZE_KEYS = ['height', 'width'];
+export const KEYS = [
+  // client rect keys
+  {key: 'bottom', source: SOURCES.CLIENT_RECT},
+  {key: 'left', source: SOURCES.CLIENT_RECT},
+  {key: 'height', source: SOURCES.CLIENT_RECT},
+  {key: 'right', source: SOURCES.CLIENT_RECT},
+  {key: 'top', source: SOURCES.CLIENT_RECT},
+  {key: 'width', source: SOURCES.CLIENT_RECT},
 
-/**
- * @constant {Array<string>} BOUNDING_CLIENT_RECT_POSITION_KEYS
- */
-export const BOUNDING_CLIENT_RECT_POSITION_KEYS = ['bottom', 'left', 'right', 'top'];
-
-/**
- * @constant {Array<string>} ALL_BOUNDING_CLIENT_RECT_KEYS
- */
-export const ALL_BOUNDING_CLIENT_RECT_KEYS = [...BOUNDING_CLIENT_RECT_POSITION_KEYS, ...BOUNDING_CLIENT_RECT_SIZE_KEYS];
-
-/**
- * @constant {Array<string>} DOM_ELEMENT_POSITION_KEYS
- */
-export const DOM_ELEMENT_POSITION_KEYS = [
-  'clientLeft',
-  'clientTop',
-  'offsetLeft',
-  'offsetTop',
-  'scrollLeft',
-  'scrollTop'
+  // element keys
+  {key: 'clientLeft', source: SOURCES.ELEMENT},
+  {key: 'clientHeight', source: SOURCES.ELEMENT},
+  {key: 'clientTop', source: SOURCES.ELEMENT},
+  {key: 'clientWidth', source: SOURCES.ELEMENT},
+  {key: 'naturalHeight', source: SOURCES.ELEMENT},
+  {key: 'naturalWidth', source: SOURCES.ELEMENT},
+  {key: 'offsetLeft', source: SOURCES.ELEMENT},
+  {key: 'offsetHeight', source: SOURCES.ELEMENT},
+  {key: 'offsetTop', source: SOURCES.ELEMENT},
+  {key: 'offsetWidth', source: SOURCES.ELEMENT},
+  {key: 'scrollLeft', source: SOURCES.ELEMENT},
+  {key: 'scrollHeight', source: SOURCES.ELEMENT},
+  {key: 'scrollTop', source: SOURCES.ELEMENT},
+  {key: 'scrollWidth', source: SOURCES.ELEMENT}
 ];
 
 /**
- * @constant {Array<string>} DOM_ELEMENT_SIZE_KEYS
+ * @constant {Array<string>} KEY_NAMES
  */
-export const DOM_ELEMENT_SIZE_KEYS = [
-  'clientHeight',
-  'clientWidth',
-  'naturalHeight',
-  'naturalWidth',
-  'offsetHeight',
-  'offsetWidth',
-  'scrollHeight',
-  'scrollWidth'
-];
+export const KEY_NAMES = KEYS.map(({key}) => {
+  return key;
+});
 
 /**
  * @constant {RegExp} FUNCTION_NAME_REGEXP
@@ -84,46 +77,3 @@ export const VOID_ELEMENT_TAG_NAMES = [
   'TRACK',
   'WBR'
 ];
-
-/**
- * @constant {Array<string>} ALL_DOM_ELEMENT_KEYS
- */
-export const ALL_DOM_ELEMENT_KEYS = [...DOM_ELEMENT_POSITION_KEYS, ...DOM_ELEMENT_SIZE_KEYS];
-
-/**
- * @constant {Array<string>} ALL_POSITION_KEYS
- */
-export const ALL_POSITION_KEYS = [...DOM_ELEMENT_POSITION_KEYS, ...BOUNDING_CLIENT_RECT_POSITION_KEYS];
-
-/**
- * @constant {Array<string>} ALL_SIZE_KEYS
- */
-export const ALL_SIZE_KEYS = [...DOM_ELEMENT_SIZE_KEYS, ...BOUNDING_CLIENT_RECT_SIZE_KEYS];
-
-/**
- * @constant {Array<string>} ALL_KEYS
- */
-export const ALL_KEYS = [...ALL_POSITION_KEYS, ...ALL_SIZE_KEYS];
-
-/**
- * @constant {string} CLIENT_RECT_TYPE
- */
-export const CLIENT_RECT_TYPE = 'clientRect';
-
-/**
- * @constant {string} ELEMENT_TYPE
- */
-export const ELEMENT_TYPE = 'element';
-
-/**
- * @constant {Object} OPTIONS_SHAPE
- */
-export const OPTIONS_SHAPE = {
-  debounce: PropTypes.number,
-  flatten: PropTypes.bool,
-  inheritedMethods: PropTypes.arrayOf(PropTypes.string),
-  isPure: PropTypes.bool,
-  positionProp: PropTypes.string,
-  renderOnResize: PropTypes.bool,
-  sizeProp: PropTypes.string
-};

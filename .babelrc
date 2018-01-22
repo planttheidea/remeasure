@@ -27,7 +27,6 @@
       ]
     },
     "lib": {
-      "plugins": ["add-module-exports"],
       "presets": [
         [
           "env",
