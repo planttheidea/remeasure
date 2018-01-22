@@ -153,7 +153,7 @@ The following properties are available for measurement:
 }
 ```
 
-The `bottom`, `left`, `right`, and `top` properties in `position` are what you would expect from the result of `element.getBoundingClientRect()`. `naturalHeight` and `naturalWidth` are properties that are native to `img` elements, and for all non-`img` elements they are coalesced with `scrollHeight` and `scrollWidth`, respectively.
+The `bottom`, `left`, `right`, and `top` properties are what you would expect from the result of `element.getBoundingClientRect()`. `naturalHeight` and `naturalWidth` are properties that are native to `img` elements, and for all non-`img` elements they are coalesced with `scrollHeight` and `scrollWidth`, respectively.
 
 These properties are retrieved on mount, but will also automatically update if the element is resized thanks to [ResizeObserver](https://github.com/que-etc/resize-observer-polyfill). Please note that elements that do not support content (such as `img`) are not supported by this resize listener because there is no content box to observe. If you need to support those elements, simply create a higher-order component that wraps that element in a `div` and decorate that component.
 
@@ -173,24 +173,17 @@ import measure from 'remeasure';
 // pass a string value for a single property
 const measureOnlyOffsetWidth = measure('offsetWidth');
 
-const MyStatelessComponent = measureOnlyOffsetWidth(({size}) => {
-  return (
-    <div>Only size is injected (because no position values were requested), with offsetWidth as the only property</div>
-  );
+const MyStatelessComponent = measureOnlyOffsetWidth(({offsetWidth}) => {
+  return <div>Only offsetWidth is injected</div>;
 });
 
 // or an array of string values for multiple properties
 @measure(['top', 'height'])
 class MyComponent extends Component {
   render() {
-    const {position, size} = this.props;
+    const {top, height} = this.props;
 
-    return (
-      <div>
-        Both the position and size props are injected (because values from both position and size were requested), and
-        each will have a single property on them (top on position, height on size).``
-      </div>
-    );
+    return <div>Both the top and height props are injected</div>;
   }
 }
 ```
