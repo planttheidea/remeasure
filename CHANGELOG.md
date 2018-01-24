@@ -1,5 +1,9 @@
 # remeasure CHANGELOG
 
+## 3.0.1
+
+* Fix convenience methods not supporting implementations both with and without options
+
 ## 3.0.0
 
 * Add `Measured` component with render function support
