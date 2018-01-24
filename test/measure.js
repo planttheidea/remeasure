@@ -140,3 +140,31 @@ test('if measure has a method as a property of itself for each key name', (t) =>
     t.is(typeof result, 'function');
   });
 });
+
+test('if measure convenience method will handle wrapping a component directly', (t) => {
+  const TestComponent = ({children, height}) => {
+    return (
+      <div>
+        {children} has height of {height}
+      </div>
+    );
+  };
+
+  const MeasuredTestComponent = measure.measure.height(TestComponent);
+
+  t.snapshot(<MeasuredTestComponent>Foo</MeasuredTestComponent>);
+});
+
+test('if measure convenience method will handle wrapping a component with options', (t) => {
+  const TestComponent = ({children, height}) => {
+    return (
+      <div>
+        {children} has height of {height}
+      </div>
+    );
+  };
+
+  const MeasuredTestComponent = measure.measure.height({debounce: 200})(TestComponent);
+
+  t.snapshot(<MeasuredTestComponent>Foo</MeasuredTestComponent>);
+});
