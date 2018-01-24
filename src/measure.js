@@ -139,7 +139,7 @@ const measure = (passedKeys, passedOptions = {}) => {
 
 KEY_NAMES.forEach((key) => {
   measure[key] = (options) => {
-    return measure([key], options);
+    return typeof options === 'function' ? measure([key])(options) : measure([key], options);
   };
 });
 

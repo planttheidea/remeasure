@@ -815,7 +815,13 @@ test('if Measured renders correctly with no RenderComponent', (t) => {
     height: true
   };
 
+  const consoleStub = sinon.stub(console, 'error');
+
   const wrapper = mount(<Measured {...props} />);
+
+  t.true(consoleStub.calledOnce);
+
+  consoleStub.restore();
 
   t.snapshot(toJson(wrapper));
 });
