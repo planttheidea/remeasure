@@ -317,7 +317,7 @@ A couple things to keep in mind when using `remeasure`:
 
 **Void tags cannot detect element resize**
 
-If children on a tag are considered invalid HTML (such as for `<input/>`, `<img/>`, etc), then the internal element resize detector cannot not work. The easy solution to this is to update the component via props (on update a recalculation of values is triggered).
+If children on a tag are considered invalid HTML (such as for `<input/>`, `<img/>`, etc), then the internal element resize detector cannot work. The easy solution to this is to update the component via props (on update, a recalculation of values is triggered).
 
 **Components may render twice on update**
 
