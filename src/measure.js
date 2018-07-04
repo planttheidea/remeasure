@@ -1,6 +1,10 @@
 // external dependencies
 import PropTypes from 'prop-types';
-import React, {Component, PureComponent} from 'react';
+import React, {
+  Component,
+  PureComponent
+} from 'react';
+import {createComponent} from 'react-parm';
 
 // classes
 import Measured from './Measured';
@@ -9,9 +13,12 @@ import Measured from './Measured';
 import {KEY_NAMES} from './constants';
 
 // utils
-import {getComponentName, getMeasureKeys} from './utils';
+import {
+  getComponentName,
+  getMeasureKeys
+} from './utils';
 
-export const createSetOriginalRef = (instance) => {
+export const createSetOriginalRef = (instance) =>
   /**
    * @private
    *
@@ -22,10 +29,9 @@ export const createSetOriginalRef = (instance) => {
    *
    * @param {HTMLElement|ReactComponent} component the component instance to assign
    */
-  return (component) => {
+  (component) => {
     instance.originalComponent = component;
   };
-};
 
 /**
  * @private
@@ -42,28 +48,27 @@ export const getMeasuredComponent = (RenderedComponent) => {
   const componentPrototype = Object.getPrototypeOf(RenderedComponent);
   const shouldSetRef = componentPrototype === Component || componentPrototype === PureComponent;
 
-  return class MeasuredComponent extends Component {
-    static displayName = `Measured(${getComponentName(RenderedComponent)})`;
+  const MeasuredComponent = createComponent(({_measuredComponentChildren, _measuredComponentRef, ...props}) => (
+    // eslint workaround
+    <RenderedComponent
+      children={_measuredComponentChildren}
+      ref={shouldSetRef ? _measuredComponentRef : null}
+      {...props}
+    />
+  ));
 
-    static propTypes = {
-      _measuredComponentChildren: PropTypes.oneOfType([PropTypes.node, PropTypes.string]),
-      _measuredComponentRef: PropTypes.func.isRequired
-    };
+  MeasuredComponent.displayName = `Measured(${getComponentName(RenderedComponent)})`;
 
-    render() {
-      const {_measuredComponentChildren, _measuredComponentRef, ...props} = this.props;
-
-      return (
-        /* eslint-disable prettier */
-        <RenderedComponent
-          children={_measuredComponentChildren}
-          ref={shouldSetRef ? _measuredComponentRef : null}
-          {...props}
-        />
-        /* eslint-enable */
-      );
-    }
+  MeasuredComponent.propTypes = {
+    _measuredComponentChildren: PropTypes.oneOfType([PropTypes.node, PropTypes.string]),
+    _measuredComponentRef: PropTypes.func.isRequired,
   };
+
+  return MeasuredComponent;
+};
+
+export const setOriginalRef = (instance, [component]) => {
+  instance.originalComponent = component;
 };
 
 /**
@@ -84,35 +89,30 @@ export const getMeasuredHoc = (keys, options) => {
   return (RenderedComponent) => {
     const component = getMeasuredComponent(RenderedComponent);
 
-    return class MeasuredHoc extends Component {
-      static displayName = 'MeasuredHoc';
-
-      static propTypes = {
-        children: PropTypes.oneOfType([PropTypes.func, PropTypes.node, PropTypes.string]),
-        render: PropTypes.func
-      };
-
-      // instance values
-      originalComponent = null;
-
-      // instance methods
-      setOriginalRef = createSetOriginalRef(this);
-
-      render() {
-        const {children, render: renderIgnored, ...props} = this.props;
-
-        return (
-          <Measured
-            {...props}
-            {...restOfOptions}
-            _measuredComponentChildren={children}
-            _measuredComponentRef={this.setOriginalRef}
-            component={component}
-            keys={keys}
-          />
-        );
+    const MeasuredHoc = createComponent(
+      ({children, render: renderIgnored, ...props}, {setOriginalRef}) => (
+        <Measured
+          {...props}
+          {...restOfOptions}
+          _measuredComponentChildren={children}
+          _measuredComponentRef={setOriginalRef}
+          component={component}
+          keys={keys}
+        />
+      ),
+      {
+        setOriginalRef,
       }
+    );
+
+    MeasuredHoc.displayName = 'MeasuredHoc';
+
+    MeasuredHoc.propTypes = {
+      children: PropTypes.oneOfType([PropTypes.func, PropTypes.node, PropTypes.string]),
+      render: PropTypes.func,
     };
+
+    return MeasuredHoc;
   };
 };
 
@@ -128,19 +128,16 @@ export const getMeasuredHoc = (keys, options) => {
  * @param {Object} [passedOptions={}] the options when creating the measured component
  * @returns {function} the HOC that will render the component passed with measurements injected
  */
-const measure = (passedKeys, passedOptions = {}) => {
-  return typeof passedKeys === 'function'
+const measure = (passedKeys, passedOptions = {}) =>
+  typeof passedKeys === 'function'
     ? getMeasuredHoc(KEY_NAMES, passedOptions)(passedKeys)
     : getMeasuredHoc(
       getMeasureKeys(passedKeys),
       passedKeys && passedKeys.constructor === Object ? passedKeys : passedOptions
     );
-};
 
 KEY_NAMES.forEach((key) => {
-  measure[key] = (options) => {
-    return typeof options === 'function' ? measure([key])(options) : measure([key], options);
-  };
+  measure[key] = (options) => (typeof options === 'function' ? measure([key])(options) : measure([key], options));
 });
 
 export {measure};

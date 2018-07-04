@@ -1,6 +1,12 @@
-import React, {Component, PureComponent} from 'react';
+import React, {
+  Component,
+  PureComponent
+} from 'react';
 
-import {measure, Measured} from '../src';
+import {
+  measure,
+  Measured
+} from '../src';
 
 @measure
 class NoParams extends PureComponent {
@@ -130,7 +136,7 @@ class App extends Component {
     activeProp: 'width',
     debounce: 500,
     isConditionalElementShown: true,
-    isVisible: false
+    isVisible: false,
   };
 
   componentDidMount() {
@@ -155,7 +161,7 @@ class App extends Component {
     const {isConditionalElementShown} = this.state;
 
     this.setState({
-      isConditionalElementShown: !isConditionalElementShown
+      isConditionalElementShown: !isConditionalElementShown,
     });
   };
 
@@ -164,30 +170,24 @@ class App extends Component {
   };
 
   toggleActiveProp = () => {
-    this.setState(({activeProp: currentProp}) => {
-      return {
-        activeProp: currentProp === 'width' ? 'height' : 'width'
-      };
-    });
+    this.setState(({activeProp: currentProp}) => ({
+      activeProp: currentProp === 'width' ? 'height' : 'width',
+    }));
   };
 
   toggleDebounce = () => {
     const min = 50;
     const max = 1000;
 
-    this.setState(() => {
-      return {
-        debounce: ~~(Math.random() * (max - min) + min)
-      };
-    });
+    this.setState(() => ({
+      debounce: ~~(Math.random() * (max - min) + min),
+    }));
   };
 
   toggleVisibility = () => {
-    this.setState(({isVisible}) => {
-      return {
-        isVisible: !isVisible
-      };
-    });
+    this.setState(({isVisible}) => ({
+      isVisible: !isVisible,
+    }));
   };
 
   render() {
@@ -246,15 +246,30 @@ class App extends Component {
           width={activeProp === 'width'}
         >
           {({height, width}) => {
-            console.log('dynamic props', {height, width});
+            console.log('dynamic props', {
+              height,
+              width,
+            });
 
-            return <div>Some contained element with dynamic prop: {JSON.stringify({height, width})}</div>;
+            return (
+              // eslint workaround
+              <div>
+                Some contained element with dynamic prop:{' '}
+                {JSON.stringify({
+                  height,
+                  width,
+                })}
+              </div>
+            );
           }}
         </Measured>
 
         <Measured
           component={({height, width}) => {
-            console.log('toggled', {height, width});
+            console.log('toggled', {
+              height,
+              width,
+            });
 
             return isVisible ? <div>Some other contained element</div> : null;
           }}

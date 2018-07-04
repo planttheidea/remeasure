@@ -3,16 +3,27 @@ import debounceMethod from 'debounce';
 import {deepEqual} from 'fast-equals';
 import memoize from 'micro-memoize';
 import PropTypes from 'prop-types';
-import React, {Component} from 'react';
+import React from 'react';
 import {findDOMNode} from 'react-dom';
+import {createComponent} from 'react-parm';
 import raf from 'raf';
 import ResizeObserver from 'resize-observer-polyfill';
 
 // constants
-import {IS_PRODUCTION, KEY_NAMES, KEYS, SOURCES} from './constants';
+import {
+  IS_PRODUCTION,
+  KEY_NAMES,
+  KEYS,
+  SOURCES
+} from './constants';
 
 // utils
-import {getNaturalDimensionValue, getStateKeys, isElementVoidTag} from './utils';
+import {
+  getNaturalDimensionValue,
+  getStateKeys,
+  isElementVoidTag,
+  reduce
+} from './utils';
 
 /**
  * @private
@@ -24,369 +35,297 @@ import {getNaturalDimensionValue, getStateKeys, isElementVoidTag} from './utils'
  *
  * @returns {Object} the initial state
  */
-export const getInitialState = () => {
-  return KEY_NAMES.reduce((state, key) => {
-    state[key] = null;
+export const getInitialState = () =>
+  reduce(
+    KEY_NAMES,
+    (state, key) => {
+      state[key] = null;
 
-    return state;
-  }, {});
+      return state;
+    },
+    {}
+  );
+
+export const createSetValues = ({delayedMethod, props: {debounce}}, isDebounce) =>
+  isDebounce && typeof debounce === 'number' ? debounceMethod(delayedMethod, debounce) : () => raf(delayedMethod);
+
+/**
+ * @private
+ *
+ * @function onConstruct
+ *
+ * @description
+ * prior to mount, set the keys to watch for and the render method
+ */
+export const onConstruct = (instance) => {
+  instance.keys = getStateKeys(instance.props);
+
+  instance.setRenderMethod(instance.props);
+
+  instance.setValuesViaDebounce = createSetValues(instance, true);
+  instance.setValuesViaRaf = createSetValues(instance, false);
 };
 
-export const createComponentWillMount = (instance) => {
-  /**
-   * @private
-   *
-   * @function componentWillMount
-   *
-   * @description
-   * prior to mount, set the keys to watch for and the render method
-   */
-  return () => {
-    instance.keys = getStateKeys(instance.props);
+/**
+ * @private
+ *
+ * @function componentDidMount
+ *
+ * @description
+ * on mount, get the element and set it's resize observer
+ */
+export const componentDidMount = (instance) => {
+  instance._isMounted = true;
 
-    instance.setRenderMethod(instance.props);
-  };
+  instance.element = findDOMNode(instance);
+
+  instance.setResizeObserver();
 };
 
-export const createComponentDidMount = (instance) => {
-  /**
-   * @private
-   *
-   * @function componentDidMount
-   *
-   * @description
-   * on mount, get the element and set it's resize observer
-   */
-  return () => {
-    instance._isMounted = true;
+/**
+ * @private
+ *
+ * @function componentWillReceiveProps
+ *
+ * @description
+ * when the component receives new props, set the render method for future renders
+ *
+ * @param {function} setRenderMethod the function to set the render method on the instance
+ * @param {Object} nextProps the next render's props
+ */
+export const componentWillReceiveProps = ({setRenderMethod}, [nextProps]) => setRenderMethod(nextProps);
 
-    instance.element = findDOMNode(instance);
+export const delayedMethod = ({_isMounted, element, keys, setState, state}) => {
+  const clientRect = element ? element.getBoundingClientRect() : {};
 
-    instance.setResizeObserver();
-  };
-};
-
-export const createComponentWillReceiveProps = (instance) => {
-  /**
-   * @private
-   *
-   * @function componentWillReceiveProps
-   *
-   * @description
-   * when the component receives new props, set the render method for future renders
-   *
-   * @param {Object} nextProps the next render's props
-   */
-  return (nextProps) => {
-    instance.setRenderMethod(nextProps);
-  };
-};
-
-export const createSetValues = (instance, isDebounce) => {
-  const {debounce} = instance.props;
-
-  /**
-   * @private
-   *
-   * @function delayedMethod
-   *
-   * @description
-   * on a delay (either requestAnimationFrame or debounce), determine the calculated measurements and assign
-   * them to state if changed
-   */
-  const delayedMethod = () => {
-    const clientRect = instance.element ? instance.element.getBoundingClientRect() : {};
-
-    const newValues = KEYS.reduce((values, key) => {
-      values[key.key] = ~instance.keys.indexOf(key)
-        ? instance.element
-          ? getNaturalDimensionValue(key.source === SOURCES.CLIENT_RECT ? clientRect : instance.element, key.key)
+  const newValues = reduce(
+    KEYS,
+    (values, key) => {
+      values[key.key] = ~keys.indexOf(key)
+        ? element
+          ? getNaturalDimensionValue(key.source === SOURCES.CLIENT_RECT ? clientRect : element, key.key)
           : 0
         : null;
 
       return values;
-    }, {});
+    },
+    {}
+  );
 
-    if (!deepEqual(instance.state, newValues) && instance._isMounted) {
-      instance.setState(() => {
-        return newValues;
-      });
-    }
-  };
-
-  return isDebounce && typeof debounce === 'number'
-    ? debounceMethod(delayedMethod, debounce)
-    : () => {
-      raf(delayedMethod);
-    };
+  if (!deepEqual(state, newValues) && _isMounted) {
+    setState(() => newValues);
+  }
 };
 
-export const createComponentDidUpdate = (instance) => {
-  /**
-   * @private
-   *
-   * @function componentDidUpdate
-   *
-   * @description
-   * on update, assign the new properties if they have changed
-   *   * element
-   *   * debounce (assign new debounced render method)
-   *   * keys
-   *
-   * @param {number} [previousDebounce] the previous props' debounce value
-   */
-  return ({debounce: previousDebounce}) => {
-    const {debounce} = instance.props;
+/**
+ * @private
+ *
+ * @function componentDidUpdate
+ *
+ * @description
+ * on update, assign the new properties if they have changed
+ *   * element
+ *   * debounce (assign new debounced render method)
+ *   * keys
+ *
+ * @param {ReactComponent} instance the component instance
+ * @param {number} [previousDebounce] the previous props' debounce value
+ */
+export const componentDidUpdate = (instance, [{debounce: previousDebounce}]) => {
+  const {
+    element: currentElement,
+    props: {debounce},
+  } = instance;
 
-    const element = findDOMNode(instance);
+  const element = findDOMNode(instance);
 
-    const hasElementChanged = element !== instance.element;
-    const hasDebounceChanged = debounce !== previousDebounce;
-    const shouldSetResizeObserver = hasElementChanged || hasDebounceChanged;
+  const hasElementChanged = element !== currentElement;
+  const hasDebounceChanged = debounce !== previousDebounce;
+  const shouldSetResizeObserver = hasElementChanged || hasDebounceChanged;
 
-    if (hasElementChanged) {
-      instance.element = element;
-    }
+  if (hasElementChanged) {
+    instance.element = element;
+  }
 
-    if (hasDebounceChanged) {
-      instance.setValuesViaDebounce = createSetValues(instance, true);
-    }
+  if (hasDebounceChanged) {
+    instance.setValuesViaDebounce = createSetValues(instance, true);
+  }
 
-    if (shouldSetResizeObserver) {
-      instance.setResizeObserver();
-    }
+  if (shouldSetResizeObserver) {
+    instance.setResizeObserver();
+  }
 
-    const newKeys = getStateKeys(instance.props);
+  const newKeys = getStateKeys(instance.props);
 
-    if (shouldSetResizeObserver || !deepEqual(instance.keys, newKeys)) {
-      instance.keys = newKeys;
+  if (shouldSetResizeObserver || !deepEqual(instance.keys, newKeys)) {
+    instance.keys = newKeys;
 
-      instance.resizeMethod();
-    }
-  };
+    instance.resizeMethod();
+  }
 };
 
-export const createComponentWillUnmount = (instance) => {
-  /**
-   * @private
-   *
-   * @function componentWillUnmount
-   *
-   * @description
-   * prior to unmount, disconnect the resize observer and reset the instance properties
-   */
-  return () => {
-    instance._isMounted = false;
+/**
+ * @private
+ *
+ * @function componentWillUnmount
+ *
+ * @description
+ * prior to unmount, disconnect the resize observer and reset the instance properties
+ *
+ * @param {ReactComponent} instance the component instance
+ */
+export const componentWillUnmount = (instance) => {
+  instance._isMounted = false;
 
-    instance.disconnectObserver();
+  instance.disconnectObserver();
 
-    instance.element = null;
-    instance.keys = [];
-    instance.resizeMethod = null;
-  };
+  instance.element = null;
+  instance.keys = [];
+  instance.resizeMethod = null;
 };
 
-export const createConnectObserver = (instance) => {
-  /**
-   * @private
-   *
-   * @function connectObserver
-   *
-   * @description
-   * if render on resize is requested, assign a resize observer to the element with the correct resize method
-   */
-  return () => {
-    const {renderOnResize} = instance.props;
+/**
+ * @private
+ *
+ * @function connectObserver
+ *
+ * @description
+ * if render on resize is requested, assign a resize observer to the element with the correct resize method
+ */
+export const connectObserver = (instance) => {
+  const {
+    element,
+    props: {renderOnResize, renderOnWindowResize},
+    resizeMethod,
+  } = instance;
 
-    if (renderOnResize) {
-      if (!IS_PRODUCTION && isElementVoidTag(instance.element)) {
-        /* eslint-disable no-console */
-        console.warn(
-          'WARNING: You are attempting to listen to resizes on a void element, which is not supported. You should wrap this element in an element that supports children, such as a <div>, to ensure correct behavior.'
-        );
-        /* eslint-enable */
-      }
-
-      instance.resizeObserver = new ResizeObserver(instance.resizeMethod);
-
-      instance.resizeObserver.observe(instance.element);
-    }
-  };
-};
-
-export const createDisconnectObserver = (instance) => {
-  /**
-   * @private
-   *
-   * @function disconnectObserver
-   *
-   * @description
-   * if a resize observer exists, disconnect it from the element
-   */
-  return () => {
-    if (instance.resizeObserver) {
-      instance.resizeObserver.disconnect(instance.element);
-
-      instance.resizeObserver = null;
-    }
-  };
-};
-
-export const createGetPassedValues = (instance) => {
-  /**
-   * @private
-   *
-   * @function getPassedValues
-   *
-   * @description
-   * get the passed values as an object, namespaced if requested
-   *
-   * @param {Object} state the current state values
-   * @param {string} [namespace] the possible namespace to assign the values to
-   * @returns {Object} the values to pass
-   */
-  return memoize((state, namespace) => {
-    const populatedState = instance.keys.reduce((values, {key}) => {
-      values[key] = state[key] || 0;
-
-      return values;
-    }, {});
-
-    return namespace
-      ? {
-        [namespace]: populatedState
-      }
-      : populatedState;
-  });
-};
-
-export const createSetRef = (instance, ref) => {
-  /**
-   * @private
-   *
-   * @function setRef
-   *
-   * @description
-   * set the DOM node to the ref passed
-   *
-   * @param {HTMLElement|ReactComponent} element the element to find the DOM node of
-   */
-  return (element) => {
-    instance[ref] = findDOMNode(element);
-  };
-};
-
-export const createSetRenderMethod = (instance) => {
-  /**
-   * @private
-   *
-   * @function setRenderMethod
-   *
-   * @description
-   * set the render method based on the possible props passed
-   *
-   * @param {function} [children] the child render function
-   * @param {function} [component] the component prop function
-   * @param {function} [render] the render prop function
-   */
-  return ({children, component, render}) => {
-    const RenderComponent = children || component || render || null;
-
-    if (!IS_PRODUCTION && typeof RenderComponent !== 'function') {
+  if (renderOnResize) {
+    if (!IS_PRODUCTION && isElementVoidTag(element)) {
       /* eslint-disable no-console */
-      console.error(
-        'ERROR: You must provide a render function, or either a "render" or "component" prop that passes a functional component.'
+      console.warn(
+        'WARNING: You are attempting to listen to resizes on a void element, which is not supported. You should wrap this element in an element that supports children, such as a <div>, to ensure correct behavior.'
       );
       /* eslint-enable */
     }
 
-    if (RenderComponent !== instance.RenderComponent) {
-      instance.RenderComponent = RenderComponent;
-    }
-  };
+    instance.resizeObserver = new ResizeObserver(resizeMethod);
+
+    instance.resizeObserver.observe(element);
+  }
+
+  if (renderOnWindowResize) {
+    window.addEventListener('resize', resizeMethod);
+  }
 };
 
-export const createSetResizeObserver = (instance) => {
-  /**
-   * @private
-   *
-   * @function setResizeObserver
-   *
-   * @description
-   * set the resize observer on the instance, based on the existence of a currrent resizeObserver and the new element
-   */
-  return () => {
-    const {debounce} = instance.props;
+/**
+ * @private
+ *
+ * @function disconnectObserver
+ *
+ * @description
+ * if a resize observer exists, disconnect it from the element
+ */
+export const disconnectObserver = (instance) => {
+  const {element, resizeObserver} = instance;
 
-    const resizeMethod = typeof debounce === 'number' ? instance.setValuesViaDebounce : instance.setValuesViaRaf;
+  if (resizeObserver) {
+    instance.resizeObserver.disconnect(element);
 
-    if (resizeMethod !== instance.resizeMethod) {
-      instance.resizeMethod = resizeMethod;
-
-      resizeMethod();
-    }
-
-    if (instance.resizeObserver) {
-      instance.disconnectObserver();
-    }
-
-    if (instance.element) {
-      instance.connectObserver();
-    }
-  };
+    instance.resizeObserver = null;
+  }
 };
 
-class Measured extends Component {
-  static displayName = 'Measured';
+/**
+ * @private
+ *
+ * @function getPassedValues
+ *
+ * @description
+ * get the passed values as an object, namespaced if requested
+ *
+ * @param {Object} state the current state values
+ * @param {string} [namespace] the possible namespace to assign the values to
+ * @returns {Object} the values to pass
+ */
+export const getPassedValues = memoize((keys, state, namespace) => {
+  const populatedState = reduce(
+    keys,
+    (values, {key}) => {
+      values[key] = state[key] || 0;
 
-  static propTypes = {
-    children: PropTypes.func,
-    component: PropTypes.func,
-    debounce: PropTypes.number,
-    namespace: PropTypes.string,
-    render: PropTypes.func,
-    renderOnResize: PropTypes.bool.isRequired,
-    ...KEY_NAMES.reduce((keyPropTypes, key) => {
-      keyPropTypes[key] = PropTypes.bool;
+      return values;
+    },
+    {}
+  );
 
-      return keyPropTypes;
-    }, {})
-  };
+  return namespace
+    ? {
+      [namespace]: populatedState,
+    }
+    : populatedState;
+});
 
-  static defaultProps = {
-    renderOnResize: true
-  };
+/**
+ * @private
+ *
+ * @function setRenderMethod
+ *
+ * @description
+ * set the render method based on the possible props passed
+ *
+ * @param {ReactComponent} instance the component instance
+ * @param {function} [children] the child render function
+ * @param {function} [component] the component prop function
+ * @param {function} [render] the render prop function
+ */
+export const setRenderMethod = (instance, [{children, component, render}]) => {
+  const RenderComponent = children || component || render || null;
 
-  // state
-  state = getInitialState();
+  if (!IS_PRODUCTION && typeof RenderComponent !== 'function') {
+    /* eslint-disable no-console */
+    console.error(
+      'ERROR: You must provide a render function, or either a "render" or "component" prop that passes a functional component.'
+    );
+    /* eslint-enable */
+  }
 
-  // lifecycle methods
-  componentWillMount = createComponentWillMount(this);
-  componentDidMount = createComponentDidMount(this);
-  componentWillReceiveProps = createComponentWillReceiveProps(this);
-  componentDidUpdate = createComponentDidUpdate(this);
-  componentWillUnmount = createComponentWillUnmount(this);
+  if (RenderComponent !== instance.RenderComponent) {
+    instance.RenderComponent = RenderComponent;
+  }
+};
 
-  // instance values
-  _isMounted = false;
-  element = null;
-  keys = [];
-  RenderComponent = null;
-  resizeMethod = null;
-  resizeObserver = null;
+export const setResizeObserver = (instance) => {
+  const {
+    connectObserver,
+    disconnectObserver,
+    element,
+    props: {debounce},
+    resizeObserver,
+    setValuesViaDebounce,
+    setValuesViaRaf,
+  } = instance;
 
-  // instance methods
-  connectObserver = createConnectObserver(this);
-  disconnectObserver = createDisconnectObserver(this);
-  getPassedValues = createGetPassedValues(this);
-  setElementRef = createSetRef(this, 'element');
-  setRenderMethod = createSetRenderMethod(this);
-  setResizeObserver = createSetResizeObserver(this);
-  setValuesViaDebounce = createSetValues(this, true);
-  setValuesViaRaf = createSetValues(this, false);
+  const resizeMethod = typeof debounce === 'number' ? setValuesViaDebounce : setValuesViaRaf;
 
-  render() {
-    const {
+  if (resizeMethod !== instance.resizeMethod) {
+    instance.resizeMethod = resizeMethod;
+
+    resizeMethod();
+  }
+
+  if (resizeObserver) {
+    disconnectObserver();
+  }
+
+  if (element) {
+    connectObserver();
+  }
+};
+
+const Measured = createComponent(
+  (
+    {
       children: childrenIgnored,
       component: componentIgnored,
       debounce: debounceIgnored,
@@ -395,23 +334,59 @@ class Measured extends Component {
       render: renderIgnored,
       renderOnResize: renderOnResizeIgnored,
       ...passThroughProps
-    } = this.props;
-
-    if (!this.RenderComponent) {
-      return null;
-    }
-
-    const RenderComponent = this.RenderComponent;
-
-    return (
-      /* eslint-disable prettier */
+    },
+    {RenderComponent, keys, state}
+  ) =>
+    RenderComponent ? (
+      // eslint workaround
       <RenderComponent
         {...passThroughProps}
-        {...this.getPassedValues(this.state, namespace)}
+        {...getPassedValues(keys, state, namespace)}
       />
-      /* eslint-enable */
-    );
+    ) : null,
+  {
+    _isMounted: false,
+    RenderComponent: null,
+    componentDidMount,
+    componentDidUpdate,
+    componentWillReceiveProps,
+    componentWillUnmount,
+    connectObserver,
+    delayedMethod,
+    disconnectObserver,
+    element: null,
+    getInitialState,
+    keys: [],
+    onConstruct,
+    resizeMethod: null,
+    resizeObserver: null,
+    setRenderMethod,
+    setResizeObserver,
   }
-}
+);
+
+Measured.displayName = 'Measured';
+
+Measured.propTypes = {
+  children: PropTypes.func,
+  component: PropTypes.func,
+  debounce: PropTypes.number,
+  namespace: PropTypes.string,
+  render: PropTypes.func,
+  renderOnResize: PropTypes.bool.isRequired,
+  ...reduce(
+    KEY_NAMES,
+    (keyPropTypes, key) => {
+      keyPropTypes[key] = PropTypes.bool;
+
+      return keyPropTypes;
+    },
+    {}
+  ),
+};
+
+Measured.defaultProps = {
+  renderOnResize: true,
+};
 
 export default Measured;

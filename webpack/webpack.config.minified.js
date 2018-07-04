@@ -10,14 +10,16 @@ module.exports = Object.assign({}, defaultConfig, {
 
   devtool: undefined,
 
+  mode: 'production',
+
   output: Object.assign({}, defaultConfig.output, {
-    filename: 'remeasure.min.js'
+    filename: 'remeasure.min.js',
   }),
 
   plugins: defaultConfig.plugins.concat([
     new webpack.LoaderOptionsPlugin({
       debug: false,
-      minimize: true
+      minimize: true,
     }),
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.optimize.ModuleConcatenationPlugin(),
@@ -38,19 +40,19 @@ module.exports = Object.assign({}, defaultConfig, {
         screw_ie8: true,
         sequences: true,
         unused: true,
-        warnings: false
+        warnings: false,
       },
       mangle: {
-        safari10: true
+        safari10: true,
       },
       output: {
         ascii_only: true,
-        comments: false
+        comments: false,
       },
-      sourceMap: false
+      sourceMap: false,
     }),
     new OptimizeJsPlugin({
-      sourceMap: false
-    })
-  ])
+      sourceMap: false,
+    }),
+  ]),
 });

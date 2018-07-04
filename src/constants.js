@@ -8,7 +8,7 @@ export const IS_PRODUCTION = !!(process && process.env && process.env.NODE_ENV =
  */
 export const SOURCES = {
   CLIENT_RECT: 'CLIENT_RECT',
-  ELEMENT: 'ELEMENT'
+  ELEMENT: 'ELEMENT',
 };
 
 /**
@@ -16,36 +16,74 @@ export const SOURCES = {
  */
 export const KEYS = [
   // client rect keys
-  {key: 'bottom', source: SOURCES.CLIENT_RECT},
-  {key: 'left', source: SOURCES.CLIENT_RECT},
-  {key: 'height', source: SOURCES.CLIENT_RECT},
-  {key: 'right', source: SOURCES.CLIENT_RECT},
-  {key: 'top', source: SOURCES.CLIENT_RECT},
-  {key: 'width', source: SOURCES.CLIENT_RECT},
+  {
+    key: 'bottom', source: SOURCES.CLIENT_RECT,
+  },
+  {
+    key: 'left', source: SOURCES.CLIENT_RECT,
+  },
+  {
+    key: 'height', source: SOURCES.CLIENT_RECT,
+  },
+  {
+    key: 'right', source: SOURCES.CLIENT_RECT,
+  },
+  {
+    key: 'top', source: SOURCES.CLIENT_RECT,
+  },
+  {
+    key: 'width', source: SOURCES.CLIENT_RECT,
+  },
 
   // element keys
-  {key: 'clientLeft', source: SOURCES.ELEMENT},
-  {key: 'clientHeight', source: SOURCES.ELEMENT},
-  {key: 'clientTop', source: SOURCES.ELEMENT},
-  {key: 'clientWidth', source: SOURCES.ELEMENT},
-  {key: 'naturalHeight', source: SOURCES.ELEMENT},
-  {key: 'naturalWidth', source: SOURCES.ELEMENT},
-  {key: 'offsetLeft', source: SOURCES.ELEMENT},
-  {key: 'offsetHeight', source: SOURCES.ELEMENT},
-  {key: 'offsetTop', source: SOURCES.ELEMENT},
-  {key: 'offsetWidth', source: SOURCES.ELEMENT},
-  {key: 'scrollLeft', source: SOURCES.ELEMENT},
-  {key: 'scrollHeight', source: SOURCES.ELEMENT},
-  {key: 'scrollTop', source: SOURCES.ELEMENT},
-  {key: 'scrollWidth', source: SOURCES.ELEMENT}
+  {
+    key: 'clientLeft', source: SOURCES.ELEMENT,
+  },
+  {
+    key: 'clientHeight', source: SOURCES.ELEMENT,
+  },
+  {
+    key: 'clientTop', source: SOURCES.ELEMENT,
+  },
+  {
+    key: 'clientWidth', source: SOURCES.ELEMENT,
+  },
+  {
+    key: 'naturalHeight', source: SOURCES.ELEMENT,
+  },
+  {
+    key: 'naturalWidth', source: SOURCES.ELEMENT,
+  },
+  {
+    key: 'offsetLeft', source: SOURCES.ELEMENT,
+  },
+  {
+    key: 'offsetHeight', source: SOURCES.ELEMENT,
+  },
+  {
+    key: 'offsetTop', source: SOURCES.ELEMENT,
+  },
+  {
+    key: 'offsetWidth', source: SOURCES.ELEMENT,
+  },
+  {
+    key: 'scrollLeft', source: SOURCES.ELEMENT,
+  },
+  {
+    key: 'scrollHeight', source: SOURCES.ELEMENT,
+  },
+  {
+    key: 'scrollTop', source: SOURCES.ELEMENT,
+  },
+  {
+    key: 'scrollWidth', source: SOURCES.ELEMENT,
+  },
 ];
 
 /**
  * @constant {Array<string>} KEY_NAMES
  */
-export const KEY_NAMES = KEYS.map(({key}) => {
-  return key;
-});
+export const KEY_NAMES = KEYS.map(({key}) => key);
 
 /**
  * @constant {RegExp} FUNCTION_NAME_REGEXP
@@ -75,5 +113,5 @@ export const VOID_ELEMENT_TAG_NAMES = [
   'PARAM',
   'SOURCE',
   'TRACK',
-  'WBR'
+  'WBR',
 ];
