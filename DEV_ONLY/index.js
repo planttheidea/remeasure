@@ -25,9 +25,3 @@ div.id = 'app-container';
 renderApp(div);
 
 document.body.appendChild(div);
-
-if (module.hot) {
-  module.hot.accept('./App', () => {
-    renderApp(div);
-  });
-}

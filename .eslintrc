@@ -12,5 +12,7 @@
     "ecmaVersion": 2017,
     "sourceType": "module"
   },
-  "rules":{}
+  "rules": {
+    "react/no-deprecated": 0
+  }
 }

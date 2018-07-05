@@ -196,7 +196,11 @@ export const createConnectObserver = (instance) => {
    * if render on resize is requested, assign a resize observer to the element with the correct resize method
    */
   return () => {
-    const {renderOnResize} = instance.props;
+    const {renderOnResize, renderOnWindowResize} = instance.props;
+
+    if (renderOnWindowResize) {
+      window.addEventListener('resize', instance.resizeMethod);
+    }
 
     if (renderOnResize) {
       if (!IS_PRODUCTION && isElementVoidTag(instance.element)) {
@@ -229,6 +233,8 @@ export const createDisconnectObserver = (instance) => {
 
       instance.resizeObserver = null;
     }
+
+    window.removeEventListener('resize', instance.resizeMethod);
   };
 };
 
@@ -320,14 +326,14 @@ export const createSetResizeObserver = (instance) => {
 
     const resizeMethod = typeof debounce === 'number' ? instance.setValuesViaDebounce : instance.setValuesViaRaf;
 
+    if (instance.resizeObserver) {
+      instance.disconnectObserver();
+    }
+
     if (resizeMethod !== instance.resizeMethod) {
       instance.resizeMethod = resizeMethod;
 
       resizeMethod();
-    }
-
-    if (instance.resizeObserver) {
-      instance.disconnectObserver();
     }
 
     if (instance.element) {
@@ -346,6 +352,7 @@ class Measured extends Component {
     namespace: PropTypes.string,
     render: PropTypes.func,
     renderOnResize: PropTypes.bool.isRequired,
+    renderOnWindowResize: PropTypes.bool.isRequired,
     ...KEY_NAMES.reduce((keyPropTypes, key) => {
       keyPropTypes[key] = PropTypes.bool;
 
@@ -354,7 +361,8 @@ class Measured extends Component {
   };
 
   static defaultProps = {
-    renderOnResize: true
+    renderOnResize: true,
+    renderOnWindowResize: false
   };
 
   // state
@@ -394,6 +402,7 @@ class Measured extends Component {
       namespace,
       render: renderIgnored,
       renderOnResize: renderOnResizeIgnored,
+      renderOnWindowResize: renderOnWindowResizeIgnored,
       ...passThroughProps
     } = this.props;
 

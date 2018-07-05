@@ -15,7 +15,7 @@ class NoParams extends PureComponent {
   }
 }
 
-@measure.width({debounce: 200})
+@measure.width({debounce: 200, renderOnResize: false, renderOnWindowResize: true})
 class WidthOnly extends PureComponent {
   render() {
     const {children, ...measurements} = this.props;
@@ -246,7 +246,9 @@ class App extends Component {
           width={activeProp === 'width'}
         >
           {({height, width}) => {
-            console.log('dynamic props', {height, width});
+            console.group('dynamic props');
+            console.log({height, width});
+            console.groupEnd('dynamic props');
 
             return <div>Some contained element with dynamic prop: {JSON.stringify({height, width})}</div>;
           }}

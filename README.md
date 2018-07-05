@@ -8,27 +8,27 @@ Get position and size of the DOM element for any React Component
 
 ## Table of contents
 
-* [Usage](#usage)
-  * [As a decorator](#as-a-decorator)
-  * [As a component](#as-a-component)
-  * [Measurements](#measurements)
-* [Advanced usage](#advanced-usage)
-  * [keys](#keys)
-  * [options](#options)
-  * [ref](#ref)
-* [Convenience methods](#convenience-methods)
-* [Caveats](#caveats)
-* [Support](#support)
-* [Development](#development)
+- [Usage](#usage)
+  - [As a decorator](#as-a-decorator)
+  - [As a component](#as-a-component)
+  - [Measurements](#measurements)
+- [Advanced usage](#advanced-usage)
+  - [keys](#keys)
+  - [options](#options)
+  - [ref](#ref)
+- [Convenience methods](#convenience-methods)
+- [Caveats](#caveats)
+- [Support](#support)
+- [Development](#development)
 
 ## Usage
 
 ```javascript
 // ES2015
-import {measure, Measured} from 'remeasure';
+import { measure, Measured } from "remeasure";
 
 // CommonJS
-const {measure, Measured} = require('remeasure').default;
+const { measure, Measured } = require("remeasure").default;
 
 // old school script
 var measure = window.Remeasure.measure;
@@ -41,13 +41,13 @@ var Measured = window.Remeasure.Measured;
 @measure
 class MyComponent extends React.Component {
   render() {
-    const {height, width} = this.props;
+    const { height, width } = this.props;
 
     return <div>I have access to my height and width through props!</div>;
   }
 }
 
-const StatelessComponent = measure(({height, width}) => {
+const StatelessComponent = measure(({ height, width }) => {
   return <div>In here too!</div>;
 });
 ```
@@ -61,7 +61,7 @@ You can use the component with function-rendering components one of three ways:
 const MyMeasuredComponent = () => {
   return (
     <Measured height width>
-      {({height, width}) => {
+      {({ height, width }) => {
         return (
           <div>
             My height is {height} and my width is {width}
@@ -78,7 +78,7 @@ const MyMeasuredComponent = () => {
     <Measured
       height
       width
-      component={({height, width}) => {
+      component={({ height, width }) => {
         return (
           <div>
             My height is {height} and my width is {width}
@@ -95,7 +95,7 @@ const MyMeasuredComponent = () => {
     <Measured
       height
       width
-      render={({height, width}) => {
+      render={({ height, width }) => {
         return (
           <div>
             My height is {height} and my width is {width}
@@ -111,7 +111,7 @@ For performance reasons, it is recommended that you store the component as a sep
 
 ```javascript
 // using a render method
-const Render = ({height, width}) => {
+const Render = ({ height, width }) => {
   return (
     <div>
       My height is {height} and my width is {width}
@@ -168,20 +168,20 @@ The keys to listen for changes to. If not specified, all possible keys will be m
 Examples:
 
 ```javascript
-import measure from 'remeasure';
+import measure from "remeasure";
 
 // pass a string value for a single property
-const measureOnlyOffsetWidth = measure('offsetWidth');
+const measureOnlyOffsetWidth = measure("offsetWidth");
 
-const MyStatelessComponent = measureOnlyOffsetWidth(({offsetWidth}) => {
+const MyStatelessComponent = measureOnlyOffsetWidth(({ offsetWidth }) => {
   return <div>Only offsetWidth is injected</div>;
 });
 
 // or an array of string values for multiple properties
-@measure(['top', 'height'])
+@measure(["top", "height"])
 class MyComponent extends Component {
   render() {
-    const {top, height} = this.props;
+    const { top, height } = this.props;
 
     return <div>Both the top and height props are injected</div>;
   }
@@ -228,6 +228,9 @@ Allows customization of the measurements. Available options:
 
     // should element rerender when resized
     renderOnResize: Boolean = true
+
+    // should element rerender when the window is resized
+    renderOnWindowResize: Boolean = false
 }
 ```
 
@@ -235,28 +238,34 @@ Example usage with the decorator:
 
 ```javascript
 // use them alone
-@measure({renderOnResize: false})
+@measure({ renderOnResize: false })
 class MyComponent extends Component {
   render() {
-    const {height, width} = this.props;
+    const { height, width } = this.props;
 
     return <div>The height and width props will not update with resizes.</div>;
   }
 }
 
 // or you can use them with keys
-const MyStatelessComponent = measure(['height', 'width'], {debounce: 50, namespace: 'measurements'})(
-  ({measurements}) => {
-    return <div>You can still pass options when you want to specify keys, as the second parameter.</div>;
-  }
-);
+const MyStatelessComponent = measure(["height", "width"], {
+  debounce: 50,
+  namespace: "measurements"
+})(({ measurements }) => {
+  return (
+    <div>
+      You can still pass options when you want to specify keys, as the second
+      parameter.
+    </div>
+  );
+});
 ```
 
 Example usage with the `Measured` component:
 
 ```javascript
 <Measured debounce={500} namespace="measurements">
-  {({measurements}) => {
+  {({ measurements }) => {
     return <div>My measurements: {JSON.stringify(measurements)}</div>;
   }}
 </Measured>
@@ -304,7 +313,7 @@ For each key that is measured, a convenience function exists on the `measure` de
 @measure.width
 class MyMeasuredComponent extends Component {
   render() {
-    const {width} = this.props;
+    const { width } = this.props;
 
     return <div>I have width of {width}.</div>;
   }
@@ -327,11 +336,11 @@ If you perform an update to the component `props` or `state` that also happens t
 
 `remeasure` has been tested and confirmed to work on the following browsers:
 
-* Chrome
-* Firefox
-* Opera
-* Edge
-* IE9+
+- Chrome
+- Firefox
+- Opera
+- Edge
+- IE9+
 
 `remeasure` also works with universal / isomorphic applications.
 
@@ -339,13 +348,13 @@ If you perform an update to the component `props` or `state` that also happens t
 
 Standard stuff, clone the repo and `npm i` to get the dependencies. npm scripts available:
 
-* `build` => builds the distributed JS with `NODE_ENV=development` and with sourcemaps
-* `build-minified` => builds the distributed JS with `NODE_ENV=production` and minified
-* `compile-for-publish` => runs the `lint`, `test`, `transpile`, `dist` scripts
-* `dev` => runs the webpack dev server for the playground
-* `dist` => runs the `build` and `build-minified`
-* `lint` => runs ESLint against files in the `src` folder
-* `prepublish` => if in publish, runs `compile-for-publish`
-* `test` => run ava with NODE_ENV=test
-* `test:watch` => runs `test` but with persistent watcher
-* `transpile` => runs Babel against files in `src` to files in `lib`
+- `build` => builds the distributed JS with `NODE_ENV=development` and with sourcemaps
+- `build-minified` => builds the distributed JS with `NODE_ENV=production` and minified
+- `compile-for-publish` => runs the `lint`, `test`, `transpile`, `dist` scripts
+- `dev` => runs the webpack dev server for the playground
+- `dist` => runs the `build` and `build-minified`
+- `lint` => runs ESLint against files in the `src` folder
+- `prepublish` => if in publish, runs `compile-for-publish`
+- `test` => run ava with NODE_ENV=test
+- `test:watch` => runs `test` but with persistent watcher
+- `transpile` => runs Babel against files in `src` to files in `lib`

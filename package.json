@@ -120,6 +120,7 @@
     "start": "npm run dev",
     "test": "NODE_PATH=. NODE_ENV=test ava",
     "test:coverage": "nyc --cache npm test",
+    "test:update": "npm run test -- --update-snapshots",
     "test:watch": "npm run test -- --watch",
     "transpile:es": "BABEL_ENV=es babel src --out-dir es",
     "transpile:lib": "BABEL_ENV=lib babel src --out-dir lib"

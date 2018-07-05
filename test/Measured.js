@@ -122,7 +122,7 @@ test('if setValues will create a delayed method to set the values in state if no
   setValues();
 
   await new Promise((resolve) => {
-    setTimeout(resolve, 1000 / 60 * 16);
+    setTimeout(resolve, (1000 / 60) * 16);
   });
 
   t.true(spy.calledOnce);
@@ -200,7 +200,7 @@ test('if setValues will not set the values if not mounted', async (t) => {
   setValues();
 
   await new Promise((resolve) => {
-    setTimeout(resolve, 1000 / 60 * 16);
+    setTimeout(resolve, (1000 / 60) * 16);
   });
 
   t.true(spy.notCalled);
@@ -240,7 +240,7 @@ test('if setValues will not set the values if the values are equal', async (t) =
   setValues();
 
   await new Promise((resolve) => {
-    setTimeout(resolve, 1000 / 60 * 16);
+    setTimeout(resolve, (1000 / 60) * 16);
   });
 
   t.true(spy.notCalled);
@@ -280,7 +280,7 @@ test('if setValues will assign values to 0 if no element exists', async (t) => {
   setValues();
 
   await new Promise((resolve) => {
-    setTimeout(resolve, 1000 / 60 * 16);
+    setTimeout(resolve, (1000 / 60) * 16);
   });
 
   t.true(spy.calledOnce);
@@ -488,6 +488,29 @@ test('if connectObserver will warn if listening to a void element', (t) => {
   t.deepEqual(instance.resizeObserver, new ResizeObserver(instance.resizeMethod));
 });
 
+test('if connectObserver will assign the resize observer as a window listener when window resize is requested', (t) => {
+  const instance = {
+    element: document.createElement('div'),
+    props: {
+      renderOnResize: false,
+      renderOnWindowResize: true
+    },
+    resizeMethod() {},
+    resizeObserver: null
+  };
+
+  const connectObserver = component.createConnectObserver(instance);
+
+  const stub = sinon.stub(window, 'addEventListener');
+
+  connectObserver();
+
+  t.true(stub.calledOnce);
+  t.true(stub.calledWith('resize', instance.resizeMethod));
+
+  stub.restore();
+});
+
 test('if connectObserver will do nothing if renderOnResize is false', (t) => {
   const instance = {
     element: document.createElement('div'),
@@ -529,6 +552,29 @@ test('if disconnectObserver will disconnect the observer if it exists', (t) => {
   t.true(disconnect.calledWith(instance.element));
 
   t.is(instance.resizeObserver, null);
+});
+
+test('if connectObserver will remove the resize observer as a window listener when window resize is requested', (t) => {
+  const disconnect = sinon.spy();
+
+  const instance = {
+    element: document.createElement('div'),
+    resizeObserver: {
+      disconnect
+    },
+    resizeMethod() {}
+  };
+
+  const disconnectObserver = component.createDisconnectObserver(instance);
+
+  const stub = sinon.stub(window, 'removeEventListener');
+
+  disconnectObserver();
+
+  t.true(stub.calledOnce);
+  t.true(stub.calledWith('resize', instance.resizeMethod));
+
+  stub.restore();
 });
 
 test('if disconnectObserver does nothing if the resize observer does not exist', (t) => {

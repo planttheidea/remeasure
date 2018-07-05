@@ -17,7 +17,6 @@ module.exports = Object.assign({}, defaultConfig, {
     compress: true,
     contentBase: './dist',
     host: 'localhost',
-    hot: true,
     inline: true,
     lazy: false,
     noInfo: false,
@@ -29,7 +28,7 @@ module.exports = Object.assign({}, defaultConfig, {
     }
   },
 
-  entry: ['react-hot-loader/patch', path.resolve(ROOT, 'DEV_ONLY', 'index.js')],
+  entry: [path.resolve(ROOT, 'DEV_ONLY', 'index.js')],
 
   externals: undefined,
 
@@ -51,5 +50,5 @@ module.exports = Object.assign({}, defaultConfig, {
     publicPath: `http://localhost:${PORT}/`
   }),
 
-  plugins: [...defaultConfig.plugins, new HtmlWebpackPlugin(), new webpack.HotModuleReplacementPlugin()]
+  plugins: [...defaultConfig.plugins, new HtmlWebpackPlugin()]
 });

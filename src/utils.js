@@ -93,6 +93,7 @@ export const getStateKeys = (props) => {
     keys,
     namespace: namespaceIgnored,
     renderOnResize: renderOnResizeIgnored,
+    renderOnWindowResize: renderOnWindowResizeIgnored,
     ...specificProperties
   } = props;
 
