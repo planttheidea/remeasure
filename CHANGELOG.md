@@ -1,5 +1,9 @@
 # remeasure CHANGELOG
 
+## 3.1.1
+
+- Ensure `renderOnWindowResize` will always rerender the component on window resize, even if the calculated values have not changed
+
 ## 3.1.0
 
 - Add `renderOnWindowResize` option

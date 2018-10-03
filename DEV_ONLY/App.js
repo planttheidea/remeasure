@@ -1,6 +1,12 @@
-import React, {Component, PureComponent} from 'react';
+import React, {
+  Component,
+  PureComponent,
+} from 'react';
 
-import {measure, Measured} from '../src';
+import {
+  measure,
+  Measured,
+} from '../src';
 
 @measure
 class NoParams extends PureComponent {
@@ -15,7 +21,11 @@ class NoParams extends PureComponent {
   }
 }
 
-@measure.width({debounce: 200, renderOnResize: false, renderOnWindowResize: true})
+@measure.width({
+  debounce: 200,
+  renderOnResize: false,
+  renderOnWindowResize: true,
+})
 class WidthOnly extends PureComponent {
   render() {
     const {children, ...measurements} = this.props;
@@ -130,14 +140,14 @@ class App extends Component {
     activeProp: 'width',
     debounce: 500,
     isConditionalElementShown: true,
-    isVisible: false
+    isVisible: false,
   };
 
   componentDidMount() {
     console.group('--------- GETTING FOO ------------');
-    console.log('actual ref', this.accessRef);
-    console.log('ref originalComponent', this.accessRef.originalComponent);
-    console.log('calling originalComponent method', this.accessRef.originalComponent.getFoo());
+    // console.log('actual ref', this.accessRef);
+    // console.log('ref originalComponent', this.accessRef.originalComponent);
+    // console.log('calling originalComponent method', this.accessRef.originalComponent.getFoo());
     console.groupEnd();
   }
 
@@ -155,7 +165,7 @@ class App extends Component {
     const {isConditionalElementShown} = this.state;
 
     this.setState({
-      isConditionalElementShown: !isConditionalElementShown
+      isConditionalElementShown: !isConditionalElementShown,
     });
   };
 
@@ -164,30 +174,24 @@ class App extends Component {
   };
 
   toggleActiveProp = () => {
-    this.setState(({activeProp: currentProp}) => {
-      return {
-        activeProp: currentProp === 'width' ? 'height' : 'width'
-      };
-    });
+    this.setState(({activeProp: currentProp}) => ({
+      activeProp: currentProp === 'width' ? 'height' : 'width',
+    }));
   };
 
   toggleDebounce = () => {
     const min = 50;
     const max = 1000;
 
-    this.setState(() => {
-      return {
-        debounce: ~~(Math.random() * (max - min) + min)
-      };
-    });
+    this.setState(() => ({
+      debounce: ~~(Math.random() * (max - min) + min),
+    }));
   };
 
   toggleVisibility = () => {
-    this.setState(({isVisible}) => {
-      return {
-        isVisible: !isVisible
-      };
-    });
+    this.setState(({isVisible}) => ({
+      isVisible: !isVisible,
+    }));
   };
 
   render() {
@@ -273,6 +277,20 @@ class App extends Component {
             return <div>Some other debounced element</div>;
           }}
         />
+
+        <Measured
+          height
+          renderOnResize={false}
+          renderOnWindowResize
+          top
+          width
+        >
+          {({top}) => {
+            const calHeight = window.innerHeight - top - 20;
+
+            return <div style={{calHeight}}>calculated: {calHeight}</div>;
+          }}
+        </Measured>
       </div>
     );
   }

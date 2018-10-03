@@ -1,6 +1,9 @@
 // test
 import test from 'ava';
-import React, {Component, PureComponent} from 'react';
+import React, {
+  Component,
+  PureComponent,
+} from 'react';
 import {shallow} from 'enzyme';
 import toJson from 'enzyme-to-json';
 
@@ -31,7 +34,7 @@ test('if getMeasuredComponent will return a component to render with a ref when 
   const Result = measure.getMeasuredComponent(RenderedComponent);
 
   const props = {
-    _measuredComponentRef() {}
+    _measuredComponentRef() {},
   };
 
   const wrapper = shallow(<Result {...props}>Children</Result>);
@@ -49,7 +52,7 @@ test('if getMeasuredComponent will return a component to render with a ref when 
   const Result = measure.getMeasuredComponent(RenderedComponent);
 
   const props = {
-    _measuredComponentRef() {}
+    _measuredComponentRef() {},
   };
 
   const wrapper = shallow(<Result {...props}>Children</Result>);
@@ -58,14 +61,12 @@ test('if getMeasuredComponent will return a component to render with a ref when 
 });
 
 test('if getMeasuredComponent will return a component to render with a ref when stateless functional component', (t) => {
-  const RenderedComponent = () => {
-    return <div />;
-  };
+  const RenderedComponent = () => <div />;
 
   const Result = measure.getMeasuredComponent(RenderedComponent);
 
   const props = {
-    _measuredComponentRef() {}
+    _measuredComponentRef() {},
   };
 
   const wrapper = shallow(<Result {...props}>Children</Result>);
@@ -79,9 +80,7 @@ test('if getMeasuredHoc will return a method that renders RenderedComponent in a
 
   const getMeasured = measure.getMeasuredHoc(keys, options);
 
-  const RenderedComponent = () => {
-    return <div />;
-  };
+  const RenderedComponent = () => <div />;
 
   const Result = getMeasured(RenderedComponent);
 
@@ -91,9 +90,7 @@ test('if getMeasuredHoc will return a method that renders RenderedComponent in a
 });
 
 test('if measure will handle when passedKeys is a component', (t) => {
-  const RenderedComponent = () => {
-    return <div />;
-  };
+  const RenderedComponent = () => <div />;
 
   const Result = measure.measure(RenderedComponent);
 
@@ -107,9 +104,7 @@ test('if measure will handle when passedKeys is an array', (t) => {
 
   t.is(typeof result, 'function');
 
-  const RenderedComponent = () => {
-    return <div />;
-  };
+  const RenderedComponent = () => <div />;
 
   const Result = result(RenderedComponent);
 
@@ -122,9 +117,7 @@ test('if measure will handle when passedKeys is an object', (t) => {
 
   t.is(typeof result, 'function');
 
-  const RenderedComponent = () => {
-    return <div />;
-  };
+  const RenderedComponent = () => <div />;
 
   const Result = result(RenderedComponent);
 
@@ -142,13 +135,11 @@ test('if measure has a method as a property of itself for each key name', (t) =>
 });
 
 test('if measure convenience method will handle wrapping a component directly', (t) => {
-  const TestComponent = ({children, height}) => {
-    return (
-      <div>
-        {children} has height of {height}
-      </div>
-    );
-  };
+  const TestComponent = ({children, height}) => (
+    <div>
+      {children} has height of {height}
+    </div>
+  );
 
   const MeasuredTestComponent = measure.measure.height(TestComponent);
 
@@ -156,13 +147,11 @@ test('if measure convenience method will handle wrapping a component directly', 
 });
 
 test('if measure convenience method will handle wrapping a component with options', (t) => {
-  const TestComponent = ({children, height}) => {
-    return (
-      <div>
-        {children} has height of {height}
-      </div>
-    );
-  };
+  const TestComponent = ({children, height}) => (
+    <div>
+      {children} has height of {height}
+    </div>
+  );
 
   const MeasuredTestComponent = measure.measure.height({debounce: 200})(TestComponent);
 

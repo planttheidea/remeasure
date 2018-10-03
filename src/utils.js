@@ -1,5 +1,11 @@
 // constants
-import {KEY_NAMES, KEYS, FUNCTION_NAME_REGEXP, NATURAL_REGEXP, VOID_ELEMENT_TAG_NAMES} from './constants';
+import {
+  KEY_NAMES,
+  KEYS,
+  FUNCTION_NAME_REGEXP,
+  NATURAL_REGEXP,
+  VOID_ELEMENT_TAG_NAMES,
+} from './constants';
 
 /**
  * @private
@@ -69,9 +75,8 @@ export const getMeasureKeys = (keys) => {
  * @param {string} key the size / position value to retrieve from source
  * @returns {number}
  */
-export const getNaturalDimensionValue = (source, key) => {
-  return source.hasOwnProperty(key) ? source[key] : source[key.replace(NATURAL_REGEXP, 'scroll')];
-};
+export const getNaturalDimensionValue = (source, key) =>
+  source.hasOwnProperty(key) ? source[key] : source[key.replace(NATURAL_REGEXP, 'scroll')];
 
 /**
  * @private
@@ -99,9 +104,7 @@ export const getStateKeys = (props) => {
 
   const specificKeys = Array.isArray(keys)
     ? keys
-    : Object.keys(specificProperties).filter((property) => {
-      return specificProperties[property];
-    });
+    : Object.keys(specificProperties).filter((property) => specificProperties[property]);
 
   if (specificKeys.length) {
     return specificKeys.reduce((requestedKeys, key) => {
@@ -129,6 +132,4 @@ export const getStateKeys = (props) => {
  * @param {HTMLElement} element
  * @returns {boolean}
  */
-export const isElementVoidTag = (element) => {
-  return !!~VOID_ELEMENT_TAG_NAMES.indexOf(element.tagName);
-};
+export const isElementVoidTag = (element) => !!~VOID_ELEMENT_TAG_NAMES.indexOf(element.tagName);

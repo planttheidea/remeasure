@@ -4,7 +4,6 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const eslintFriendlyFormatter = require('eslint-friendly-formatter');
 const path = require('path');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
-const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
 const webpack = require('webpack');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -14,7 +13,9 @@ module.exports = {
 
   entry: [path.resolve(ROOT, 'src', 'index.js')],
 
-  externals: ['react', 'react-dom'],
+  externals: ['react', 'react-dom', 'prop-types'],
+
+  mode: 'development',
 
   module: {
     rules: [
@@ -27,16 +28,16 @@ module.exports = {
           failOnError: true,
           failOnWarning: false,
           fix: true,
-          formatter: eslintFriendlyFormatter
+          formatter: eslintFriendlyFormatter,
         },
-        test: /\.js$/
+        test: /\.js$/,
       },
       {
         include: [path.resolve(ROOT, 'src')],
         loader: 'babel-loader',
-        test: /\.js$/
-      }
-    ]
+        test: /\.js$/,
+      },
+    ],
   },
 
   output: {
@@ -48,21 +49,20 @@ module.exports = {
     libraryTarget: 'umd',
     path: path.resolve(ROOT, 'dist'),
     pathinfo: true,
-    umdNamedDefine: true
+    umdNamedDefine: true,
   },
 
   performance: {
-    hints: false
+    hints: false,
   },
 
   plugins: [
     new webpack.EnvironmentPlugin(['NODE_ENV']),
     new webpack.NamedModulesPlugin(),
     new CaseSensitivePathsPlugin(),
-    new WatchMissingNodeModulesPlugin(path.resolve(ROOT, 'node_modules'))
   ],
 
   resolve: {
-    plugins: [new ModuleScopePlugin(path.resolve(ROOT, 'src'))]
-  }
+    plugins: [new ModuleScopePlugin(path.resolve(ROOT, 'src'))],
+  },
 };

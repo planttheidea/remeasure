@@ -9,7 +9,10 @@ import ResizeObserver from 'resize-observer-polyfill';
 
 // src
 import * as component from 'src/Measured';
-import {KEY_NAMES, KEYS} from 'src/constants';
+import {
+  KEY_NAMES,
+  KEYS,
+} from 'src/constants';
 
 const Measured = component.default;
 
@@ -30,21 +33,16 @@ test('if componentWillMount will get the keys and set the render method', (t) =>
   const instance = {
     keys: [],
     props: {
-      height: true
+      height: true,
     },
-    setRenderMethod: sinon.spy()
+    setRenderMethod: sinon.spy(),
   };
 
   const componentWillMount = component.createComponentWillMount(instance);
 
   componentWillMount();
 
-  t.deepEqual(
-    instance.keys,
-    KEYS.filter(({key}) => {
-      return key === 'height';
-    })
-  );
+  t.deepEqual(instance.keys, KEYS.filter(({key}) => key === 'height'));
 
   t.true(instance.setRenderMethod.calledOnce);
   t.true(instance.setRenderMethod.calledWith(instance.props));
@@ -54,7 +52,7 @@ test('if componentDidMount will set the element and resize observer', (t) => {
   const instance = {
     _isMounted: false,
     element: null,
-    setResizeObserver: sinon.spy()
+    setResizeObserver: sinon.spy(),
   };
 
   const findDOMNodeStub = sinon.stub(ReactDOM, 'findDOMNode').returnsArg(0);
@@ -77,7 +75,7 @@ test('if componentDidMount will set the element and resize observer', (t) => {
 
 test('if componentWillReceiveProps will set the render method based on the props', (t) => {
   const instance = {
-    setRenderMethod: sinon.spy()
+    setRenderMethod: sinon.spy(),
   };
 
   const componentWillReceiveProps = component.createComponentWillReceiveProps(instance);
@@ -94,9 +92,7 @@ test('if setValues will create a delayed method to set the values in state if no
   const instance = {
     _isMounted: true,
     element: document.createElement('div'),
-    keys: KEYS.filter(({key}) => {
-      return key === 'height';
-    }),
+    keys: KEYS.filter(({key}) => key === 'height'),
     props: {},
     setState(fn) {
       const result = fn();
@@ -111,8 +107,8 @@ test('if setValues will create a delayed method to set the values in state if no
       );
     },
     state: {
-      height: null
-    }
+      height: null,
+    },
   };
 
   const spy = sinon.spy(instance, 'setState');
@@ -132,11 +128,9 @@ test('if setValues will create a delayed method to set the values in state if de
   const instance = {
     _isMounted: true,
     element: document.createElement('div'),
-    keys: KEYS.filter(({key}) => {
-      return key === 'height';
-    }),
+    keys: KEYS.filter(({key}) => key === 'height'),
     props: {
-      debounce: 200
+      debounce: 200,
     },
     setState(fn) {
       const result = fn();
@@ -151,8 +145,8 @@ test('if setValues will create a delayed method to set the values in state if de
       );
     },
     state: {
-      height: null
-    }
+      height: null,
+    },
   };
 
   const spy = sinon.spy(instance, 'setState');
@@ -172,9 +166,7 @@ test('if setValues will not set the values if not mounted', async (t) => {
   const instance = {
     _isMounted: false,
     element: document.createElement('div'),
-    keys: KEYS.filter(({key}) => {
-      return key === 'height';
-    }),
+    keys: KEYS.filter(({key}) => key === 'height'),
     props: {},
     setState(fn) {
       const result = fn();
@@ -189,8 +181,8 @@ test('if setValues will not set the values if not mounted', async (t) => {
       );
     },
     state: {
-      height: null
-    }
+      height: null,
+    },
   };
 
   const spy = sinon.spy(instance, 'setState');
@@ -210,9 +202,7 @@ test('if setValues will not set the values if the values are equal', async (t) =
   const instance = {
     _isMounted: true,
     element: document.createElement('div'),
-    keys: KEYS.filter(({key}) => {
-      return key === 'height';
-    }),
+    keys: KEYS.filter(({key}) => key === 'height'),
     props: {},
     setState(fn) {
       const result = fn();
@@ -230,7 +220,7 @@ test('if setValues will not set the values if the values are equal', async (t) =
       state[key] = key === 'height' ? 0 : null;
 
       return state;
-    }, {})
+    }, {}),
   };
 
   const spy = sinon.spy(instance, 'setState');
@@ -246,13 +236,55 @@ test('if setValues will not set the values if the values are equal', async (t) =
   t.true(spy.notCalled);
 });
 
+test('if setValues will set the values if the values are equal but the method was triggered by resize and renderOnWindowResize is true', async (t) => {
+  const instance = {
+    _isMounted: true,
+    element: document.createElement('div'),
+    keys: KEYS.filter(({key}) => key === 'height'),
+    props: {
+      renderOnWindowResize: true,
+    },
+    setState(fn) {
+      const result = fn();
+
+      t.deepEqual(
+        result,
+        KEY_NAMES.reduce((state, key) => {
+          state[key] = key === 'height' ? 0 : null;
+
+          return state;
+        }, {})
+      );
+    },
+    state: KEY_NAMES.reduce((state, key) => {
+      state[key] = key === 'height' ? 0 : null;
+
+      return state;
+    }, {}),
+  };
+
+  const spy = sinon.spy(instance, 'setState');
+
+  const setValues = component.createSetValues(instance, false);
+
+  const event = {
+    type: 'resize',
+  };
+
+  setValues(event);
+
+  await new Promise((resolve) => {
+    setTimeout(resolve, (1000 / 60) * 16);
+  });
+
+  t.true(spy.calledOnce);
+});
+
 test('if setValues will assign values to 0 if no element exists', async (t) => {
   const instance = {
     _isMounted: true,
     element: null,
-    keys: KEYS.filter(({key}) => {
-      return key === 'height';
-    }),
+    keys: KEYS.filter(({key}) => key === 'height'),
     props: {},
     setState(fn) {
       const result = fn();
@@ -270,7 +302,7 @@ test('if setValues will assign values to 0 if no element exists', async (t) => {
       state[key] = key === 'height' ? 123 : null;
 
       return state;
-    }, {})
+    }, {}),
   };
 
   const spy = sinon.spy(instance, 'setState');
@@ -295,7 +327,7 @@ test('if componentDidUpdate will set the element and the resize observer if the 
     props: {},
     resizeMethod: sinon.spy(),
     setResizeObserver: sinon.spy(),
-    setValuesViaDebounce: originalSetValuesViaDebounce
+    setValuesViaDebounce: originalSetValuesViaDebounce,
   };
 
   const findDOMNodeStub = sinon.stub(ReactDOM, 'findDOMNode').returnsArg(0);
@@ -327,11 +359,11 @@ test('if componentDidUpdate will set the debounce method and the resize observer
     element: null,
     keys: KEYS,
     props: {
-      debounce: 200
+      debounce: 200,
     },
     resizeMethod: sinon.spy(),
     setResizeObserver: sinon.spy(),
-    setValuesViaDebounce: originalSetValuesViaDebounce
+    setValuesViaDebounce: originalSetValuesViaDebounce,
   };
 
   const findDOMNodeStub = sinon.stub(ReactDOM, 'findDOMNode').returns(null);
@@ -339,7 +371,7 @@ test('if componentDidUpdate will set the debounce method and the resize observer
   const componentDidUpdate = component.createComponentDidUpdate(instance);
 
   const previousProps = {
-    debounce: 50
+    debounce: 50,
   };
 
   componentDidUpdate(previousProps);
@@ -365,11 +397,11 @@ test('if componentDidUpdate will call the resize method if keys have changed', (
     element: null,
     keys: KEYS,
     props: {
-      height: true
+      height: true,
     },
     resizeMethod: sinon.spy(),
     setResizeObserver: sinon.spy(),
-    setValuesViaDebounce: originalSetValuesViaDebounce
+    setValuesViaDebounce: originalSetValuesViaDebounce,
   };
 
   const findDOMNodeStub = sinon.stub(ReactDOM, 'findDOMNode').returns(null);
@@ -403,7 +435,7 @@ test('if componentDidUpdate will do nothing if nothing has changed', (t) => {
     props: {},
     resizeMethod: sinon.spy(),
     setResizeObserver: sinon.spy(),
-    setValuesViaDebounce: originalSetValuesViaDebounce
+    setValuesViaDebounce: originalSetValuesViaDebounce,
   };
 
   const findDOMNodeStub = sinon.stub(ReactDOM, 'findDOMNode').returns(null);
@@ -434,7 +466,7 @@ test('if componentWillUnmount will disconnect the observer and reset the instanc
     disconnectObserver: sinon.spy(),
     element: document.createElement('div'),
     keys: KEYS,
-    resizeMethod() {}
+    resizeMethod() {},
   };
 
   const componentWillUnmount = component.createComponentWillUnmount(instance);
@@ -452,10 +484,10 @@ test('if connectObserver will assign the resize observer and connect it to the e
   const instance = {
     element: document.createElement('div'),
     props: {
-      renderOnResize: true
+      renderOnResize: true,
     },
     resizeMethod() {},
-    resizeObserver: null
+    resizeObserver: null,
   };
 
   const connectObserver = component.createConnectObserver(instance);
@@ -469,10 +501,10 @@ test('if connectObserver will warn if listening to a void element', (t) => {
   const instance = {
     element: document.createElement('img'),
     props: {
-      renderOnResize: true
+      renderOnResize: true,
     },
     resizeMethod() {},
-    resizeObserver: null
+    resizeObserver: null,
   };
 
   const connectObserver = component.createConnectObserver(instance);
@@ -493,10 +525,10 @@ test('if connectObserver will assign the resize observer as a window listener wh
     element: document.createElement('div'),
     props: {
       renderOnResize: false,
-      renderOnWindowResize: true
+      renderOnWindowResize: true,
     },
     resizeMethod() {},
-    resizeObserver: null
+    resizeObserver: null,
   };
 
   const connectObserver = component.createConnectObserver(instance);
@@ -515,10 +547,10 @@ test('if connectObserver will do nothing if renderOnResize is false', (t) => {
   const instance = {
     element: document.createElement('div'),
     props: {
-      renderOnResize: false
+      renderOnResize: false,
     },
     resizeMethod() {},
-    resizeObserver: null
+    resizeObserver: null,
   };
 
   const connectObserver = component.createConnectObserver(instance);
@@ -540,8 +572,8 @@ test('if disconnectObserver will disconnect the observer if it exists', (t) => {
   const instance = {
     element: document.createElement('div'),
     resizeObserver: {
-      disconnect
-    }
+      disconnect,
+    },
   };
 
   const disconnectObserver = component.createDisconnectObserver(instance);
@@ -559,10 +591,10 @@ test('if connectObserver will remove the resize observer as a window listener wh
 
   const instance = {
     element: document.createElement('div'),
+    resizeMethod() {},
     resizeObserver: {
-      disconnect
+      disconnect,
     },
-    resizeMethod() {}
   };
 
   const disconnectObserver = component.createDisconnectObserver(instance);
@@ -580,7 +612,7 @@ test('if connectObserver will remove the resize observer as a window listener wh
 test('if disconnectObserver does nothing if the resize observer does not exist', (t) => {
   const instance = {
     element: document.createElement('div'),
-    resizeObserver: null
+    resizeObserver: null,
   };
 
   const disconnectObserver = component.createDisconnectObserver(instance);
@@ -596,9 +628,7 @@ test('if disconnectObserver does nothing if the resize observer does not exist',
 
 test('if getPassedValues will return the populated state if there is no namespace', (t) => {
   const instance = {
-    keys: KEYS.filter(({key}) => {
-      return key === 'height' || key === 'width';
-    })
+    keys: KEYS.filter(({key}) => key === 'height' || key === 'width'),
   };
 
   const getPassedValues = component.createGetPassedValues(instance);
@@ -606,7 +636,7 @@ test('if getPassedValues will return the populated state if there is no namespac
   t.true(getPassedValues.isMemoized);
 
   const state = {
-    height: 123
+    height: 123,
   };
   const namespace = undefined;
 
@@ -614,15 +644,13 @@ test('if getPassedValues will return the populated state if there is no namespac
 
   t.deepEqual(result, {
     ...state,
-    width: 0
+    width: 0,
   });
 });
 
 test('if getPassedValues will return the populated state namespaced if there is one provided', (t) => {
   const instance = {
-    keys: KEYS.filter(({key}) => {
-      return key === 'height' || key === 'width';
-    })
+    keys: KEYS.filter(({key}) => key === 'height' || key === 'width'),
   };
 
   const getPassedValues = component.createGetPassedValues(instance);
@@ -630,7 +658,7 @@ test('if getPassedValues will return the populated state namespaced if there is 
   t.true(getPassedValues.isMemoized);
 
   const state = {
-    height: 123
+    height: 123,
   };
   const namespace = 'namespace';
 
@@ -639,8 +667,8 @@ test('if getPassedValues will return the populated state namespaced if there is 
   t.deepEqual(result, {
     [namespace]: {
       ...state,
-      width: 0
-    }
+      width: 0,
+    },
   });
 });
 
@@ -666,13 +694,13 @@ test('if setRef will assign the result of findDOMNode to the instance', (t) => {
 
 test('if setRenderMethod will use the children when applicable', (t) => {
   const instance = {
-    RenderComponent: null
+    RenderComponent: null,
   };
 
   const setRenderMethod = component.createSetRenderMethod(instance);
 
   const props = {
-    children() {}
+    children() {},
   };
 
   setRenderMethod(props);
@@ -682,13 +710,13 @@ test('if setRenderMethod will use the children when applicable', (t) => {
 
 test('if setRenderMethod will use the component prop when applicable', (t) => {
   const instance = {
-    RenderComponent: null
+    RenderComponent: null,
   };
 
   const setRenderMethod = component.createSetRenderMethod(instance);
 
   const props = {
-    component() {}
+    component() {},
   };
 
   setRenderMethod(props);
@@ -698,13 +726,13 @@ test('if setRenderMethod will use the component prop when applicable', (t) => {
 
 test('if setRenderMethod will use the render prop when applicable', (t) => {
   const instance = {
-    RenderComponent: null
+    RenderComponent: null,
   };
 
   const setRenderMethod = component.createSetRenderMethod(instance);
 
   const props = {
-    render() {}
+    render() {},
   };
 
   setRenderMethod(props);
@@ -714,7 +742,7 @@ test('if setRenderMethod will use the render prop when applicable', (t) => {
 
 test('if setRenderMethod will log an error when no method is passed', (t) => {
   const instance = {
-    RenderComponent: null
+    RenderComponent: null,
   };
 
   const setRenderMethod = component.createSetRenderMethod(instance);
@@ -744,7 +772,7 @@ test('if setResizeObserver will disconnect the existing observer and connect the
     resizeMethod: setValuesViaRaf,
     resizeObserver() {},
     setValuesViaDebounce,
-    setValuesViaRaf
+    setValuesViaRaf,
   };
 
   const setResizeObserver = component.createSetResizeObserver(instance);
@@ -770,7 +798,7 @@ test('if setResizeObserver will not disconnect the existing observer if it does 
     resizeMethod: setValuesViaRaf,
     resizeObserver: null,
     setValuesViaDebounce,
-    setValuesViaRaf
+    setValuesViaRaf,
   };
 
   const setResizeObserver = component.createSetResizeObserver(instance);
@@ -796,7 +824,7 @@ test('if setResizeObserver will not connect the observer if the element does not
     resizeMethod: setValuesViaRaf,
     resizeObserver: null,
     setValuesViaDebounce,
-    setValuesViaRaf
+    setValuesViaRaf,
   };
 
   const setResizeObserver = component.createSetResizeObserver(instance);
@@ -819,12 +847,12 @@ test('if setResizeObserver will change the resize method if calcualted to be dif
     disconnectObserver: sinon.spy(),
     element: null,
     props: {
-      debounce: 200
+      debounce: 200,
     },
     resizeMethod: setValuesViaRaf,
     resizeObserver: null,
     setValuesViaDebounce,
-    setValuesViaRaf
+    setValuesViaRaf,
   };
 
   const setResizeObserver = component.createSetResizeObserver(instance);
@@ -842,23 +870,17 @@ test('if setResizeObserver will change the resize method if calcualted to be dif
 
 test('if Measured renders correctly with default props', (t) => {
   const props = {
-    height: true
+    height: true,
   };
 
-  const wrapper = mount(
-    <Measured {...props}>
-      {() => {
-        return <div>Child</div>;
-      }}
-    </Measured>
-  );
+  const wrapper = mount(<Measured {...props}>{() => <div>Child</div>}</Measured>);
 
   t.snapshot(toJson(wrapper));
 });
 
 test('if Measured renders correctly with no RenderComponent', (t) => {
   const props = {
-    height: true
+    height: true,
   };
 
   const consoleStub = sinon.stub(console, 'error');

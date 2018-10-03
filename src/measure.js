@@ -1,6 +1,9 @@
 // external dependencies
 import PropTypes from 'prop-types';
-import React, {Component, PureComponent} from 'react';
+import React, {
+  Component,
+  PureComponent,
+} from 'react';
 
 // classes
 import Measured from './Measured';
@@ -9,9 +12,12 @@ import Measured from './Measured';
 import {KEY_NAMES} from './constants';
 
 // utils
-import {getComponentName, getMeasureKeys} from './utils';
+import {
+  getComponentName,
+  getMeasureKeys,
+} from './utils';
 
-export const createSetOriginalRef = (instance) => {
+export const createSetOriginalRef = (instance) =>
   /**
    * @private
    *
@@ -22,10 +28,9 @@ export const createSetOriginalRef = (instance) => {
    *
    * @param {HTMLElement|ReactComponent} component the component instance to assign
    */
-  return (component) => {
+  (component) => {
     instance.originalComponent = component;
   };
-};
 
 /**
  * @private
@@ -47,7 +52,7 @@ export const getMeasuredComponent = (RenderedComponent) => {
 
     static propTypes = {
       _measuredComponentChildren: PropTypes.oneOfType([PropTypes.node, PropTypes.string]),
-      _measuredComponentRef: PropTypes.func.isRequired
+      _measuredComponentRef: PropTypes.func.isRequired,
     };
 
     render() {
@@ -89,7 +94,7 @@ export const getMeasuredHoc = (keys, options) => {
 
       static propTypes = {
         children: PropTypes.oneOfType([PropTypes.func, PropTypes.node, PropTypes.string]),
-        render: PropTypes.func
+        render: PropTypes.func,
       };
 
       // instance values
@@ -128,19 +133,16 @@ export const getMeasuredHoc = (keys, options) => {
  * @param {Object} [passedOptions={}] the options when creating the measured component
  * @returns {function} the HOC that will render the component passed with measurements injected
  */
-const measure = (passedKeys, passedOptions = {}) => {
-  return typeof passedKeys === 'function'
+const measure = (passedKeys, passedOptions = {}) =>
+  typeof passedKeys === 'function'
     ? getMeasuredHoc(KEY_NAMES, passedOptions)(passedKeys)
     : getMeasuredHoc(
       getMeasureKeys(passedKeys),
       passedKeys && passedKeys.constructor === Object ? passedKeys : passedOptions
     );
-};
 
 KEY_NAMES.forEach((key) => {
-  measure[key] = (options) => {
-    return typeof options === 'function' ? measure([key])(options) : measure([key], options);
-  };
+  measure[key] = (options) => (typeof options === 'function' ? measure([key])(options) : measure([key], options));
 });
 
 export {measure};
